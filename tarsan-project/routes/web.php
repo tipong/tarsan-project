@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Admin\{ RoomController, UserController, VoucherController, OrderController, ReviewController };
+use App\Http\Controllers\Admin\{ RoomController, UserController, VoucherController, OrderController, ReviewController, FinancialReportController };
 use App\Http\Controllers\MidtransCallbackController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Resepsionis\AvailabilityController as ResepsionisAvailabilityController;
@@ -11,23 +11,27 @@ use App\Http\Controllers\Tamu\CheckoutController;
 use App\Http\Controllers\Tamu\InvoiceController;
 use App\Http\Controllers\Tamu\PaymentController;
 use App\Http\Controllers\Tamu\ReservationController;
+use App\Http\Controllers\Tamu\RoomController as TamuRoomController;
+use App\Http\Controllers\Tamu\OrderController as TamuOrderController;
 use App\Mail\WelcomeMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
 /*
-|-------------------------------------------------------------------------- 
-| PUBLIC
-|-------------------------------------------------------------------------- 
+|--------------------------------------------------------------------------
+| PUBLIC - GUEST DAPAT EXPLORE KAMAR TANPA LOGIN
+|--------------------------------------------------------------------------
 */
 Route::get('/', fn () => view('welcome'))->name('beranda');
-Route::get('/kamar', fn () => view('kamar.index'))->name('kamar.index');
-Route::get('/pesanan-saya', fn () => view('pesanan.saya'))->name('pesanan.saya');
+Route::get('/kamar', [TamuRoomController::class, 'index'])->name('kamar.index');
+Route::get('/kamar/{room}', [TamuRoomController::class, 'show'])->name('kamar.show');
+Route::post('/midtrans/callback', [MidtransCallbackController::class, 'handle'])
+    ->name('midtrans.callback');
 
 /*
-|-------------------------------------------------------------------------- 
+|--------------------------------------------------------------------------
 | LOGIN REDIRECT
-|-------------------------------------------------------------------------- 
+|--------------------------------------------------------------------------
 */
 Route::get('/dashboard', function () {
     $user = auth()->user();
@@ -48,28 +52,37 @@ Route::get('/dashboard', function () {
 })->middleware('auth')->name('dashboard');
 
 /*
-|-------------------------------------------------------------------------- 
+|--------------------------------------------------------------------------
 | ADMIN (HANYA ADMIN)
-|-------------------------------------------------------------------------- 
+|--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
 
-        Route::view('/dashboard', 'admin.dashboard')->name('dashboard');
+        Route::get('/dashboard', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'index'])->name('dashboard');
 
         Route::resource('rooms', RoomController::class);
         Route::resource('users', UserController::class);
         Route::resource('vouchers', VoucherController::class);
         Route::resource('orders', OrderController::class);
+        Route::post('/orders/{order}/check-in', [OrderController::class, 'checkIn'])->name('orders.checkin');
+        Route::post('/orders/{order}/check-out', [OrderController::class, 'checkOut'])->name('orders.checkout');
         Route::resource('reviews', ReviewController::class);
+        Route::post('/reviews/{review}/reply', [ReviewController::class, 'reply'])->name('reviews.reply');
+
+        // Financial Reports
+        Route::get('/reports/financial', [FinancialReportController::class, 'index'])
+            ->name('reports.financial');
+        Route::get('/reports/financial/export', [FinancialReportController::class, 'export'])
+            ->name('reports.financial.export');
     });
 
 /*
-|-------------------------------------------------------------------------- 
+|--------------------------------------------------------------------------
 | RESEPSIONIS (HANYA RESEPSIONIS)
-|-------------------------------------------------------------------------- 
+|--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:resepsionis'])
     ->prefix('resepsionis')
@@ -90,21 +103,21 @@ Route::middleware(['auth', 'role:resepsionis'])
 
         Route::get('/walkin/create', [ResepsionisOrderController::class, 'create'])
             ->name('orders.walkin.create');
-        
+
         Route::post('/walkin', [ResepsionisOrderController::class, 'store'])
             ->name('orders.walkin.store');
 
         Route::get('/availability', [ResepsionisAvailabilityController::class, 'index'])
             ->name('availability');
-        
+
         Route::post('/availability/check', [ResepsionisAvailabilityController::class, 'check'])
             ->name('availability.check');
     });
 
 /*
-|-------------------------------------------------------------------------- 
+|--------------------------------------------------------------------------
 | TAMU (HANYA TAMU)
-|-------------------------------------------------------------------------- 
+|--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:tamu'])
     ->prefix('tamu')
@@ -150,45 +163,68 @@ Route::middleware(['auth', 'role:tamu'])
 
         Route::post('/reservation/confirm', [ReservationController::class, 'confirm'])
             ->name('reservation.confirm');
-            
+
         Route::post(
                 '/reservation/guest',
                 [ReservationController::class, 'applyGuestInfo']
-            )->name('reservation.guest');  
+            )->name('reservation.guest');
 
-        Route::get('/payment', 
+        Route::get('/payment',
             [PaymentController::class, 'index']
         )->name('payment.index');
 
         Route::post('/payment/pay', [PaymentController::class, 'pay'])
         ->name('payment.pay');
 
-        Route::post('/payment/callback', [PaymentController::class, 'callback'])
-        ->name('payment.callback');
-        
-        Route::get('/payment/snap-token',
-            [PaymentController::class, 'snapToken']
-        )->name('payment.token');
+        Route::post('/payment/orders/{order}/sync', [PaymentController::class, 'sync'])
+            ->name('payment.sync');
+        Route::post('/payment/orders/{order}/continue', [PaymentController::class, 'continuePayment'])
+            ->name('payment.continue');
 
-        Route::get('/tamu/invoice/{order}', [InvoiceController::class, 'show'])
-        ->name('tamu.invoice.show');
+        Route::get('/invoice/{order}/download', [InvoiceController::class, 'download'])
+        ->name('invoice.download');
+
+        Route::get('/invoice/{order}', [InvoiceController::class, 'show'])
+        ->name('invoice.show');
 
         Route::get('/payment/success', function () {
             return redirect()->route('tamu.orders')
                 ->with('success', 'Payment successful. Your order has been confirmed.');
         })->name('payment.success');
 
-        Route::post('tamu/midtrans/callback', [MidtransCallbackController::class, 'handle']);
-
         Route::get('/orders', [\App\Http\Controllers\Tamu\OrderController::class, 'index'])
         ->middleware('auth')
         ->name('orders');
+
+        // Alias untuk route pesanan.saya (digunakan di views)
+        Route::get('/pesanan-saya', [\App\Http\Controllers\Tamu\OrderController::class, 'index'])
+        ->middleware('auth')
+        ->name('pesanan.saya');
+
+        Route::post('/orders/{order}/cancel', [TamuOrderController::class, 'cancel'])
+            ->name('orders.cancel');
+
+        Route::get('/orders/{order}', [TamuOrderController::class, 'show'])
+            ->name('orders.show');
+
+        Route::post('/orders/{order}/review', [\App\Http\Controllers\Tamu\ReviewController::class, 'store'])
+            ->name('orders.review');
+
+        // Notifications
+        Route::get('/notifications', [\App\Http\Controllers\Tamu\NotificationController::class, 'index'])
+            ->name('notifications.index');
+        Route::post('/notifications/{notification}/read', [\App\Http\Controllers\Tamu\NotificationController::class, 'markAsRead'])
+            ->name('notifications.read');
+        Route::post('/notifications/read-all', [\App\Http\Controllers\Tamu\NotificationController::class, 'markAllAsRead'])
+            ->name('notifications.read-all');
+        Route::get('/notifications/unread-count', [\App\Http\Controllers\Tamu\NotificationController::class, 'unreadCount'])
+            ->name('notifications.unread-count');
     });
 
 /*
-|-------------------------------------------------------------------------- 
+|--------------------------------------------------------------------------
 | PROFILE (SEMUA ROLE)
-|-------------------------------------------------------------------------- 
+|--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:tamu'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

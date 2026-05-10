@@ -1,43 +1,38 @@
-@extends('tamu.layouts.edit')
+@extends('layouts.app')
+
+@section('title', 'Edit Profile')
 
 @section('content')
+<div class="min-h-screen bg-gray-50">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {{-- Header --}}
+        <div class="mb-8">
+            <a href="{{ route('tamu.dashboard') }}" class="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition duration-200 mb-4">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+                Kembali ke Dashboard
+            </a>
+            <h1 class="text-3xl font-bold text-gray-900">Edit Profile</h1>
+            <p class="text-gray-600 mt-1">Kelola informasi akun Anda di sini</p>
+        </div>
 
-{{-- HEADER --}}
-@section('header')
-<div class="flex items-center gap-3">
-    <a href="{{ route('tamu.dashboard') }}"
-       class="font-semibold text-xl text-gray-800 hover:text-gray-900">
-        ←
-    </a>
-
-    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-        Profile
-    </h2>
-</div>
-@endsection
-
-{{-- CONTENT --}}
-<div class="py-12">
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-
-        <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-            <div class="max-w-xl">
+        <div class="space-y-6">
+            {{-- Profile Information --}}
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                 @include('profile.partials.update-profile-information-form')
             </div>
-        </div>
 
-        <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-            <div class="max-w-xl">
+            {{-- Update Password --}}
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                 @include('profile.partials.update-password-form')
             </div>
-        </div>
 
-        <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-            <div class="max-w-xl">
+            {{-- Delete Account --}}
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-red-200">
                 @include('profile.partials.delete-user-form')
             </div>
         </div>
-
     </div>
 </div>
 @endsection

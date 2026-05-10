@@ -11,13 +11,14 @@ class BookingController extends Controller
 {
     public function index()
     {
-        $rooms = Room::with('images')
+        $rooms = Room::withRoomRelations()
             ->where('is_active', 1)
             ->get();
+        $facilities = Room::facilityOptions();
 
         $cart = session('cart', []);
 
-        return view('tamu.booking.index', compact('rooms', 'cart'));
+        return view('tamu.booking.index', compact('rooms', 'cart', 'facilities'));
     }
 
     public function search(Request $request)
@@ -27,15 +28,33 @@ class BookingController extends Controller
             'check_out' => 'required|date|after:check_in',
         ]);
 
-        $rooms = Room::with('images')->where('is_active', 1)->get();
+        $rooms = Room::withRoomRelations()->where('is_active', 1);
+        $facilities = Room::facilityOptions();
+
+        // Filter by room search
+        if ($request->filled('room_search')) {
+            $search = $request->room_search;
+            $rooms->where(function ($query) use ($search) {
+                $query->where('room_name', 'like', "%$search%")
+                    ->orWhere('description', 'like', "%$search%");
+            });
+        }
+
+        // Filter by facility
+        if ($request->filled('facility')) {
+            $rooms->filterByFacility($request->facility);
+        }
+
+        $rooms = $rooms->get();
 
         session([
-            'booking_filter' => $request->only('check_in', 'check_out')
+            'booking_filter' => $request->only('check_in', 'check_out', 'room_search', 'facility')
         ]);
 
         return view('tamu.booking.index', [
             'rooms' => $rooms,
-            'cart'  => session('cart', [])
+            'cart'  => session('cart', []),
+            'facilities' => $facilities,
         ]);
     }
 

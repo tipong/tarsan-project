@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Resepsionis;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Room;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class AvailabilityController extends Controller
@@ -21,11 +22,14 @@ class AvailabilityController extends Controller
             'check_out' => 'required|date|after:check_in',
         ]);
 
-        $rooms = Room::all()->map(function ($room) use ($request) {
+        $checkIn = Carbon::parse($request->check_in);
+        $checkOut = Carbon::parse($request->check_out);
+
+        $rooms = Room::all()->map(function ($room) use ($checkIn, $checkOut) {
             $available = Order::isRoomAvailable(
                 $room->id,
-                $request->check_in,
-                $request->check_out
+                $checkIn,
+                $checkOut
             );
 
             return [

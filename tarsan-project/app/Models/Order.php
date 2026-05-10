@@ -11,6 +11,7 @@ class Order extends Model
 {
     protected $fillable = [
         'order_code',
+        'midtrans_order_id',
         'user_id',
         'check_in',
         'check_out',
@@ -22,6 +23,11 @@ class Order extends Model
         'status',
         'checked_in_at',
         'checked_out_at',
+        'cancelled_at',
+        'cancelled_reason',
+        'payment_method',
+        'snap_token',
+        'snap_token_expires_at',
         'is_walkin',
         'guest_name',
         'guest_phone',
@@ -32,8 +38,23 @@ class Order extends Model
         'check_out' => 'date',
         'checked_in_at' => 'datetime',
         'checked_out_at' => 'datetime',
+        'cancelled_at' => 'datetime',
+        'snap_token_expires_at' => 'datetime',
         'is_walkin' => 'boolean',
     ];
+
+    /* =====================
+     | ACCESSOR (Backward Compatibility)
+     ===================== */
+    public function getCheckInDateAttribute()
+    {
+        return $this->check_in;
+    }
+
+    public function getCheckOutDateAttribute()
+    {
+        return $this->check_out;
+    }
 
     public function items()
     {
@@ -56,6 +77,11 @@ class Order extends Model
     public function review()
     {
         return $this->hasOne(Review::class);
+    }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
     }
 
     /* =====================
@@ -86,14 +112,17 @@ class Order extends Model
         Carbon $checkIn,
         Carbon $checkOut
     ): bool {
-        return ! self::where('room_id', $roomId)
-            ->whereNull('checked_out_at') // masih aktif
+        // Cek di order_items karena room_id ada di sana, bukan di orders
+        return ! self::whereHas('items', function ($q) use ($roomId) {
+                $q->where('room_id', $roomId);
+            })
+            ->where('status', '!=', 'cancelled')
             ->where(function ($q) use ($checkIn, $checkOut) {
-                $q->whereBetween('check_in_date', [$checkIn, $checkOut])
-                  ->orWhereBetween('check_out_date', [$checkIn, $checkOut])
+                $q->whereBetween('check_in', [$checkIn, $checkOut])
+                  ->orWhereBetween('check_out', [$checkIn, $checkOut])
                   ->orWhere(function ($sub) use ($checkIn, $checkOut) {
-                      $sub->where('check_in_date', '<=', $checkIn)
-                          ->where('check_out_date', '>=', $checkOut);
+                      $sub->where('check_in', '<=', $checkIn)
+                          ->where('check_out', '>=', $checkOut);
                   });
             })
             ->exists();
@@ -136,10 +165,9 @@ class Order extends Model
         ]);
 
         // 🔹 Buat ORDER ITEM
-        OrderItem::create([
+        OrderItem::createBookingItem([
             'order_id' => $order->id,
             'room_id' => $room->id,
-            'qty' => 1,
             'price_per_night' => $room->price_per_night,
             'nights' => $nights,
             'subtotal' => $room->price_per_night * $nights,

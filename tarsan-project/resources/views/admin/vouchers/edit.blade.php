@@ -4,57 +4,33 @@
 
 @section('content')
 <h1 class="text-xl font-semibold mb-4">Edit Voucher</h1>
+<form method="POST" action="{{ route('admin.vouchers.update', $voucher) }}" class="bg-white p-6 rounded-xl shadow max-w-xl">
+    @csrf
+    @method('PUT')
 
-<form method="POST"
-      action="{{ route('admin.vouchers.update', $voucher) }}"
-      class="bg-white p-6 rounded shadow max-w-xl">
-@csrf
-@method('PUT')
+    <div class="space-y-6">
 
-<div class="space-y-4">
+        <label for="code" class="block text-sm font-medium text-slate-800 font-semibold mb-2">Voucher Code</label>
+        <input
+            type="text"
+            name="code"
+            id="code"
+            placeholder="Enter voucher code"
+            class="w-full border border-slate-200 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-slate-900 focus:border-slate-900 text-sm outline-none transition-all bg-white text-slate-800"
+            value="{{ old('code', $voucher->code) }}"
+            required>
 
-    <input
-        name="code"
-        value="{{ old('code', $voucher->code) }}"
-        class="w-full border rounded p-2"
-        required>
+        <label for="amount" class="block text-sm font-medium text-slate-800 font-semibold mb-2">Nominal (Rp)</label>
+        <input
+            type="number"
+            name="amount"
+            id="amount"
+            placeholder="Enter voucher amount"
+            class="w-full border border-slate-200 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-slate-900 focus:border-slate-900 text-sm outline-none transition-all bg-white text-slate-800"
+            value="{{ old('amount', $voucher->amount) }}"
+            required>
 
-    <input
-        type="number"
-        name="amount"
-        value="{{ old('amount', $voucher->amount) }}"
-        class="w-full border rounded p-2"
-        required>
-
-    <input
-        type="datetime-local"
-        name="starts_at"
-        value="{{ old('starts_at', $voucher->starts_at->format('Y-m-d\TH:i')) }}"
-        class="w-full border rounded p-2"
-        required>
-
-    <input
-        type="datetime-local"
-        name="ends_at"
-        value="{{ old('ends_at', $voucher->ends_at->format('Y-m-d\TH:i')) }}"
-        class="w-full border rounded p-2"
-        required>
-
-    {{-- PAKSA kirim 0 jika checkbox tidak dicentang --}}
-    <input type="hidden" name="is_active" value="0">
-
-    <label class="flex items-center gap-2">
-        <input type="checkbox"
-            name="is_active"
-            value="1"
-            {{ old('is_active', $voucher->is_active) ? 'checked' : '' }}>
-        Active
-    </label>
-
-    <button class="bg-blue-600 text-white px-4 py-2 rounded">
-        Update
-    </button>
-
-</div>
+        <button type="submit" class="bg-slate-900 text-white px-6 py-2.5 rounded-xl hover:bg-slate-800 transition-colors shadow-sm text-sm font-medium-xl hover:bg-slate-800">Save Voucher</button>
+    </div>
 </form>
 @endsection

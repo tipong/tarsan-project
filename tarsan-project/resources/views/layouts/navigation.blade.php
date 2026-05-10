@@ -1,4 +1,4 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
+<nav x-data="{ open: false }" class="bg-white border border-slate-300 text-slate-900-b border-gray-100">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
 
@@ -16,7 +16,16 @@
 
 
             {{-- RIGHT : PROFILE --}}
+            @auth
             <div class="hidden sm:flex sm:items-center sm:ms-6">
+                {{-- Notifikasi --}}
+                <a href="{{ route('tamu.notifications.index') }}" class="relative text-gray-400 hover:text-gray-600 transition-colors mr-4 flex items-center">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                    </svg>
+                    <span id="notif-badge-nav" class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center hidden"></span>
+                </a>
+
                 <x-dropdown align="right" width="48">
 
                     {{-- Trigger --}}
@@ -69,6 +78,19 @@
                     </x-slot>
                 </x-dropdown>
             </div>
+            @endauth
+
+            {{-- GUEST LOGIN LINKS --}}
+            @guest
+            <div class="hidden sm:flex sm:items-center sm:ms-6 gap-4">
+                <a href="{{ route('login') }}" class="px-4 py-2 text-gray-600 hover:text-gray-800">
+                    Login
+                </a>
+                <a href="{{ route('register') }}" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                    Register
+                </a>
+            </div>
+            @endguest
 
             {{-- MOBILE --}}
             <div class="-me-2 flex items-center sm:hidden">

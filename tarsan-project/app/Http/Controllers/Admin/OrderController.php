@@ -11,7 +11,7 @@ class OrderController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Order::with(['user', 'room']);
+        $query = Order::with(['user', 'items.room']);
 
         /* =====================
         | SEARCH
@@ -20,9 +20,9 @@ class OrderController extends Controller
             $query->where(function ($q) use ($request) {
                 $q->whereHas('user', function ($u) use ($request) {
                     $u->where('name', 'like', '%' . $request->search . '%');
-                })->orWhereHas('room', function ($r) use ($request) {
+                })->orWhereHas('items.room', function ($r) use ($request) {
                     $r->where('room_name', 'like', '%' . $request->search . '%');
-                });
+                })->orWhere('guest_name', 'like', '%' . $request->search . '%');
             });
         }
 
@@ -31,7 +31,8 @@ class OrderController extends Controller
         ===================== */
         if ($request->status === 'upcoming') {
             $query->whereNull('checked_in_at')
-                ->where('check_in_date', '>', now());
+                ->where('check_in', '>', now())
+                ->where('status', '!=', 'cancelled');
         }
 
         if ($request->status === 'ongoing') {
@@ -47,6 +48,15 @@ class OrderController extends Controller
             $query->where('status', 'cancelled');
         }
 
+        if ($request->status === 'paid') {
+            $query->where('payment_status', 'paid');
+        }
+
+        if ($request->status === 'unpaid') {
+            $query->where('payment_status', '!=', 'paid')
+                ->where('status', '!=', 'cancelled');
+        }
+
         /* =====================
         | DATE FILTER
         ===================== */
@@ -58,7 +68,9 @@ class OrderController extends Controller
         | ROOM FILTER
         ===================== */
         if ($request->filled('room_id')) {
-            $query->where('room_id', $request->room_id);
+            $query->whereHas('items', function($q) use ($request) {
+                $q->where('room_id', $request->room_id);
+            });
         }
 
         $orders = $query->latest()->paginate(10)->withQueryString();

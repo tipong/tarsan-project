@@ -13,7 +13,7 @@
         <div class="border-b py-4 flex justify-between">
             <div>
                 <h3 class="font-semibold">{{ $item['room_name'] }}</h3>
-                <p class="text-sm text-gray-500">
+                <p class="text-sm text-slate-500">
                     {{ $item['check_in'] }} → {{ $item['check_out'] }}
                     ({{ $item['nights'] }} nights)
                 </p>
@@ -24,7 +24,7 @@
             </div>
         </div>
     @empty
-        <p class="text-gray-500">Your cart is empty</p>
+        <p class="text-slate-500">Your cart is empty</p>
     @endforelse
 
     <div class="mt-6 flex justify-between items-center">

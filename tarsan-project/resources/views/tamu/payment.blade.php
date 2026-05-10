@@ -6,7 +6,7 @@
 <p>Total: Rp {{ number_format($order->total_price) }}</p>
 
 <button id="pay-button"
-    class="bg-blue-600 text-white px-6 py-2 rounded">
+    class="bg-slate-900 text-white px-6 py-2 rounded">
     Pay Now
 </button>
 

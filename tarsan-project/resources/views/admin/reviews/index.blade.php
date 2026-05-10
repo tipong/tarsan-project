@@ -11,7 +11,7 @@
     <div class="text-yellow-500 text-lg">
         ⭐ {{ number_format($averageRating, 1) }}
     </div>
-    <div class="text-gray-600">
+    <div class="text-slate-600">
         {{ $totalReviews }} Reviews
     </div>
 </div>
@@ -23,13 +23,13 @@
         name="search"
         value="{{ request('search') }}"
         placeholder="Search guest..."
-        class="border rounded px-4 py-2 w-64">
+        class="border rounded-xl px-4 py-2 w-64">
 </form>
 
 {{-- LIST --}}
-<div class="space-y-4">
+<div class="space-y-6">
 @forelse($reviews as $review)
-    <div class="bg-white p-5 rounded shadow">
+    <div class="bg-white p-5 rounded-xl shadow">
 
         <div class="flex items-center gap-3">
             <img
@@ -40,7 +40,7 @@
 
             <div>
                 <p class="font-semibold">{{ $review->user->name }}</p>
-                <p class="text-xs text-gray-500">
+                <p class="text-xs text-slate-500">
                     {{ $review->created_at->format('d M Y') }}
                 </p>
             </div>
@@ -62,17 +62,17 @@
             <textarea
                 name="admin_reply"
                 rows="2"
-                class="w-full border rounded p-2"
+                class="w-full border rounded-xl p-2"
                 placeholder="Admin reply...">{{ $review->admin_reply }}</textarea>
 
-            <button class="mt-2 bg-blue-600 text-white px-4 py-1 rounded">
+            <button class="mt-2 bg-slate-900 text-white px-4 py-1 rounded">
                 Reply
             </button>
         </form>
 
     </div>
 @empty
-    <p class="text-gray-500">No reviews found</p>
+    <p class="text-slate-500">No reviews found</p>
 @endforelse
 </div>
 

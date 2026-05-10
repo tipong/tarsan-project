@@ -41,10 +41,9 @@ class CheckoutController extends Controller
         ]);
 
         foreach ($cart as $item) {
-            OrderItem::create([
+            OrderItem::createBookingItem([
                 'order_id' => $order->id,
                 'room_id' => $item['room_id'],
-                'qty' => 1,
                 'price_per_night' => $item['price'],
                 'nights' => $item['nights'],
                 'subtotal' => $item['subtotal'],
