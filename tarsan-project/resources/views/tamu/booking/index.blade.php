@@ -5,8 +5,8 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {{-- Header Section --}}
         <div class="mb-12">
-            <h1 class="text-3xl md:text-4xl font-bold text-slate-900 mb-2">Pesan Kamar</h1>
-            <p class="text-slate-600">Temukan kamar yang sempurna sesuai tanggal dan kebutuhan Anda</p>
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-900 mb-2">Book a Room</h1>
+            <p class="text-slate-600">Find the perfect room for your dates and needs</p>
         </div>
 
         {{-- Filter Section --}}
@@ -37,19 +37,19 @@
 
                     {{-- SEARCH ROOM NAME --}}
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Nama Kamar</label>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Room Name</label>
                         <input type="text"
                                name="room_search"
-                               placeholder="Cari kamar..."
+                               placeholder="Search room..."
                                value="{{ request('room_search') }}"
                                class="w-full px-4 py-2 border border-slate-200 rounded-2xl text-sm focus:ring-2 focus:ring-indigo-600 focus:border-transparent outline-none transition">
                     </div>
 
                     {{-- FACILITIES FILTER --}}
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Fasilitas</label>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Facilities</label>
                         <select name="facility" class="w-full px-4 py-2 border border-slate-200 rounded-2xl text-sm focus:ring-2 focus:ring-indigo-600 focus:border-transparent outline-none transition">
-                            <option value="">Semua</option>
+                            <option value="">All</option>
                             @foreach($facilities as $facility)
                                 <option value="{{ $facility->slug }}" {{ request('facility') == $facility->slug ? 'selected' : '' }}>
                                     {{ $facility->name }}
@@ -61,7 +61,7 @@
                     {{-- BUTTONS --}}
                     <div class="flex gap-2 items-end">
                         <button type="submit" class="flex-1 px-4 py-2 bg-slate-900 text-white rounded-2xl hover:bg-slate-800 transition duration-200 font-medium text-sm">
-                            Cari
+                            Search
                         </button>
                         <a href="{{ route('tamu.booking.index') }}" class="flex-1 px-4 py-2 bg-slate-100 text-slate-700 rounded-2xl hover:bg-gray-300 transition duration-200 font-medium text-sm text-center">
                             Reset
@@ -76,7 +76,7 @@
             {{-- Room List --}}
             <div class="md:col-span-3 space-y-4">
                 @forelse($rooms as $room)
-                    <div class="bg-white rounded-2xl shadow border border-slate-200 overflow-hidden hover:shadow-md transition">
+                    <div class="bg-white rounded-2xl shadow border border-slate-200 overflow-hidden hover:shadow-md transition {{ isset($room->is_available) && !$room->is_available ? 'opacity-60 pointer-events-none' : '' }}">
                         <div class="md:grid md:grid-cols-4 gap-4 p-5">
                             {{-- Image --}}
                             <div class="relative h-40 md:h-auto bg-gray-50 rounded-2xl overflow-hidden mb-4 md:mb-0 group">
@@ -86,8 +86,27 @@
                                          class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
                                 @else
                                     <div class="w-full h-full flex items-center justify-center bg-slate-100 text-slate-500 text-sm">
-                                        Gambar tidak tersedia
+                                        No image available
                                     </div>
+                                @endif
+
+                                {{-- Availability Badge --}}
+                                @if(isset($room->is_available))
+                                    @if($room->is_available)
+                                        <div class="absolute top-3 right-3 bg-emerald-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg">
+                                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            Available
+                                        </div>
+                                    @else
+                                        <div class="absolute top-3 right-3 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg">
+                                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            Fully Booked
+                                        </div>
+                                    @endif
                                 @endif
                             </div>
 
@@ -99,7 +118,7 @@
                                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                         <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"></path>
                                     </svg>
-                                    <strong>Kapasitas:</strong> {{ $room->capacity }} orang
+                                    <strong>Capacity:</strong> {{ $room->capacity }} guests
                                 </div>
                                 @if($room->facility_names->isNotEmpty())
                                     <div class="flex flex-wrap gap-2">
@@ -120,9 +139,9 @@
                             {{-- Action --}}
                             <div class="flex flex-col justify-between">
                                 <div>
-                                    <p class="text-sm text-slate-500 mb-1">Mulai dari</p>
+                                    <p class="text-sm text-slate-500 mb-1">Starting from</p>
                                     <p class="text-2xl font-bold text-indigo-600">Rp {{ number_format($room->price_per_night) }}</p>
-                                    <p class="text-xs text-slate-500">/malam</p>
+                                    <p class="text-xs text-slate-500">/night</p>
                                 </div>
 
                                 @php
@@ -130,18 +149,28 @@
                                 @endphp
 
                                 @if($hasDate)
-                                    <form method="POST" action="{{ route('tamu.booking.add') }}" class="mt-4">
-                                        @csrf
-                                        <input type="hidden" name="room_id" value="{{ $room->id }}">
-                                        <input type="hidden" name="check_in" value="{{ session('booking_filter.check_in') }}">
-                                        <input type="hidden" name="check_out" value="{{ session('booking_filter.check_out') }}">
-                                        <button type="submit" class="w-full px-4 py-2 bg-slate-900 text-white rounded-2xl hover:bg-slate-800 transition duration-200 font-medium text-sm">
-                                            + Tambah
+                                    @if(isset($room->is_available) && $room->is_available)
+                                        <form method="POST" action="{{ route('tamu.booking.add') }}" class="mt-4">
+                                            @csrf
+                                            <input type="hidden" name="room_id" value="{{ $room->id }}">
+                                            <input type="hidden" name="check_in" value="{{ session('booking_filter.check_in') }}">
+                                            <input type="hidden" name="check_out" value="{{ session('booking_filter.check_out') }}">
+                                            <button type="submit" class="w-full px-4 py-2 bg-slate-900 text-white rounded-2xl hover:bg-slate-800 transition duration-200 font-medium text-sm">
+                                                + Add
+                                            </button>
+                                        </form>
+                                    @elseif(isset($room->is_available) && !$room->is_available)
+                                        <button disabled class="w-full px-4 py-2 bg-red-100 text-red-600 rounded-2xl cursor-not-allowed font-medium text-sm">
+                                            Not Available
                                         </button>
-                                    </form>
+                                    @else
+                                        <button disabled class="w-full px-4 py-2 bg-slate-100 text-slate-500 rounded-2xl cursor-not-allowed font-medium text-sm">
+                                            Select Date
+                                        </button>
+                                    @endif
                                 @else
                                     <button disabled class="w-full px-4 py-2 bg-slate-100 text-slate-500 rounded-2xl cursor-not-allowed font-medium text-sm">
-                                        Pilih Tanggal
+                                        Select Date
                                     </button>
                                 @endif
                             </div>
@@ -152,8 +181,8 @@
                         <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-3m2 3l2-3m2 3l2-3m2 3l2-3m2 3l2-3"></path>
                         </svg>
-                        <p class="text-slate-500 text-lg">Tidak ada kamar yang tersedia</p>
-                        <p class="text-slate-500 text-sm mt-1">Coba ubah filter pencarian Anda</p>
+                        <p class="text-slate-500 text-lg">No rooms available</p>
+                        <p class="text-slate-500 text-sm mt-1">Try changing your search filters</p>
                     </div>
                 @endforelse
             </div>
@@ -161,7 +190,7 @@
             {{-- Sidebar: Reservation Summary --}}
             <div class="md:col-span-1">
                 <div class="bg-white p-6 rounded-2xl shadow border border-slate-200 sticky top-24">
-                    <h3 class="text-lg font-bold text-slate-900 mb-4">Ringkasan Pemesanan</h3>
+                    <h3 class="text-lg font-bold text-slate-900 mb-4">Booking Summary</h3>
 
                     @php
                         $cart = session('cart', []);
@@ -176,12 +205,12 @@
                             @foreach($cart as $roomId => $item)
                                 <div class="bg-gray-50 p-3 rounded-2xl border border-slate-200">
                                     <p class="font-semibold text-sm text-slate-800">{{ $item['room_name'] }}</p>
-                                    <p class="text-xs text-slate-500 mt-1">{{ $item['nights'] }} malam</p>
+                                    <p class="text-xs text-slate-500 mt-1">{{ $item['nights'] }} nights</p>
                                     <p class="text-sm font-semibold text-slate-800 mt-2">Rp {{ number_format($item['subtotal']) }}</p>
                                     <form method="POST" action="{{ route('tamu.booking.remove', $roomId) }}" class="mt-2">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="text-xs text-red-600 hover:text-red-700 transition">Hapus</button>
+                                        <button type="submit" class="text-xs text-red-600 hover:text-red-700 transition">Remove</button>
                                     </form>
                                 </div>
                             @endforeach
@@ -195,14 +224,14 @@
                         </div>
 
                         <a href="{{ route('tamu.reservation.index') }}" class="block w-full px-4 py-2 bg-slate-900 text-white rounded-2xl hover:bg-slate-800 transition duration-200 font-medium text-center">
-                            Lanjut ke Pemesanan
+                            Continue to Booking
                         </a>
                     @else
                         <div class="text-center py-8">
                             <svg class="w-12 h-12 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                             </svg>
-                            <p class="text-sm text-slate-500">Belum ada kamar dipilih</p>
+                            <p class="text-sm text-slate-500">No rooms selected yet</p>
                         </div>
                     @endif
                 </div>

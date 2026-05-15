@@ -9,6 +9,7 @@ use App\Models\Room;
 use App\Models\Notification;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class OrderController extends Controller
 {
@@ -16,15 +17,16 @@ class OrderController extends Controller
     {
         $orders = Order::with(['user', 'items.room'])
             ->latest()
-            ->paginate(10);
+            ->paginate(15);
+        $rooms = Room::where('is_active', true)->get();
 
-        return view('resepsionis.orders.index', compact('orders'));
+        return view('resepsionis.orders.index', compact('orders', 'rooms'));
     }
 
     public function checkIn(Order $order)
     {
         if ($order->checked_in_at) {
-            return back()->with('error', 'Order sudah check-in');
+            return back()->with('error', 'Order has already checked in');
         }
 
         $order->update([
@@ -33,27 +35,28 @@ class OrderController extends Controller
 
         // Create notification
         if ($order->user) {
-            $roomName = $order->items->first()?->room?->room_name ?? 'kamar';
+            $roomName = $order->items->first()?->room?->room_name ?? 'room';
             Notification::create([
                 'user_id' => $order->user_id,
                 'type' => 'checkin',
-                'title' => 'Check-in Berhasil',
-                'message' => 'Anda telah berhasil check-in di kamar ' . $roomName,
+                'title' => 'Check-in Successful',
+                'message' => 'You have successfully checked in to ' . $roomName,
                 'order_id' => $order->id
             ]);
         }
 
-        return back()->with('success', 'Tamu berhasil check-in');
+        return back()->with('success', 'Guest successfully checked in');
     }
 
     public function checkOut(Order $order)
     {
         if ($order->checked_out_at) {
-            return back()->with('error', 'Order sudah check-out');
+            return back()->with('error', 'Order has already checked out');
         }
 
         $order->update([
             'checked_out_at' => now(),
+            'status' => 'completed',
         ]);
 
         // Create notification
@@ -61,13 +64,13 @@ class OrderController extends Controller
             Notification::create([
                 'user_id' => $order->user_id,
                 'type' => 'checkout',
-                'title' => 'Check-out Berhasil',
-                'message' => 'Terima kasih telah menginap di Tarsan Homestay. Kami tunggu kunjungan Anda berikutnya!',
+                'title' => 'Check-out Successful',
+                'message' => 'Thank you for staying at Tarsan Homestay. We look forward to your next visit!',
                 'order_id' => $order->id
             ]);
         }
 
-        return back()->with('success', 'Tamu berhasil check-out');
+        return back()->with('success', 'Guest successfully checked out');
     }
 
     public function create()
@@ -82,23 +85,25 @@ class OrderController extends Controller
         $request->validate([
             'guest_name' => 'required|string|max:100',
             'guest_phone' => 'required|string|max:20',
-            'room_id' => 'required|exists:rooms,id',
-            'check_in_date' => 'required|date',
-            'check_out_date' => 'required|date|after:check_in_date',
-            'payment_method' => 'required|in:cash,bank_transfer,card',
+            'room_ids' => 'required|array|min:1',
+            'room_ids.*' => 'required|exists:rooms,id',
+            'check_in_date' => 'required|date|date_format:Y-m-d',
+            'check_out_date' => 'required|date|date_format:Y-m-d|after:check_in_date',
+            'payment_method' => 'required|in:cash,bank_transfer',
         ]);
 
-        $room = Room::findOrFail($request->room_id);
-
-        // Hitung malam
+        $rooms = Room::whereIn('id', $request->room_ids)->get();
         $checkIn = Carbon::parse($request->check_in_date);
         $checkOut = Carbon::parse($request->check_out_date);
         $nights = max($checkIn->diffInDays($checkOut), 1);
 
-        $total = $room->price_per_night * $nights;
+        $total = 0;
+        foreach ($rooms as $room) {
+            $total += $room->price_per_night * $nights;
+        }
 
-        // Generate order code
-        $orderCode = 'ORD-' . now()->format('YmdHi') . '-' . strtoupper(substr($request->guest_name, 0, 2));
+        // Generate unique order code
+        $orderCode = 'WALK-' . strtoupper(Str::random(8));
 
         $order = Order::create([
             'order_code' => $orderCode,
@@ -106,33 +111,45 @@ class OrderController extends Controller
             'check_out' => $checkOut,
             'nights' => $nights,
             'total_price' => $total,
-            'status' => $request->payment_method === 'cash' ? 'confirmed' : 'pending',
-            'payment_status' => $request->payment_method === 'cash' ? 'paid' : 'pending',
+            'gross_amount' => $total,
+            'payment_status' => 'paid',
+            'booking_status' => 'checked_in',
+            'status' => 'confirmed',
             'payment_method' => $request->payment_method,
             'is_walkin' => true,
             'guest_name' => $request->guest_name,
             'guest_phone' => $request->guest_phone,
-            'checked_in_at' => now(), // WALK-IN LANGSUNG CHECK-IN
+            'checked_in_at' => now(),
+            'user_id' => null,
         ]);
 
-        // Create order item
-        OrderItem::createBookingItem([
-            'order_id' => $order->id,
-            'room_id' => $room->id,
-            'price_per_night' => $room->price_per_night,
-            'nights' => $nights,
-            'subtotal' => $total,
-        ]);
+        foreach ($rooms as $room) {
+            OrderItem::create([
+                'order_id' => $order->id,
+                'room_id' => $room->id,
+                'price_per_night' => $room->price_per_night,
+                'nights' => $nights,
+                'subtotal' => $room->price_per_night * $nights,
+                'qty' => 1,
+            ]);
+        }
 
         // Create notification
         Notification::create([
+            'user_id' => auth()->user()->id,
             'type' => 'booking',
-            'title' => 'Walk-in Booking Dibuat',
-            'message' => 'Pesanan walk-in untuk ' . $request->guest_name . ' telah dibuat dengan metode pembayaran ' . ucfirst(str_replace('_', ' ', $request->payment_method)),
+            'title' => 'Walk-in Booking Created',
+            'message' => 'Walk-in booking for ' . $request->guest_name . ' has been created with ' . $rooms->count() . ' room(s).',
         ]);
 
         return redirect()
             ->route('resepsionis.orders.index')
-            ->with('success', 'Walk-in booking berhasil dibuat. Metode pembayaran: ' . ucfirst(str_replace('_', ' ', $request->payment_method)));
+            ->with('success', 'Walk-in booking created successfully and guest has checked in.');
+    }
+
+    public function show(Order $order)
+    {
+        $order->load(['user', 'items.room', 'review']);
+        return view('resepsionis.orders.show', compact('order'));
     }
 }

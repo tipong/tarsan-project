@@ -31,8 +31,8 @@ class ReservationController extends Controller
             'payment_method' => 'required',
         ]);
 
-        // SIMPAN KE DATABASE (orders & order_items)
-        // (tahap ini bisa kita lanjutkan nanti)
+        // SAVE TO DATABASE (orders & order_items)
+        // (we can continue this step later)
 
         session()->forget(['cart', 'booking_filter']);
 

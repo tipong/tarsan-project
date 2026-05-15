@@ -4,10 +4,10 @@
             <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
             </svg>
-            Informasi Profile
+            Profile Information
         </h2>
         <p class="mt-1 text-sm text-gray-500">
-            Perbarui informasi profile dan email akun Anda.
+            Update your profile information and account email.
         </p>
     </header>
 
@@ -18,9 +18,9 @@
         @csrf
         @method('patch')
 
-        {{-- FOTO PROFILE --}}
+        {{-- PROFILE PHOTO --}}
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Foto Profile</label>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Profile Photo</label>
             <div class="flex items-center gap-4">
                 <img
                     id="photoPreview"
@@ -42,15 +42,15 @@
                             file:bg-blue-50 file:text-blue-600
                             hover:file:bg-blue-100"
                         onchange="previewPhoto(event)">
-                    <p class="text-xs text-gray-400 mt-1">JPG, PNG atau GIF. Maksimal 2MB.</p>
+                    <p class="text-xs text-gray-400 mt-1">JPG, PNG or GIF. Max 2MB.</p>
                 </div>
             </div>
             <x-input-error class="mt-2" :messages="$errors->get('photo')" />
         </div>
 
-        {{-- NAMA --}}
+        {{-- NAME --}}
         <div>
-            <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
+            <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
             <input
                 id="name"
                 name="name"
@@ -74,11 +74,11 @@
             <x-input-error class="mt-2" :messages="$errors->get('email')" />
         </div>
 
-        {{-- SIMPAN --}}
+        {{-- SAVE --}}
         <div class="flex items-center gap-4 pt-4 border-t border-gray-100">
             <button type="submit"
                 class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200 font-medium text-sm">
-                Simpan Perubahan
+                Save Changes
             </button>
 
             @if (session('status') === 'profile-updated')
@@ -86,7 +86,7 @@
                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                     </svg>
-                    Tersimpan.
+                    Saved.
                 </p>
             @endif
         </div>

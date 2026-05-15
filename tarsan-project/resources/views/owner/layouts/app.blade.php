@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Tarsan Homestay</title>
+    <title>Owner Dashboard - Tarsan Homestay</title>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:300,400,500,600&display=swap" rel="stylesheet" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -14,29 +14,17 @@
     {{-- SIDEBAR --}}
     <aside class="w-64 bg-white border border-slate-300 text-slate-900 border-slate-200 hidden md:flex flex-col shadow">
         <div class="px-6 py-5 border-b border-slate-200">
-            <a href="{{ Auth::user()->role === 'owner' ? route('admin.dashboard') : route('admin.dashboard') }}" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+            <a href="{{ route('owner.dashboard') }}" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
                 <img src="{{ asset('images/tarsanhomestay.png') }}" class="h-10 object-contain">
-                <span class="font-bold text-lg text-slate-900 tracking-tight">{{ Auth::user()->role === 'owner' ? 'Owner' : 'Admin' }}</span>
+                <span class="font-bold text-lg text-slate-900 tracking-tight">Owner</span>
             </a>
         </div>
 
         <nav class="mt-6 flex-1 space-y-1 px-4">
-            <x-admin-link route="admin.dashboard" label="Dashboard" />
-            <x-admin-link route="admin.rooms.index" label="Rooms" />
-            <x-admin-link route="admin.facilities.index" label="Facilities" />
-            <x-admin-link route="admin.users.index" label="Users" />
-            <x-admin-link route="admin.vouchers.index" label="Voucher" />
-            <x-admin-link route="admin.orders.index" label="Orders" />
-            <x-admin-link route="admin.reviews.index" label="Review" />
-            
-            @if(Auth::user()->role === 'owner')
-                <div class="pt-4 pb-2 px-4">
-                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Reports</span>
-                </div>
-                <x-admin-link route="owner.reports.financial" label="Financial Report" />
-            @endif
+            <x-admin-link route="owner.dashboard" label="Dashboard" />
+            <x-admin-link route="owner.reports.financial" label="Financial Report" />
         </nav>
-        
+
         <div class="p-4 border-t border-slate-200">
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
@@ -51,7 +39,7 @@
     <div class="flex-1 flex flex-col min-w-0">
 
         {{-- NAVBAR --}}
-        <header class="bg-white border border-slate-300 text-slate-900 border-slate-200 shadow px-8 py-4 flex justify-between items-center sticky top-0 z-10">
+        <header class="bg-white border border-slate-300 text-slate-900-b border-slate-200 shadow px-8 py-4 flex justify-between items-center sticky top-0 z-10">
             <h1 class="font-semibold text-xl text-slate-800 tracking-tight">
                 @yield('title', 'Dashboard')
             </h1>
@@ -74,6 +62,8 @@
             @yield('content')
         </main>
     </div>
+
+    @yield('scripts')
 
 </body>
 </html>

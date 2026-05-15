@@ -7,8 +7,9 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\RoomController;
 use App\Http\Controllers\Admin\VoucherController;
 use App\Http\Controllers\Admin\ReviewController;
+use App\Http\Controllers\Admin\FacilityController;
 
-Route::middleware(['auth', 'role:admin'])
+Route::middleware(['auth', 'role:admin,owner'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
@@ -18,6 +19,7 @@ Route::middleware(['auth', 'role:admin'])
 
         Route::resource('rooms', RoomController::class);
         Route::resource('users', controller: UserController::class);
+        Route::resource('facilities', FacilityController::class);
         Route::resource('vouchers', VoucherController::class)
             ->only(['index', 'create', 'store', 'destroy']);
         Route::get('/orders', [OrderController::class, 'index'])
@@ -30,7 +32,7 @@ Route::middleware(['auth', 'role:admin'])
         Route::prefix('reviews')->name('reviews.')->group(function () {
             Route::get('/', [ReviewController::class, 'index'])
                         ->name('index');
-                
+
             Route::post('/{review}/reply', [ReviewController::class, 'reply'])
                         ->name('reply');
         });

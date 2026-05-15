@@ -7,7 +7,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {{-- Breadcrumb --}}
         <div class="mb-8 flex items-center gap-2 text-sm text-gray-600">
-            <a href="{{ route('kamar.index') }}" class="hover:text-blue-600 transition">Daftar Kamar</a>
+            <a href="{{ route('kamar.index') }}" class="hover:text-blue-600 transition">Room List</a>
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
             </svg>
@@ -26,7 +26,7 @@
                              id="mainImage">
                     @else
                         <div class="w-full h-96 flex items-center justify-center bg-gray-300">
-                            <span class="text-gray-500 text-lg">Gambar tidak tersedia</span>
+                            <span class="text-gray-500 text-lg">Image not available</span>
                         </div>
                     @endif
                 </div>
@@ -53,7 +53,7 @@
                 <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
                     <h1 class="text-3xl font-bold text-gray-900 mb-4">{{ $room->room_name }}</h1>
                     <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                        <p class="text-sm text-gray-600 mb-1">Harga Per Malam</p>
+                        <p class="text-sm text-gray-600 mb-1">Price Per Night</p>
                         <p class="text-3xl font-bold text-blue-600">
                             Rp {{ number_format($room->price_per_night, 0, ',', '.') }}
                         </p>
@@ -62,7 +62,7 @@
 
                 {{-- Key Information --}}
                 <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <h3 class="font-bold text-gray-900 mb-4">Informasi Kamar</h3>
+                    <h3 class="font-bold text-gray-900 mb-4">Room Information</h3>
                     <div class="space-y-4">
                         <div class="flex items-start gap-3">
                             <svg class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
@@ -79,7 +79,7 @@
                             </svg>
                             <div>
                                 <p class="text-sm text-gray-600">Jumlah Unit</p>
-                                <p class="font-semibold text-gray-900">{{ $room->total_rooms }} kamar</p>
+                                <p class="font-semibold text-gray-900">{{ $room->total_rooms }} room</p>
                             </div>
                         </div>
                     </div>
@@ -108,23 +108,23 @@
                         @if(auth()->user()->role === 'tamu')
                             <a href="{{ route('tamu.booking.index') }}?room_id={{ $room->id }}"
                                class="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200 font-semibold text-center block">
-                                Pesan Kamar Ini
+                                Book This Room
                             </a>
                         @else
                             <div class="p-4 bg-red-50 border border-red-200 rounded-lg">
-                                <p class="text-sm text-red-700">Hanya tamu yang dapat memesan kamar</p>
+                                <p class="text-sm text-red-700">Only guests can book rooms</p>
                             </div>
                         @endif
                     @else
                         <a href="{{ route('login') }}"
                            class="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200 font-semibold text-center block">
-                            Login untuk Memesan
+                            Login to Book
                         </a>
                     @endauth
 
                     <a href="{{ route('kamar.index') }}"
                        class="w-full px-6 py-3 bg-gray-200 text-gray-900 rounded-lg hover:bg-gray-300 transition duration-200 font-semibold text-center block">
-                        Kembali
+                        Back
                     </a>
                 </div>
             </div>
@@ -132,7 +132,7 @@
 
         {{-- Description --}}
         <div class="mt-12 bg-white p-8 rounded-lg shadow-sm border border-gray-200">
-            <h2 class="text-2xl font-bold text-gray-900 mb-4">Deskripsi</h2>
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">Description</h2>
             <p class="text-gray-700 leading-relaxed">{{ $room->description }}</p>
         </div>
     </div>

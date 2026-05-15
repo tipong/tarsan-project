@@ -10,7 +10,7 @@
 
     {{-- Favicon --}}
     <link rel="icon" type="image/png" href="{{ asset('tarsanhomestay.png') }}">
-    {{-- atau jika pakai ico --}}
+    {{-- or use ico if needed --}}
     {{-- <link rel="icon" href="{{ asset('favicon.ico') }}"> --}}
 
     <!-- Fonts -->

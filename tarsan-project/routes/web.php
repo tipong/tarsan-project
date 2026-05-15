@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Admin\{ RoomController, UserController, VoucherController, OrderController, ReviewController, FinancialReportController };
+use App\Http\Controllers\Admin\{ RoomController, UserController, VoucherController, OrderController, ReviewController, FinancialReportController, FacilityController };
 use App\Http\Controllers\MidtransCallbackController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Resepsionis\AvailabilityController as ResepsionisAvailabilityController;
@@ -36,6 +36,10 @@ Route::post('/midtrans/callback', [MidtransCallbackController::class, 'handle'])
 Route::get('/dashboard', function () {
     $user = auth()->user();
 
+    if ($user->role === 'owner') {
+        return redirect()->route('admin.dashboard');
+    }
+
     if ($user->role === 'admin') {
         return redirect()->route('admin.dashboard');
     }
@@ -56,7 +60,7 @@ Route::get('/dashboard', function () {
 | ADMIN (HANYA ADMIN)
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'role:admin'])
+Route::middleware(['auth', 'role:admin,owner'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
@@ -66,13 +70,28 @@ Route::middleware(['auth', 'role:admin'])
         Route::resource('rooms', RoomController::class);
         Route::resource('users', UserController::class);
         Route::resource('vouchers', VoucherController::class);
+        Route::resource('facilities', FacilityController::class);
         Route::resource('orders', OrderController::class);
         Route::post('/orders/{order}/check-in', [OrderController::class, 'checkIn'])->name('orders.checkin');
         Route::post('/orders/{order}/check-out', [OrderController::class, 'checkOut'])->name('orders.checkout');
         Route::resource('reviews', ReviewController::class);
         Route::post('/reviews/{review}/reply', [ReviewController::class, 'reply'])->name('reviews.reply');
+    });
 
-        // Financial Reports
+/*
+|--------------------------------------------------------------------------
+| OWNER (OWNER HAS ALL ADMIN CAPABILITIES)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'role:owner'])
+    ->prefix('owner')
+    ->name('owner.')
+    ->group(function () {
+        Route::get('/dashboard', function() {
+            return redirect()->route('admin.dashboard');
+        })->name('dashboard');
+
+        // Financial Reports (Exclusive to Owner)
         Route::get('/reports/financial', [FinancialReportController::class, 'index'])
             ->name('reports.financial');
         Route::get('/reports/financial/export', [FinancialReportController::class, 'export'])
@@ -94,6 +113,9 @@ Route::middleware(['auth', 'role:resepsionis'])
 
         Route::get('/orders', [ResepsionisOrderController::class, 'index'])
             ->name('orders.index');
+
+        Route::get('/orders/{order}', [ResepsionisOrderController::class, 'show'])
+            ->name('orders.show');
 
         Route::post('/orders/{order}/check-in', [ResepsionisOrderController::class, 'checkIn'])
             ->name('orders.checkin');
@@ -181,12 +203,6 @@ Route::middleware(['auth', 'role:tamu'])
         Route::post('/payment/orders/{order}/continue', [PaymentController::class, 'continuePayment'])
             ->name('payment.continue');
 
-        Route::get('/invoice/{order}/download', [InvoiceController::class, 'download'])
-        ->name('invoice.download');
-
-        Route::get('/invoice/{order}', [InvoiceController::class, 'show'])
-        ->name('invoice.show');
-
         Route::get('/payment/success', function () {
             return redirect()->route('tamu.orders')
                 ->with('success', 'Payment successful. Your order has been confirmed.');
@@ -237,3 +253,16 @@ require __DIR__.'/auth.php';
 Route::get('/send-welcome-mail', function () {
     Mail::to('adriantsatrio3@gmail.com')->send(new WelcomeMail());
 });
+
+/*
+|--------------------------------------------------------------------------
+| SHARED - INVOICE (TAMU, ADMIN, RESEPSIONIS)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'role:tamu,admin,resepsionis,owner'])
+    ->group(function () {
+        Route::get('/tamu/invoice/{order}/download', [InvoiceController::class, 'download'])
+            ->name('tamu.invoice.download');
+        Route::get('/tamu/invoice/{order}', [InvoiceController::class, 'show'])
+            ->name('tamu.invoice.show');
+    });

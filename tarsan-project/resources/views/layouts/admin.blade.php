@@ -22,7 +22,7 @@
 
             <a href="{{ route('admin.rooms.index') }}"
                class="block px-3 py-2 rounded hover:bg-gray-200">
-                Kelola Kamar
+                Manage Rooms
             </a>
             {{-- LOGOUT --}}
             <form method="POST" action="{{ route('logout') }}">

@@ -85,21 +85,21 @@ class OrderController extends Controller
      ===================== */
     public function checkIn(Order $order)
     {
-        // ❌ Sudah check-in
+        // ❌ Already checked in
         if ($order->checked_in_at) {
-            return back()->with('error', 'Order ini sudah check-in');
+            return back()->with('error', 'This order has already been checked in');
         }
 
-        // ❌ Terlalu cepat
-        if (now()->lt($order->check_in_date)) {
-            return back()->with('error', 'Belum waktunya check-in');
+        // ❌ Too early
+        if ($order->check_in->isFuture()) {
+            return back()->with('error', 'Check-in time has not arrived yet. Your check-in date is ' . $order->check_in->format('d M Y'));
         }
 
         $order->update([
             'checked_in_at' => now(),
         ]);
 
-        return back()->with('success', 'Tamu berhasil check-in');
+        return back()->with('success', 'Guest successfully checked in');
     }
 
     /* =====================
@@ -107,14 +107,14 @@ class OrderController extends Controller
      ===================== */
     public function checkOut(Order $order)
     {
-        // ❌ Belum check-in
+        // ❌ Not yet checked in
         if (! $order->checked_in_at) {
-            return back()->with('error', 'Tamu belum check-in');
+            return back()->with('error', 'Guest has not checked in yet');
         }
 
-        // ❌ Sudah check-out
+        // ❌ Already checked out
         if ($order->checked_out_at) {
-            return back()->with('error', 'Order ini sudah check-out');
+            return back()->with('error', 'This order has already been checked out');
         }
 
         $order->update([
@@ -122,6 +122,12 @@ class OrderController extends Controller
             'status' => 'completed',
         ]);
 
-        return back()->with('success', 'Tamu berhasil check-out');
+        return back()->with('success', 'Guest successfully checked out');
+    }
+
+    public function show(Order $order)
+    {
+        $order->load(['user', 'items.room', 'review']);
+        return view('admin.orders.show', compact('order'));
     }
 }

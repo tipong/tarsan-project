@@ -9,7 +9,7 @@
         {{ $label }}
     </a>
 @else
-    {{-- fallback agar tidak error --}}
+    {{-- fallback to prevent errors --}}
     <span
         class="block px-3 py-2 rounded text-gray-400 cursor-not-allowed">
         {{ $label }}

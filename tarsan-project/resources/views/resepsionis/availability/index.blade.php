@@ -1,6 +1,6 @@
 @extends('resepsionis.layouts.app')
 
-@section('title', 'Availability Kamar')
+@section('title', 'Room Availability')
 
 @section('content')
 <div class="min-h-screen bg-slate-50">
@@ -11,10 +11,10 @@
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                 </svg>
-                Kembali ke Dashboard
+                Back to Dashboard
             </a>
-            <h1 class="text-2xl md:text-3xl font-bold text-slate-900">Cek Ketersediaan Kamar</h1>
-            <p class="text-slate-600 mt-1">Pilih tanggal untuk melihat kamar yang tersedia</p>
+            <h1 class="text-2xl md:text-3xl font-bold text-slate-900">Check Room Availability</h1>
+            <p class="text-slate-600 mt-1">Select a date to see available rooms</p>
         </div>
 
         {{-- Filter Form --}}
@@ -67,8 +67,8 @@
                 <table class="w-full text-sm">
                     <thead class="bg-slate-50">
                         <tr>
-                            <th class="px-6 py-3 text-left font-semibold text-slate-700">Kamar</th>
-                            <th class="px-6 py-3 text-left font-semibold text-slate-700">Harga/Malam</th>
+                            <th class="px-6 py-3 text-left font-semibold text-slate-700">Room</th>
+                            <th class="px-6 py-3 text-left font-semibold text-slate-700">Price/Night</th>
                             <th class="px-6 py-3 text-center font-semibold text-slate-700">Status</th>
                             <th class="px-6 py-3 text-center font-semibold text-slate-700">Aksi</th>
                         </tr>
@@ -96,7 +96,7 @@
                                         <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
                                         </svg>
-                                        Tidak Tersedia
+                                        Not Available
                                     </span>
                                 @endif
                             </td>
@@ -124,7 +124,7 @@
                                 <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                 </svg>
-                                <p class="text-slate-500">Silakan pilih tanggal dan tekan tombol "Cek Ketersediaan" untuk melihat kamar yang tersedia.</p>
+                                <p class="text-slate-500">Please select dates and press the "Check Availability" button to see available rooms.</p>
                             </td>
                         </tr>
                         @endforelse

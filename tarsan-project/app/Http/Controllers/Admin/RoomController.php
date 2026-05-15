@@ -13,8 +13,10 @@ class RoomController extends Controller
     public function index()
     {
         $rooms = Room::withRoomRelations()->latest()->get();
+        $usesFacilityRelations = Room::supportsFacilityRelations();
+        $facilities = Room::facilityOptions();
 
-        return view('admin.rooms.index', compact('rooms'));
+        return view('admin.rooms.index', compact('rooms', 'facilities', 'usesFacilityRelations'));
     }
 
     public function create()
@@ -64,7 +66,7 @@ class RoomController extends Controller
             $room->facilities()->sync($validated['facility_ids'] ?? []);
         }
 
-        // SIMPAN MULTIPLE IMAGE
+        // SAVE MULTIPLE IMAGES
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
                 $path = $image->store('rooms', 'public');
@@ -78,7 +80,7 @@ class RoomController extends Controller
 
         return redirect()
             ->route('admin.rooms.index')
-            ->with('success', 'Room berhasil ditambahkan');
+            ->with('success', 'Room successfully added');
     }
 
     public function edit(Room $room)
@@ -165,7 +167,7 @@ class RoomController extends Controller
 
         return redirect()
             ->route('admin.rooms.index')
-            ->with('success', 'Room berhasil diperbarui');
+            ->with('success', 'Room successfully updated');
     }
 
     public function destroy(Room $room)
@@ -174,7 +176,7 @@ class RoomController extends Controller
 
         return redirect()
             ->route('admin.rooms.index')
-            ->with('success', 'Room berhasil dihapus');
+            ->with('success', 'Room successfully deleted');
     }
 
     private function normalizeFacilitiesInput(?string $facilities): ?string

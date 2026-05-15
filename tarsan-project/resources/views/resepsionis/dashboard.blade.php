@@ -1,14 +1,14 @@
 @extends('resepsionis.layouts.app')
 
-@section('title', 'Dashboard Resepsionis')
+@section('title', 'Receptionist Dashboard')
 
 @section('content')
 <div class="min-h-screen bg-slate-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {{-- Header --}}
         <div class="mb-8">
-            <h1 class="text-2xl md:text-3xl font-bold text-slate-900">Dashboard Resepsionis</h1>
-            <p class="text-slate-600 mt-1">Kelola pesanan dan ketersediaan kamar</p>
+            <h1 class="text-2xl md:text-3xl font-bold text-slate-900">Receptionist Dashboard</h1>
+            <p class="text-slate-600 mt-1">Manage orders and room availability</p>
         </div>
 
         {{-- Stats Cards --}}
@@ -16,55 +16,55 @@
             {{-- Upcoming Check-in --}}
             <div class="bg-white p-6 rounded-2xl shadow border border-slate-200">
                 <div class="flex items-center justify-between mb-3">
-                    <p class="text-sm text-slate-500">Akan Datang</p>
+                    <p class="text-sm text-slate-500">Upcoming</p>
                     <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                 </div>
                 <p class="text-3xl font-bold text-slate-900">{{ $upcoming }}</p>
-                <p class="text-xs text-slate-500 mt-1">Belum check-in</p>
+                <p class="text-xs text-slate-500 mt-1">Not checked-in</p>
             </div>
 
             {{-- Ongoing Stay --}}
             <div class="bg-white p-6 rounded-2xl shadow border border-slate-200">
                 <div class="flex items-center justify-between mb-3">
-                    <p class="text-sm text-slate-500">Sedang Menginap</p>
+                    <p class="text-sm text-slate-500">Currently Staying</p>
                     <svg class="w-8 h-8 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                     </svg>
                 </div>
                 <p class="text-3xl font-bold text-slate-900">{{ $ongoing }}</p>
-                <p class="text-xs text-slate-500 mt-1">Sedang menginap</p>
+                <p class="text-xs text-slate-500 mt-1">Currently staying</p>
             </div>
 
             {{-- Today Check-in --}}
             <div class="bg-white p-6 rounded-2xl shadow border border-slate-200">
                 <div class="flex items-center justify-between mb-3">
-                    <p class="text-sm text-slate-500">Check-in Hari Ini</p>
+                    <p class="text-sm text-slate-500">Today Check-in</p>
                     <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m8 0l4 4m-4 4l-4-4"></path>
                     </svg>
                 </div>
                 <p class="text-3xl font-bold text-slate-900">{{ $todayCheckin }}</p>
-                <p class="text-xs text-slate-500 mt-1">Jadwal check-in</p>
+                <p class="text-xs text-slate-500 mt-1">Check-in scheduled</p>
             </div>
 
             {{-- Today Check-out --}}
             <div class="bg-white p-6 rounded-2xl shadow border border-slate-200">
                 <div class="flex items-center justify-between mb-3">
-                    <p class="text-sm text-slate-500">Check-out Hari Ini</p>
+                    <p class="text-sm text-slate-500">Today Check-out</p>
                     <svg class="w-8 h-8 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m-8 0l-4 4m4 4l4-4"></path>
                     </svg>
                 </div>
                 <p class="text-3xl font-bold text-slate-900">{{ $todayCheckout }}</p>
-                <p class="text-xs text-slate-500 mt-1">Jadwal check-out</p>
+                <p class="text-xs text-slate-500 mt-1">Check-out scheduled</p>
             </div>
         </div>
 
         {{-- Quick Actions --}}
         <div>
-            <h3 class="text-lg font-semibold text-slate-900 mb-4">Aksi Cepat</h3>
+            <h3 class="text-lg font-semibold text-slate-900 mb-4">Quick Actions</h3>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <a href="{{ route('resepsionis.orders.index') }}" class="bg-white p-5 rounded-2xl shadow border border-slate-200 hover:shadow-md transition">
                     <div class="flex items-center gap-3">
@@ -73,7 +73,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                             </svg>
                         </div>
-                        <span class="font-medium text-slate-700">Kelola Pesanan</span>
+                        <span class="font-medium text-slate-700">Manage Orders</span>
                     </div>
                 </a>
 
@@ -95,7 +95,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                             </svg>
                         </div>
-                        <span class="font-medium text-slate-700">Cek Ketersediaan</span>
+                        <span class="font-medium text-slate-700">Check Availability</span>
                     </div>
                 </a>
             </div>

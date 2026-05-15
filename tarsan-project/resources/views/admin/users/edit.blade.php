@@ -45,9 +45,9 @@
                 <label class="block text-sm font-medium text-slate-800 font-semibold mb-2">Role</label>
                 <select name="role"
                         class="w-full border border-slate-200 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-slate-900 focus:border-slate-900 text-sm outline-none transition-all">
-                    <option value="tamu" {{ $user->role=='tamu'?'selected' : '' }}>Tamu</option>
+                    <option value="tamu" {{ $user->role=='tamu'?'selected' : '' }}>Guest</option>
                     <option value="resepsionis" {{ $user->role=='resepsionis'?'selected' : '' }}>
-                        Resepsionis
+                        Receptionist
                     </option>
                 </select>
             </div>

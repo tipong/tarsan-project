@@ -34,7 +34,7 @@
         </main>
     </div>
 
-    {{-- ✅ WAJIB ADA --}}
+    {{-- ✅ MUST BE PRESENT --}}
     @yield('scripts')
 
 </body>

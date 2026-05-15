@@ -5,13 +5,14 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $query = User::query()
-            ->whereIn('role', ['tamu', 'resepsionis']);
+        $query = User::query();
 
         // 🔍 SEARCH
         if ($request->filled('search')) {
@@ -33,41 +34,65 @@ class UserController extends Controller
             $query->latest();
         }
 
-        $users = $query->paginate(10)->withQueryString();
+        $users = $query->paginate(15)->withQueryString();
 
         return view('admin.users.index', compact('users'));
     }
 
-    public function edit(User $user)
+    public function store(Request $request)
     {
-        abort_if($user->role === 'admin', 403);
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8',
+            'role' => 'required|in:tamu,resepsionis,admin,owner',
+            'photo' => 'nullable|image|max:2048',
+        ]);
 
-        return view('admin.users.edit', compact('user'));
+        $validated['password'] = Hash::make($validated['password']);
+
+        if ($request->hasFile('photo')) {
+            $validated['photo'] = $request->file('photo')->store('users', 'public');
+        }
+
+        User::create($validated);
+
+        return back()->with('success', 'User successfully added');
     }
 
     public function update(Request $request, User $user)
     {
-        abort_if($user->role === 'admin', 403);
-
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email',
-            'role' => 'required|in:tamu,resepsionis',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'role' => 'required|in:tamu,resepsionis,admin,owner',
+            'photo' => 'nullable|image|max:2048',
         ]);
+
+        if ($request->hasFile('photo')) {
+            if ($user->photo) {
+                Storage::disk('public')->delete($user->photo);
+            }
+            $validated['photo'] = $request->file('photo')->store('users', 'public');
+        }
 
         $user->update($validated);
 
-        return redirect()
-            ->route('admin.users.index')
-            ->with('success', 'User berhasil diperbarui');
+        return back()->with('success', 'User successfully updated');
     }
 
     public function destroy(User $user)
     {
-        abort_if($user->role === 'admin', 403);
+        if ($user->id === auth()->id()) {
+            return back()->with('error', 'You cannot delete yourself');
+        }
+
+        if ($user->photo) {
+            Storage::disk('public')->delete($user->photo);
+        }
 
         $user->delete();
 
-        return back()->with('success', 'User berhasil dihapus');
+        return back()->with('success', 'User successfully deleted');
     }
 }

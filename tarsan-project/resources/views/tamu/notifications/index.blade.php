@@ -1,23 +1,23 @@
 @extends('layouts.app')
 
-@section('title', 'Notifikasi Saya')
+@section('title', 'My Notifications')
 
 @section('content')
 <div class="max-w-4xl mx-auto px-6 py-8">
     {{-- Header --}}
     <div class="flex justify-between items-center mb-8">
         <div>
-            <h1 class="text-4xl font-bold text-slate-800">Notifikasi</h1>
-            <p class="text-slate-600">Kelola semua notifikasi Anda</p>
+            <h1 class="text-4xl font-bold text-slate-800">Notifications</h1>
+            <p class="text-slate-600">Manage all your notifications</p>
         </div>
         <button onclick="markAllAsRead()" class="px-4 py-2 bg-slate-900 text-white rounded-2xl hover:bg-slate-800">
-            ✓ Tandai Semua Sudah Dibaca
+            ✓ Mark All as Read
         </button>
     </div>
 
     @if($notifications->isEmpty())
         <div class="bg-white p-8 rounded-2xl shadow-md text-center">
-            <p class="text-slate-600 text-lg">Tidak ada notifikasi</p>
+            <p class="text-slate-600 text-lg">No notifications</p>
         </div>
     @else
         <div class="space-y-4">
@@ -46,15 +46,15 @@
                                     @if($notification->type === 'booking')
                                         📅 Pemesanan
                                     @elseif($notification->type === 'payment')
-                                        💳 Pembayaran
+                                        💳 Payment
                                     @elseif($notification->type === 'cancellation')
-                                        ✗ Pembatalan
+                                        ✗ Cancellation
                                     @elseif($notification->type === 'checkin')
                                         🔓 Check-in
                                     @elseif($notification->type === 'checkout')
                                         🚪 Check-out
                                     @else
-                                        ℹ️ Informasi
+                                        ℹ️ Information
                                     @endif
                                 </span>
                             </div>
@@ -64,7 +64,7 @@
                         @if(!$notification->read_at)
                             <button onclick="markAsRead({{ $notification->id }})"
                                    class="ml-4 px-3 py-1 bg-slate-100 text-slate-700 rounded-xl hover:bg-gray-300 text-sm">
-                                Tandai Dibaca
+                                Mark as Read
                             </button>
                         @endif
                     </div>
@@ -74,7 +74,7 @@
                         <div class="mt-3 pt-3 border-t">
                             <a href="{{ route('tamu.orders.show', $notification->order) }}"
                                class="text-indigo-600 hover:text-blue-700 text-sm font-semibold">
-                                Lihat Detail Pesanan →
+                                View Order Details →
                             </a>
                         </div>
                     @endif
@@ -107,7 +107,7 @@ function markAsRead(notificationId) {
 }
 
 function markAllAsRead() {
-    showConfirm('Tandai Semua Sudah Dibaca?', 'Semua notifikasi akan ditandai sebagai sudah dibaca', () => {
+    showConfirm('Mark All as Read?', 'All notifications will be marked as read', () => {
         fetch('/tamu/notifications/read-all', {
             method: 'POST',
             headers: {
@@ -118,7 +118,7 @@ function markAllAsRead() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                showSuccess('Berhasil', 'Semua notifikasi telah ditandai sebagai sudah dibaca');
+                showSuccess('Success', 'All notifications have been marked as read');
                 setTimeout(() => location.reload(), 1500);
             }
         });

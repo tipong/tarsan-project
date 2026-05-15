@@ -11,8 +11,11 @@ class InvoiceController extends Controller
 {
     public function show(Order $order)
     {
-        // Security: hanya pemilik order
-        if ($order->user_id !== Auth::id()) {
+        // Security: pemilik order, admin, resepsionis, atau owner
+        $isStaff = in_array(Auth::user()->role, ['admin', 'resepsionis', 'owner']);
+        $isOwnerOfOrder = $order->user_id && $order->user_id === Auth::id();
+
+        if (!$isStaff && !$isOwnerOfOrder) {
             abort(403);
         }
 
@@ -23,8 +26,11 @@ class InvoiceController extends Controller
 
     public function download(Order $order)
     {
-        // Security: hanya pemilik order
-        if ($order->user_id !== Auth::id()) {
+        // Security: pemilik order, admin, resepsionis, atau owner
+        $isStaff = in_array(Auth::user()->role, ['admin', 'resepsionis', 'owner']);
+        $isOwnerOfOrder = $order->user_id && $order->user_id === Auth::id();
+
+        if (!$isStaff && !$isOwnerOfOrder) {
             abort(403);
         }
 

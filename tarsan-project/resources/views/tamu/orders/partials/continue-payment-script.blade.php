@@ -19,7 +19,7 @@ async function syncExistingOrderPayment(orderId, result = {}) {
     const data = await response.json();
 
     if (!response.ok) {
-        throw new Error(data.error ?? 'Gagal menyinkronkan status pembayaran.');
+        throw new Error(data.error ?? 'Failed to sync payment status.');
     }
 
     return data;
@@ -43,11 +43,11 @@ async function continuePayment(orderId, button) {
         const data = await response.json();
 
         if (!response.ok) {
-            throw new Error(data.error ?? 'Gagal melanjutkan pembayaran.');
+            throw new Error(data.error ?? 'Failed to continue payment.');
         }
 
         if (data.payment_status === 'paid') {
-            Swal.fire('Sukses', data.message ?? 'Pembayaran sudah terverifikasi.', 'success')
+            Swal.fire('Success', data.message ?? 'Payment has been verified.', 'success')
                 .then(() => window.location.reload());
             return;
         }
@@ -57,7 +57,7 @@ async function continuePayment(orderId, button) {
                 try {
                     await syncExistingOrderPayment(orderId, result);
 
-                    Swal.fire('Sukses!', 'Pembayaran berhasil. Terima kasih!', 'success')
+                    Swal.fire('Success!', 'Payment successful. Thank you!', 'success')
                         .then(() => window.location.reload());
                 } catch (syncError) {
                     console.error('SYNC ERROR:', syncError);
@@ -70,7 +70,7 @@ async function continuePayment(orderId, button) {
                 try {
                     await syncExistingOrderPayment(orderId, result);
 
-                    Swal.fire('Menunggu', 'Pembayaran Anda sedang diproses...', 'info')
+                    Swal.fire('Pending', 'Your payment is being processed...', 'info')
                         .then(() => window.location.href = `${orderBaseUrl}/${orderId}`);
                 } catch (syncError) {
                     console.error('SYNC ERROR:', syncError);
@@ -80,7 +80,7 @@ async function continuePayment(orderId, button) {
                 }
             },
             onError: function() {
-                Swal.fire('Gagal', 'Pembayaran gagal. Silahkan coba lagi.', 'error');
+                Swal.fire('Failed', 'Payment failed. Please try again.', 'error');
                 button.disabled = false;
                 button.innerHTML = originalLabel;
             },
@@ -91,7 +91,7 @@ async function continuePayment(orderId, button) {
         });
     } catch (error) {
         console.error('CONTINUE PAYMENT ERROR:', error);
-        Swal.fire('Error', error.message ?? 'Terjadi kesalahan. Silahkan coba lagi.', 'error');
+        Swal.fire('Error', error.message ?? 'An error occurred. Please try again.', 'error');
         button.disabled = false;
         button.innerHTML = originalLabel;
     }

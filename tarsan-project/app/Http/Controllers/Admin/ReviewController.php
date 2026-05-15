@@ -43,15 +43,15 @@ class ReviewController extends Controller
             'admin_reply' => 'required|string|max:500',
         ]);
 
-        // ❌ Tidak boleh reply review order belum selesai
+        // ❌ Cannot reply to reviews from incomplete orders
         if (! $review->order || ! $review->order->checked_out_at) {
-            return back()->with('error', 'Review belum valid');
+            return back()->with('error', 'Review is not valid');
         }
 
         $review->update([
             'admin_reply' => $request->admin_reply,
         ]);
 
-        return back()->with('success', 'Balasan berhasil dikirim');
+        return back()->with('success', 'Reply successfully sent');
     }
 }

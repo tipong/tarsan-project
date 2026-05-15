@@ -53,14 +53,14 @@ class VoucherController extends Controller
             'ends_at'   => 'required|date|after:starts_at',
         ]);
 
-        // 🔥 default aktif
+        // 🔥 default active
         $validated['is_active'] = 1;
 
         Voucher::create($validated);
 
         return redirect()
             ->route('admin.vouchers.index')
-            ->with('success', 'Voucher berhasil ditambahkan');
+            ->with('success', 'Voucher successfully added');
     }
 
     public function edit(Voucher $voucher)
@@ -77,14 +77,14 @@ class VoucherController extends Controller
             'ends_at'   => 'required|date|after:starts_at',
         ]);
 
-        // 🔥 INI KUNCI UTAMA
+        // 🔥 THIS IS THE KEY
         $validated['is_active'] = (int) $request->input('is_active', 0);
 
         $voucher->update($validated);
 
         return redirect()
             ->route('admin.vouchers.index')
-            ->with('success', 'Voucher berhasil diperbarui');
+            ->with('success', 'Voucher successfully updated');
     }
 
 
@@ -92,6 +92,6 @@ class VoucherController extends Controller
     {
         $voucher->delete();
 
-        return back()->with('success', 'Voucher berhasil dihapus');
+        return back()->with('success', 'Voucher successfully deleted');
     }
 }

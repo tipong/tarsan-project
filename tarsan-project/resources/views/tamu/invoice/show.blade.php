@@ -11,7 +11,7 @@
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                 </svg>
-                Kembali ke Pesanan
+                Back to Orders
             </a>
         </div>
 
@@ -37,56 +37,48 @@
                 {{-- Booking Details --}}
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
                     <div>
-                        <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Detail Pemesanan</h3>
+                        <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Booking Details</h3>
                         <div class="space-y-2">
                             <div>
-                                <p class="text-sm text-slate-500">Tanggal Pemesanan</p>
+                                <p class="text-sm text-slate-500">Order Date</p>
                                 <p class="font-medium text-slate-900">{{ $order->created_at->format('d M Y, H:i') }}</p>
                             </div>
                             <div>
-                                <p class="text-sm text-slate-500">Kode Pesanan</p>
-                                <p class="font-medium text-slate-900">{{ $order->order_code ?? 'N/A' }}</p>
+                                <p class="text-sm text-slate-500">Account Username</p>
+                                <p class="font-medium text-slate-900">{{ $order->user->name ?? 'N/A' }}</p>
                             </div>
                             <div>
-                                <p class="text-sm text-slate-500">Status Pembayaran</p>
+                                <p class="text-sm text-slate-500">Payment Status</p>
                                 <p class="font-medium {{ $order->payment_status === 'paid' ? 'text-green-600' : 'text-yellow-600' }}">
-                                    {{ $order->payment_status === 'paid' ? 'Lunas' : 'Belum Lunas' }}
+                                    {{ $order->payment_status === 'paid' ? 'Paid' : 'Not Paid' }}
                                 </p>
                             </div>
                         </div>
                     </div>
-                    <div>
-                        <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Informasi Akun</h3>
-                        <div class="space-y-2">
-                            <div>
-                                <p class="text-sm text-slate-500">Username Akun</p>
-                                <p class="font-medium text-slate-900">{{ $order->user->name ?? 'N/A' }}</p>
-                            </div>
-                            <div>
-                                <p class="text-sm text-slate-500">Email Akun</p>
-                                <p class="font-medium text-slate-900">{{ $order->user->email ?? 'N/A' }}</p>
-                            </div>
-                        </div>
+                    <div class="text-right">
+                        <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">ID Transaksi</h3>
+                        <p class="font-mono text-slate-900 font-bold text-lg">{{ $order->order_code ?? 'N/A' }}</p>
+                        <p class="text-xs text-slate-500 mt-1">Use this code as reference</p>
                     </div>
                 </div>
 
                 {{-- Stay Details --}}
                 <div class="bg-gray-50 rounded-2xl p-6 mb-8">
-                    <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Detail Menginap</h3>
+                    <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Stay Details</h3>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div>
                             <p class="text-sm text-slate-500">Check-in</p>
                             <p class="text-lg font-semibold text-slate-900">{{ $order->check_in?->format('d M Y') ?? 'N/A' }}</p>
-                            <p class="text-sm text-slate-500">dari pukul 14:00 WITA</p>
+                            <p class="text-sm text-slate-500">from 14:00 WITA</p>
                         </div>
                         <div>
                             <p class="text-sm text-slate-500">Check-out</p>
                             <p class="text-lg font-semibold text-slate-900">{{ $order->check_out?->format('d M Y') ?? 'N/A' }}</p>
-                            <p class="text-sm text-slate-500">sebelum pukul 12:00 WITA</p>
+                            <p class="text-sm text-slate-500">before 12:00 WITA</p>
                         </div>
                         <div>
-                            <p class="text-sm text-slate-500">Durasi</p>
-                            <p class="text-lg font-semibold text-slate-900">{{ $order->nights ?? 1 }} Malam</p>
+                            <p class="text-sm text-slate-500">Duration</p>
+                            <p class="text-lg font-semibold text-slate-900">{{ $order->nights ?? 1 }} Night</p>
                         </div>
                     </div>
                 </div>
@@ -94,14 +86,14 @@
                 {{-- Order Items --}}
                 @if($order->items && $order->items->count() > 0)
                 <div class="mb-8">
-                    <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Rincian Pesanan</h3>
+                    <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Order Details</h3>
                     <div class="overflow-x-auto">
                         <table class="w-full">
                             <thead>
                                 <tr class="border-b border-slate-200">
-                                    <th class="text-left py-3 px-4 text-sm font-semibold text-slate-600">Kamar</th>
-                                    <th class="text-center py-3 px-4 text-sm font-semibold text-slate-600">Harga/Malam</th>
-                                    <th class="text-center py-3 px-4 text-sm font-semibold text-slate-600">Malam</th>
+                                    <th class="text-left py-3 px-4 text-sm font-semibold text-slate-600">Room</th>
+                                    <th class="text-center py-3 px-4 text-sm font-semibold text-slate-600">Price/Night</th>
+                                    <th class="text-center py-3 px-4 text-sm font-semibold text-slate-600">Nights</th>
                                     <th class="text-right py-3 px-4 text-sm font-semibold text-slate-600">Subtotal</th>
                                 </tr>
                             </thead>
@@ -131,21 +123,20 @@
                 </div>
                 @endif
 
-                {{-- Informasi Tamu (Moved to Bottom) --}}
-                <div class="bg-gray-50 rounded-2xl p-6 mb-8">
-                    <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Informasi Tamu</h3>
+                <div class="bg-indigo-50 rounded-2xl p-6 mb-8 border border-indigo-100">
+                    <h3 class="text-sm font-semibold text-indigo-900 uppercase tracking-wider mb-4">Guest Information (Stay Details)</h3>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div>
-                            <p class="text-sm text-slate-500">Nama Tamu</p>
-                            <p class="text-lg font-semibold text-slate-900">{{ $order->guest_name ?? $order->user->name ?? 'N/A' }}</p>
+                            <p class="text-sm text-indigo-400">Guest Name</p>
+                            <p class="text-lg font-bold text-indigo-900">{{ $order->guest_name ?? $order->user->name ?? 'N/A' }}</p>
                         </div>
                         <div>
-                            <p class="text-sm text-slate-500">No. Telepon</p>
-                            <p class="text-lg font-semibold text-slate-900">{{ $order->guest_phone ?? $order->user->phone ?? 'N/A' }}</p>
+                            <p class="text-sm text-indigo-400">Phone Number</p>
+                            <p class="text-lg font-bold text-indigo-900">{{ $order->guest_phone ?? $order->user->phone ?? 'N/A' }}</p>
                         </div>
                         <div>
-                            <p class="text-sm text-slate-500">Email Guest</p>
-                            <p class="text-lg font-semibold text-slate-900">{{ $order->user->email ?? 'N/A' }}</p>
+                            <p class="text-sm text-indigo-400">Contact Email</p>
+                            <p class="text-lg font-bold text-indigo-900">{{ $order->user->email ?? '-' }}</p>
                         </div>
                     </div>
                 </div>
@@ -179,7 +170,7 @@
                 {{-- Payment Method --}}
                 @if($order->payment_method)
                 <div class="mt-6 bg-gray-50 rounded-2xl p-4">
-                    <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-2">Metode Pembayaran</h3>
+                    <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-2">Payment Method</h3>
                     <p class="font-medium text-slate-900">{{ ucfirst($order->payment_method) }}</p>
                 </div>
                 @endif
@@ -187,10 +178,10 @@
                 {{-- Footer Note --}}
                 <div class="mt-8 pt-6 border-t border-slate-200 text-center">
                     <p class="text-sm text-slate-500">
-                        Invoice ini dibuat secara otomatis dan sah tanpa tanda tangan atau stempel.
+                        This invoice was automatically created and is valid without signature or stamp.
                     </p>
                     <p class="text-sm text-slate-500 mt-1">
-                        Terima kasih telah memilih Tarsan Homestay.
+                        Thank you for choosing Tarsan Homestay.
                     </p>
                 </div>
             </div>

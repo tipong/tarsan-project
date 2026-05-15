@@ -5,13 +5,13 @@
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {{-- Header --}}
         <div class="flex items-center justify-between mb-12">
-            <h1 class="text-3xl md:text-4xl font-bold text-slate-900">Rincian Pemesanan</h1>
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-900">Booking Details</h1>
             <a href="{{ route('tamu.booking.index') }}"
                class="inline-flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-2xl hover:bg-slate-800 transition duration-200 font-medium">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                 </svg>
-                Tambah Kamar
+                Add Room
             </a>
         </div>
 
@@ -41,7 +41,7 @@
                                     @method('DELETE')
                                     <button type="submit"
                                             class="text-sm text-red-600 hover:text-red-700 transition font-medium">
-                                        Hapus
+                                        Remove
                                     </button>
                                 </form>
                             </div>
@@ -49,7 +49,7 @@
                     </div>
                 @empty
                     <div class="bg-white p-8 rounded-2xl shadow border border-slate-200 text-center">
-                        <p class="text-slate-500">Tidak ada kamar yang dipilih</p>
+                        <p class="text-slate-500">No rooms selected</p>
                     </div>
                 @endforelse
             </div>
@@ -61,11 +61,11 @@
                     class="bg-white rounded-2xl shadow border border-slate-200 p-6">
                     @csrf
 
-                    <h3 class="text-lg font-bold text-slate-900 mb-4">Data Tamu</h3>
+                    <h3 class="text-lg font-bold text-slate-900 mb-4">Guest Data</h3>
 
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">Nama Tamu *</label>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Guest Name *</label>
                             <input type="text"
                                 name="name"
                                 value="{{ session('guest.name') }}"
@@ -74,7 +74,7 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">Nomor Telepon *</label>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Phone Number *</label>
                             <input type="text"
                                 name="phone"
                                 value="{{ session('guest.phone') }}"
@@ -84,13 +84,13 @@
 
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-2">
-                                Kode Voucher (Opsional)
+                                Voucher Code (Optional)
                             </label>
                             <input type="text"
                                 name="voucher"
                                 value="{{ session('voucher.code') }}"
                                 class="w-full px-4 py-2 border border-slate-200 rounded-2xl text-sm focus:ring-2 focus:ring-indigo-600 focus:border-transparent outline-none transition"
-                                placeholder="Masukkan kode voucher...">
+                                placeholder="Enter voucher code...">
                             @error('voucher')
                                 <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                             @enderror
@@ -98,7 +98,7 @@
 
                         <button type="submit"
                             class="w-full px-4 py-2 bg-slate-900 text-white rounded-2xl hover:bg-slate-800 transition duration-200 font-medium text-sm">
-                            Simpan Data Tamu
+                            Save Guest Data
                         </button>
                     </div>
                 </form>
@@ -120,7 +120,7 @@
                 @endphp
 
                 <div class="bg-white rounded-2xl shadow border border-slate-200 p-6 h-fit">
-                    <h3 class="text-lg font-bold text-slate-900 mb-4">Ringkasan Biaya</h3>
+                    <h3 class="text-lg font-bold text-slate-900 mb-4">Cost Summary</h3>
 
                     <div class="space-y-3 text-sm">
                         <div class="flex justify-between">
@@ -130,7 +130,7 @@
 
                         @if($voucherDiscount > 0)
                             <div class="flex justify-between text-green-600">
-                                <span>Diskon Voucher</span>
+                                <span>Voucher Discount</span>
                                 <span class="font-semibold">- Rp {{ number_format($voucherDiscount) }}</span>
                             </div>
                         @endif
@@ -153,12 +153,12 @@
                     @if($guestReady)
                         <a href="{{ route('tamu.payment.index') }}"
                         class="block w-full mt-6 px-4 py-3 bg-slate-900 text-white rounded-2xl hover:bg-slate-800 transition duration-200 font-bold text-center">
-                            Lanjut ke Pembayaran
+                            Continue to Payment
                         </a>
                     @else
                         <button disabled
                             class="block w-full mt-6 px-4 py-3 bg-gray-300 text-slate-500 rounded-2xl cursor-not-allowed font-bold">
-                            Isi Data Tamu Terlebih Dahulu
+                            Fill Guest Data First
                         </button>
                     @endif
                 </div>

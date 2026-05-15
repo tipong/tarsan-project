@@ -18,6 +18,16 @@ class BookingController extends Controller
 
         $cart = session('cart', []);
 
+        // Add availability status for rooms
+        $checkIn = request('check_in');
+        $checkOut = request('check_out');
+
+        if ($checkIn && $checkOut) {
+            foreach ($rooms as $room) {
+                $room->is_available = $this->isRoomAvailable($room->id, $checkIn, $checkOut);
+            }
+        }
+
         return view('tamu.booking.index', compact('rooms', 'cart', 'facilities'));
     }
 
@@ -46,6 +56,11 @@ class BookingController extends Controller
         }
 
         $rooms = $rooms->get();
+
+        // Add availability status for each room
+        foreach ($rooms as $room) {
+            $room->is_available = $this->isRoomAvailable($room->id, $request->check_in, $request->check_out);
+        }
 
         session([
             'booking_filter' => $request->only('check_in', 'check_out', 'room_search', 'facility')
@@ -102,5 +117,38 @@ class BookingController extends Controller
         }
 
         return redirect()->back()->with('success', 'Room removed from cart');
+    }
+
+    public function cart()
+    {
+        $cart = session('cart', []);
+        return view('tamu.booking.cart', compact('cart'));
+    }
+
+    /**
+     * Check if a room is available for the given date range
+     */
+    private function isRoomAvailable($roomId, $checkIn, $checkOut)
+    {
+        $checkInDate = Carbon::parse($checkIn);
+        $checkOutDate = Carbon::parse($checkOut);
+
+        // Check if any order overlaps with the requested date range
+        // Orders store room_id in order_items table
+        $overlappingOrders = \App\Models\Order::whereHas('items', function ($query) use ($roomId) {
+                $query->where('room_id', $roomId);
+            })
+            ->whereIn('status', ['pending', 'confirmed'])
+            ->where(function ($query) use ($checkInDate, $checkOutDate) {
+                $query->whereBetween('check_in', [$checkInDate, $checkOutDate->subDay()])
+                    ->orWhereBetween('check_out', [$checkInDate->addDay(), $checkOutDate])
+                    ->orWhere(function ($q) use ($checkInDate, $checkOutDate) {
+                        $q->where('check_in', '<=', $checkInDate)
+                            ->where('check_out', '>=', $checkOutDate);
+                    });
+            })
+            ->count();
+
+        return $overlappingOrders === 0;
     }
 }

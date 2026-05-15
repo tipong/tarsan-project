@@ -11,10 +11,10 @@
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                 </svg>
-                Kembali ke Dashboard
+                Back to Dashboard
             </a>
             <h1 class="text-3xl font-bold text-gray-900">Edit Profile</h1>
-            <p class="text-gray-600 mt-1">Kelola informasi akun Anda di sini</p>
+            <p class="text-gray-600 mt-1">Manage your account information here</p>
         </div>
 
         <div class="space-y-6">

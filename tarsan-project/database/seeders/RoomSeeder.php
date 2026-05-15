@@ -17,7 +17,7 @@ class RoomSeeder extends Seeder
                 'price_per_night' => 280000,
                 'capacity' => 2,
                 'total_rooms' => 1,
-                'description' => 'Kamar nyaman dengan 1 bed super king, shower, kamar mandi pribadi, pemandangan taman, dan WiFi.',
+                'description' => 'Comfortable room with 1 super king bed, shower, private bathroom, garden view, and WiFi.',
                 'facilities' => ['1 Bed Super King', 'AC', 'Shower', 'Bathroom', 'Garden View', 'WiFi', 'Private'],
             ],
             [
@@ -25,7 +25,7 @@ class RoomSeeder extends Seeder
                 'price_per_night' => 280000,
                 'capacity' => 2,
                 'total_rooms' => 1,
-                'description' => 'Kamar twin yang cocok untuk dua tamu dengan 2 bed single, shower, kamar mandi pribadi, pemandangan taman, dan WiFi.',
+                'description' => 'Twin room suitable for two guests with 2 single beds, shower, private bathroom, garden view, and WiFi.',
                 'facilities' => ['2 Bed Single', 'AC', 'Shower', 'Bathroom', 'Garden View', 'WiFi', 'Private'],
             ],
             [
@@ -33,7 +33,7 @@ class RoomSeeder extends Seeder
                 'price_per_night' => 320000,
                 'capacity' => 2,
                 'total_rooms' => 1,
-                'description' => 'Kamar double premium dengan 1 bed super king, balkon, shower, kamar mandi pribadi, pemandangan taman, dan WiFi.',
+                'description' => 'Premium double room with 1 super king bed, balcony, shower, private bathroom, garden view, and WiFi.',
                 'facilities' => ['1 Bed Super King', 'AC', 'Shower', 'Balcony', 'Bathroom', 'Garden View', 'WiFi', 'Private'],
             ],
             [
@@ -41,7 +41,7 @@ class RoomSeeder extends Seeder
                 'price_per_night' => 180000,
                 'capacity' => 1,
                 'total_rooms' => 1,
-                'description' => 'Kamar hemat untuk solo traveler dengan 1 bed single, AC, shower, akses WiFi, dan kamar mandi sharing.',
+                'description' => 'Budget room for solo travelers with 1 single bed, AC, shower, WiFi access, and shared bathroom.',
                 'facilities' => ['1 Bed Single', 'AC', 'Shower', 'Bathroom', 'WiFi', 'Sharing'],
             ],
         ];

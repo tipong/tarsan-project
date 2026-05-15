@@ -39,10 +39,10 @@ class ProfileController extends Controller
         'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
     ]);
 
-    // Upload photo jika ada
+    // Upload photo if there is
     if ($request->hasFile('photo')) {
 
-        // Hapus foto lama
+        // Delete old photo
         if ($user->photo && Storage::disk('public')->exists($user->photo)) {
             Storage::disk('public')->delete($user->photo);
         }

@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Schema;
 class PaymentController extends Controller
 {
     /**
-     * HALAMAN PAYMENT
+     * PAYMENT PAGE
      */
     public function index()
     {
@@ -77,7 +77,7 @@ class PaymentController extends Controller
                     $this->clearCheckoutSession($order);
 
                     return response()->json([
-                        'error' => 'Pesanan ini sudah lunas.'
+                        'error' => 'This order has already been paid.'
                     ], 422);
                 }
 
@@ -121,8 +121,8 @@ class PaymentController extends Controller
                         Notification::create([
                             'user_id' => Auth::id(),
                             'type' => 'booking',
-                            'title' => 'Pesanan Dibuat',
-                            'message' => 'Pesanan Anda dengan kode ' . $order->order_code . ' telah dibuat. Silakan selesaikan pembayaran.',
+                            'title' => 'Order Created',
+                            'message' => 'Your order with code ' . $order->order_code . ' has been created. Please complete the payment.',
                             'order_id' => $order->id
                         ]);
                     }
@@ -164,7 +164,7 @@ class PaymentController extends Controller
                 $this->clearCheckoutSession($order);
 
                 return response()->json([
-                    'message' => 'Pesanan ini sudah lunas.',
+                    'message' => 'This order has already been paid.',
                     'payment_status' => 'paid',
                     'status' => $order->status,
                 ]);
@@ -172,7 +172,7 @@ class PaymentController extends Controller
 
             if ($order->status !== 'pending') {
                 return response()->json([
-                    'error' => 'Pesanan ini tidak dapat dilanjutkan pembayarannya.'
+                    'error' => 'This order cannot be continued for payment.'
                 ], 422);
             }
 
@@ -195,7 +195,7 @@ class PaymentController extends Controller
             ]);
 
             return response()->json([
-                'error' => 'Gagal menyiapkan ulang pembayaran.'
+                'error' => 'Failed to prepare payment again.'
             ], 500);
         }
     }
@@ -224,7 +224,7 @@ class PaymentController extends Controller
             ]);
 
             return response()->json([
-                'error' => 'Gagal menyinkronkan status pembayaran.'
+                'error' => 'Failed to synchronize payment status.'
             ], 500);
         }
     }

@@ -12,7 +12,8 @@ class OrderController extends Controller
 {
     public function index(MidtransPaymentService $midtransPayment)
     {
-        $orders = Order::where('user_id', auth()->id())
+        $orders = Order::with(['review', 'items.room'])
+            ->where('user_id', auth()->id())
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
@@ -59,7 +60,7 @@ class OrderController extends Controller
 
         // Check if order can be cancelled
         if (!in_array($order->status, ['pending', 'confirmed'])) {
-            return redirect()->route('tamu.orders')->with('error', 'Pesanan tidak dapat dibatalkan dalam status ini.');
+            return redirect()->route('tamu.orders')->with('error', 'Order cannot be cancelled in this status.');
         }
 
         // Cancel order
@@ -74,11 +75,11 @@ class OrderController extends Controller
         Notification::create([
             'user_id' => $order->user_id,
             'type' => 'cancellation',
-            'title' => 'Pesanan Dibatalkan',
-            'message' => 'Pesanan ' . $order->order_code . ' telah dibatalkan. Alasan: ' . $request->reason,
+            'title' => 'Order Cancelled',
+            'message' => 'Order ' . $order->order_code . ' has been cancelled. Reason: ' . $request->reason,
             'order_id' => $order->id
         ]);
 
-        return redirect()->route('tamu.orders')->with('success', 'Pesanan berhasil dibatalkan.');
+        return redirect()->route('tamu.orders')->with('success', 'Order successfully cancelled.');
     }
 }

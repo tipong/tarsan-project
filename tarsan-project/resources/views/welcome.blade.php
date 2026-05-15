@@ -13,7 +13,7 @@
 
     {{-- Favicon --}}
     <link rel="icon" type="image/png" href="{{ asset('tarsanhomestay.png') }}">
-    {{-- atau jika pakai ico --}}
+    {{-- or use ico if needed --}}
     {{-- <link rel="icon" href="{{ asset('favicon.ico') }}"> --}}
 
     <!-- Scripts -->
@@ -36,16 +36,16 @@
             <a href="#beranda" class="text-slate-600 hover:text-slate-900 transition-colors">Home</a>
             <a href="#tentang" class="text-slate-600 hover:text-slate-900 transition-colors">About</a>
             <a href="#fasilitas" class="text-slate-600 hover:text-slate-900 transition-colors">Facilities</a>
-            <a href="{{ route('kamar.index') }}" class="text-slate-600 hover:text-slate-900 transition-colors">Kamar</a>
+            <a href="{{ route('kamar.index') }}" class="text-slate-600 hover:text-slate-900 transition-colors">Rooms</a>
             <a href="#kontak" class="text-slate-600 hover:text-slate-900 transition-colors">Contact</a>
 
             @auth
                 <a href="{{ route('tamu.notifications.index') }}" class="relative text-slate-600 hover:text-slate-900 transition-colors">
-                    Notifikasi
+                    Notifications
                     <span id="notif-badge" class="absolute -top-2 -right-3 bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center hidden"></span>
                 </a>
                 <a href="{{ route('tamu.orders') }}" class="text-slate-600 hover:text-slate-900 transition-colors">
-                    Pesanan Saya
+                    My Orders
                 </a>
             @endauth
         </div>
@@ -294,7 +294,7 @@
 
 @auth
 <script>
-// Load unread notification count setiap 30 detik
+// Load unread notification count every 30 seconds
 document.addEventListener('DOMContentLoaded', function() {
     loadUnreadCount();
     setInterval(loadUnreadCount, 30000);

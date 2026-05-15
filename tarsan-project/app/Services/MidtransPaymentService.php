@@ -219,8 +219,8 @@ class MidtransPaymentService
                 'type' => 'payment',
             ],
             [
-                'title' => 'Pembayaran Berhasil',
-                'message' => 'Pembayaran untuk pesanan ' . $order->order_code . ' telah berhasil. Total: Rp ' . number_format($order->total_price, 0, ',', '.'),
+                'title' => 'Payment Successful',
+                'message' => 'Payment for order ' . $order->order_code . ' has been successful. Total: Rp ' . number_format($order->total_price, 0, ',', '.'),
             ]
         );
     }

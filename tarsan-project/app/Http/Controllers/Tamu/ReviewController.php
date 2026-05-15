@@ -18,17 +18,17 @@ class ReviewController extends Controller
 
         // Must be checked out
         if (!$order->checked_out_at) {
-            return back()->with('error', 'Anda hanya bisa memberikan ulasan setelah selesai menginap.');
+            return back()->with('error', 'You can only give a review after completing your stay.');
         }
 
         // Cannot review twice
         if ($order->review) {
-            return back()->with('error', 'Anda sudah memberikan ulasan untuk pesanan ini.');
+            return back()->with('error', 'You have already submitted a review for this order.');
         }
 
         $request->validate([
             'rating' => 'required|integer|min:1|max:5',
-            'review' => 'required|string|max:1000'
+            'review' => 'nullable|string|max:1000'
         ]);
 
         Review::create([
@@ -38,6 +38,6 @@ class ReviewController extends Controller
             'review' => $request->review
         ]);
 
-        return back()->with('success', 'Terima kasih atas ulasan Anda!');
+        return back()->with('success', 'Thank you for your review!');
     }
 }

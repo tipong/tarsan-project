@@ -5,8 +5,8 @@
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {{-- Header --}}
         <div class="mb-12">
-            <h1 class="text-3xl md:text-4xl font-bold text-slate-900 mb-2">Konfirmasi Pembayaran</h1>
-            <p class="text-slate-600">Tinjau pesanan Anda sebelum melakukan pembayaran</p>
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-900 mb-2">Payment Confirmation</h1>
+            <p class="text-slate-600">Review your order before payment</p>
         </div>
 
         <div class="grid md:grid-cols-3 gap-6">
@@ -14,7 +14,7 @@
             <div class="md:col-span-2 space-y-6">
                 {{-- Booking Summary Card --}}
                 <div class="bg-white p-6 rounded-2xl shadow border border-slate-200">
-                    <h2 class="text-lg font-bold text-slate-900 mb-4">Ringkasan Pesanan</h2>
+                    <h2 class="text-lg font-bold text-slate-900 mb-4">Order Summary</h2>
 
                     <div class="space-y-4">
                         @foreach($cart as $item)
@@ -24,11 +24,11 @@
                                     <p class="text-sm text-slate-600 mt-2">
                                         📅 {{ \Carbon\Carbon::parse($item['check_in'])->format('d M Y') }} - {{ \Carbon\Carbon::parse($item['check_out'])->format('d M Y') }}
                                     </p>
-                                    <p class="text-sm text-slate-600">🌙 {{ $item['nights'] }} malam</p>
+                                    <p class="text-sm text-slate-600">🌙 {{ $item['nights'] }} nights</p>
                                 </div>
                                 <div class="text-right">
                                     <p class="font-bold text-slate-900">Rp {{ number_format($item['subtotal']) }}</p>
-                                    <p class="text-xs text-slate-500 mt-1">Rp {{ number_format($item['price'] ?? 0) }}/malam</p>
+                                    <p class="text-xs text-slate-500 mt-1">Rp {{ number_format($item['price'] ?? 0) }}/night</p>
                                 </div>
                             </div>
                         @endforeach
@@ -39,21 +39,21 @@
 
                     {{-- Total --}}
                     <div class="flex justify-between items-center">
-                        <span class="text-lg font-bold text-slate-900">Total Pembayaran</span>
+                        <span class="text-lg font-bold text-slate-900">Total Payment</span>
                         <span class="text-2xl font-bold text-indigo-600">Rp {{ number_format($finalTotal) }}</span>
                     </div>
                 </div>
 
                 {{-- Guest Information Card --}}
                 <div class="bg-white p-6 rounded-2xl shadow border border-slate-200">
-                    <h3 class="text-lg font-bold text-slate-900 mb-4">Data Tamu</h3>
+                    <h3 class="text-lg font-bold text-slate-900 mb-4">Guest Data</h3>
                     <div class="space-y-3">
                         <div>
-                            <p class="text-sm text-slate-600">Nama Tamu</p>
+                            <p class="text-sm text-slate-600">Guest Name</p>
                             <p class="font-semibold text-slate-900">{{ session('guest.name', 'N/A') }}</p>
                         </div>
                         <div>
-                            <p class="text-sm text-slate-600">Nomor Telepon</p>
+                            <p class="text-sm text-slate-600">Phone Number</p>
                             <p class="font-semibold text-slate-900">{{ session('guest.phone', 'N/A') }}</p>
                         </div>
                         <div>
@@ -67,22 +67,22 @@
             {{-- RIGHT: Payment Methods --}}
             <div>
                 <div class="bg-white p-6 rounded-2xl shadow border border-slate-200 sticky top-24">
-                    <h3 class="text-lg font-bold text-slate-900 mb-4">Metode Pembayaran</h3>
+                    <h3 class="text-lg font-bold text-slate-900 mb-4">Payment Methods</h3>
 
                     <div class="space-y-3 mb-6 text-sm text-slate-600">
-                        <p><strong>Midtrans Snap</strong> menerima berbagai metode pembayaran:</p>
+                        <p><strong>Midtrans Snap</strong> accepts various payment methods:</p>
                         <ul class="space-y-2 text-sm">
                             <li class="flex items-center gap-2">
                                 <svg class="w-4 h-4 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                                 </svg>
-                                Kartu Kredit / Debit
+                                Credit / Debit Card
                             </li>
                             <li class="flex items-center gap-2">
                                 <svg class="w-4 h-4 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                                 </svg>
-                                Transfer Bank
+                                Bank Transfer
                             </li>
                             <li class="flex items-center gap-2">
                                 <svg class="w-4 h-4 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
@@ -94,18 +94,18 @@
                                 <svg class="w-4 h-4 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                                 </svg>
-                                QRIS & Gerai Ritel
+                                QRIS & Retail Stores
                             </li>
                         </ul>
                     </div>
 
                     <button id="pay-button"
                             class="w-full px-6 py-3 bg-slate-900 text-white rounded-2xl hover:bg-slate-800 transition duration-200 font-bold text-center">
-                        💳 Lanjut Pembayaran
+                        💳 Continue Payment
                     </button>
 
                     <p class="text-xs text-slate-500 text-center mt-4">
-                        Pembayaran Anda dilindungi oleh Midtrans
+                        Your payment is protected by Midtrans
                     </p>
                 </div>
             </div>
@@ -136,7 +136,7 @@ async function syncPaymentStatus(orderId, result = {}) {
     const data = await response.json();
 
     if (!response.ok) {
-        throw new Error(data.error ?? 'Gagal menyinkronkan status pembayaran.');
+        throw new Error(data.error ?? 'Failed to sync payment status.');
     }
 
     return data;
@@ -158,7 +158,7 @@ document.getElementById('pay-button').addEventListener('click', async function (
         });
 
         if (!response.ok) {
-            let serverMessage = 'Terjadi kesalahan pada server. Silahkan coba lagi.';
+            let serverMessage = 'An error occurred on the server. Please try again.';
 
             try {
                 const errorData = await response.json();
@@ -171,7 +171,7 @@ document.getElementById('pay-button').addEventListener('click', async function (
 
             Swal.fire('Error', serverMessage, 'error');
             button.disabled = false;
-            button.innerHTML = '💳 Lanjut Pembayaran';
+            button.innerHTML = '💳 Continue Payment';
             return;
         }
 
@@ -179,9 +179,9 @@ document.getElementById('pay-button').addEventListener('click', async function (
         console.log('PAYMENT RESPONSE:', data);
 
         if (!data.snap_token) {
-            Swal.fire('Error', data.error ?? 'Gagal membuat token pembayaran', 'error');
+            Swal.fire('Error', data.error ?? 'Failed to create payment token', 'error');
             button.disabled = false;
-            button.innerHTML = '💳 Lanjut Pembayaran';
+            button.innerHTML = '💳 Continue Payment';
             return;
         }
 
@@ -190,13 +190,13 @@ document.getElementById('pay-button').addEventListener('click', async function (
                 try {
                     await syncPaymentStatus(data.order_id, result);
 
-                    Swal.fire('Sukses!', 'Pembayaran berhasil. Terima kasih!', 'success').then(() => {
+                    Swal.fire('Success!', 'Payment successful. Thank you!', 'success').then(() => {
                         window.location.href = "{{ route('tamu.payment.success') }}";
                     });
                 } catch (syncError) {
                     console.error('SYNC ERROR:', syncError);
                     button.disabled = false;
-                    button.innerHTML = '💳 Lanjut Pembayaran';
+                    button.innerHTML = '💳 Continue Payment';
                     Swal.fire('Error', syncError.message, 'error');
                 }
             },
@@ -204,31 +204,31 @@ document.getElementById('pay-button').addEventListener('click', async function (
                 try {
                     await syncPaymentStatus(data.order_id, result);
 
-                    Swal.fire('Menunggu', 'Pembayaran Anda sedang diproses...', 'info').then(() => {
+                    Swal.fire('Pending', 'Your payment is being processed...', 'info').then(() => {
                         window.location.href = `${orderBaseUrl}/${data.order_id}`;
                     });
                 } catch (syncError) {
                     console.error('SYNC ERROR:', syncError);
                     button.disabled = false;
-                    button.innerHTML = '💳 Lanjut Pembayaran';
+                    button.innerHTML = '💳 Continue Payment';
                     Swal.fire('Error', syncError.message, 'error');
                 }
             },
             onError: function () {
-                Swal.fire('Gagal', 'Pembayaran gagal. Silahkan coba lagi.', 'error');
+                Swal.fire('Failed', 'Payment failed. Please try again.', 'error');
                 button.disabled = false;
-                button.innerHTML = '💳 Lanjut Pembayaran';
+                button.innerHTML = '💳 Continue Payment';
             },
             onClose: function () {
                 button.disabled = false;
-                button.innerHTML = '💳 Lanjut Pembayaran';
+                button.innerHTML = '💳 Continue Payment';
             }
         });
     } catch (error) {
         console.error('ERROR:', error);
-        Swal.fire('Error', 'Terjadi kesalahan. Silahkan coba lagi.', 'error');
+        Swal.fire('Error', 'An error occurred. Please try again.', 'error');
         button.disabled = false;
-        button.innerHTML = '💳 Lanjut Pembayaran';
+        button.innerHTML = '💳 Continue Payment';
     }
 });
 </script>

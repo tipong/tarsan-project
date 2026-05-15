@@ -56,7 +56,7 @@
                 Availability Kamar
             </a>
         </nav>
-        
+
         <div class="p-4 border-t border-slate-200">
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
@@ -104,7 +104,7 @@
 <script>
     Swal.fire({
         icon: 'success',
-        title: 'Berhasil!',
+        title: 'Success!',
         text: '{{ session('success') }}',
         showConfirmButton: true,
         confirmButtonText: 'OK',
@@ -119,7 +119,7 @@
 <script>
     Swal.fire({
         icon: 'error',
-        title: 'Gagal!',
+        title: 'Error!',
         text: '{{ session('error') }}',
         showConfirmButton: true,
         confirmButtonText: 'OK',

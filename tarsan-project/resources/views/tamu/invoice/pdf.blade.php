@@ -200,26 +200,20 @@
                         <div class="info-value">{{ $order->created_at->format('d M Y, H:i') }}</div>
                     </div>
                     <div class="info-row">
-                        <div class="info-label">Kode Pesanan</div>
-                        <div class="info-value">{{ $order->order_code ?? 'N/A' }}</div>
-                    </div>
-                    <div class="info-row">
-                        <div class="info-label">Status Pembayaran</div>
-                        <div class="info-value" style="color: {{ $order->payment_status === 'paid' ? '#16a34a' : '#ca8a04' }};">
-                            {{ $order->payment_status === 'paid' ? 'Lunas' : 'Belum Lunas' }}
-                        </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="section-title">Informasi Akun</div>
-                    <div class="info-row">
-                        <div class="info-label">Username Akun</div>
+                        <div class="info-label">Account Username</div>
                         <div class="info-value">{{ $order->user->name ?? 'N/A' }}</div>
                     </div>
                     <div class="info-row">
-                        <div class="info-label">Email Akun</div>
-                        <div class="info-value">{{ $order->user->email ?? 'N/A' }}</div>
+                        <div class="info-label">Payment Status</div>
+                        <div class="info-value" style="color: {{ $order->payment_status === 'paid' ? '#16a34a' : '#ca8a04' }};">
+                            {{ $order->payment_status === 'paid' ? 'Paid' : 'Not Paid' }}
+                        </div>
                     </div>
+                </div>
+                <div class="col" style="text-align: right;">
+                    <div class="section-title">ID Transaksi</div>
+                    <div class="info-value" style="font-size: 16px; color: #2563eb;">{{ $order->order_code ?? 'N/A' }}</div>
+                    <p style="font-size: 9px; color: #6b7280;">Use this code as reference</p>
                 </div>
             </div>
         </div>
@@ -231,16 +225,16 @@
                 <div class="col">
                     <div class="info-label">Check-in</div>
                     <div class="info-value" style="font-size: 14px;">{{ $order->check_in?->format('d M Y') ?? 'N/A' }}</div>
-                    <div class="info-label">dari pukul 14:00 WITA</div>
+                    <div class="info-label">from 14:00 WITA</div>
                 </div>
                 <div class="col">
                     <div class="info-label">Check-out</div>
                     <div class="info-value" style="font-size: 14px;">{{ $order->check_out?->format('d M Y') ?? 'N/A' }}</div>
-                    <div class="info-label">sebelum pukul 12:00 WITA</div>
+                    <div class="info-label">before 12:00 WITA</div>
                 </div>
                 <div class="col">
                     <div class="info-label">Durasi</div>
-                    <div class="info-value" style="font-size: 14px;">{{ $order->nights ?? 1 }} Malam</div>
+                    <div class="info-value" style="font-size: 14px;">{{ $order->nights ?? 1 }} Night</div>
                 </div>
             </div>
         </div>
@@ -248,13 +242,13 @@
         {{-- Order Items --}}
         @if($order->items && $order->items->count() > 0)
         <div class="section">
-            <div class="section-title">Rincian Pesanan</div>
+            <div class="section-title">Order Details</div>
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Kamar</th>
-                        <th class="text-center">Harga/Malam</th>
-                        <th class="text-center">Malam</th>
+                        <th>Room</th>
+                        <th class="text-center">Price/Night</th>
+                        <th class="text-center">Nights</th>
                         <th class="text-right">Subtotal</th>
                     </tr>
                 </thead>
@@ -277,21 +271,21 @@
         </div>
         @endif
 
-        {{-- Informasi Tamu (Moved to Bottom) --}}
-        <div class="stay-details clearfix">
-            <div class="section-title">Informasi Tamu</div>
+        {{-- Guest Information (Moved to Bottom) --}}
+        <div class="stay-details clearfix" style="background: #eef2ff; border: 1px solid #e0e7ff;">
+            <div class="section-title" style="color: #4338ca; border-bottom-color: #c7d2fe;">Guest Information (Stay Details)</div>
             <div class="stay-grid-3 clearfix">
                 <div class="col">
-                    <div class="info-label">Nama Tamu</div>
-                    <div class="info-value" style="font-size: 14px;">{{ $order->guest_name ?? $order->user->name ?? 'N/A' }}</div>
+                    <div class="info-label" style="color: #6366f1;">Guest Name</div>
+                    <div class="info-value" style="font-size: 14px; color: #312e81;">{{ $order->guest_name ?? $order->user->name ?? 'N/A' }}</div>
                 </div>
                 <div class="col">
-                    <div class="info-label">No. Telepon</div>
-                    <div class="info-value" style="font-size: 14px;">{{ $order->guest_phone ?? $order->user->phone ?? 'N/A' }}</div>
+                    <div class="info-label" style="color: #6366f1;">Phone Number</div>
+                    <div class="info-value" style="font-size: 14px; color: #312e81;">{{ $order->guest_phone ?? $order->user->phone ?? 'N/A' }}</div>
                 </div>
                 <div class="col">
-                    <div class="info-label">Email Guest</div>
-                    <div class="info-value" style="font-size: 14px;">{{ $order->user->email ?? 'N/A' }}</div>
+                    <div class="info-label" style="color: #6366f1;">Contact Email</div>
+                    <div class="info-value" style="font-size: 14px; color: #312e81;">{{ $order->user->email ?? '-' }}</div>
                 </div>
             </div>
         </div>
@@ -304,7 +298,7 @@
             </div>
             @if($order->discount_amount ?? 0 > 0)
             <div class="summary-row" style="color: #16a34a;">
-                <span class="label">Diskon</span>
+                <span class="label">Discount</span>
                 <span class="value">- Rp {{ number_format($order->discount_amount, 0, ',', '.') }}</span>
             </div>
             @endif
@@ -317,15 +311,15 @@
         {{-- Payment Method --}}
         @if($order->payment_method)
         <div class="payment-method">
-            <div class="section-title" style="margin-bottom: 5px;">Metode Pembayaran</div>
+            <div class="section-title" style="margin-bottom: 5px;">Payment Method</div>
             <div class="info-value">{{ ucfirst($order->payment_method) }}</div>
         </div>
         @endif
 
         {{-- Footer --}}
         <div class="footer">
-            <p>Invoice ini dibuat secara otomatis dan sah tanpa tanda tangan atau stempel.</p>
-            <p>Terima kasih telah memilih Tarsan Homestay.</p>
+            <p>This invoice is generated automatically and is valid without signature or stamp.</p>
+            <p>Thank you for choosing Tarsan Homestay.</p>
         </div>
     </div>
 </body>

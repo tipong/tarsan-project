@@ -19,7 +19,7 @@ class FinancialReportController extends Controller
             ? Carbon::parse($request->end_date)->endOfDay()
             : Carbon::now()->endOfDay();
 
-        // Get paid orders within date range (berdasarkan created_at)
+        // Get paid orders within date range (based on created_at)
         $orders = Order::where('payment_status', 'paid')
             ->whereBetween('created_at', [$startDate, $endDate])
             ->with(['items.room', 'user'])
@@ -46,7 +46,7 @@ class FinancialReportController extends Controller
             })
             ->toArray();
 
-        // Get room-wise revenue dari order_items
+        // Get room-wise revenue from order_items
         $roomRevenue = [];
         foreach ($orders as $order) {
             foreach ($order->items as $item) {
@@ -68,7 +68,7 @@ class FinancialReportController extends Controller
             ->sortByDesc('revenue')
             ->toArray();
 
-        return view('admin.reports.financial', compact(
+        return view(auth()->user()->role . '.reports.financial', compact(
             'orders',
             'totalRevenue',
             'totalOrders',
@@ -113,11 +113,11 @@ class FinancialReportController extends Controller
             $file = fopen('php://output', 'w');
 
             // Header
-            fputcsv($file, ['Laporan Keuangan Tarsan Homestay', 'Periode: ' . now()->format('Y-m-d H:i:s')]);
+            fputcsv($file, ['Tarsan Homestay Financial Report', 'Period: ' . now()->format('Y-m-d H:i:s')]);
             fputcsv($file, []);
 
             // Column headers
-            fputcsv($file, ['Tanggal', 'Kode Pesanan', 'Tamu', 'Kamar', 'Total Harga', 'Metode Pembayaran']);
+            fputcsv($file, ['Date', 'Order Code', 'Guest', 'Room', 'Total Price', 'Payment Method']);
 
             // Data
             foreach ($orders as $order) {

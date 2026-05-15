@@ -13,7 +13,7 @@
 
     {{-- Favicon --}}
     <link rel="icon" type="image/png" href="{{ asset('tarsanhomestay.png') }}">
-    {{-- atau jika pakai ico --}}
+    {{-- or use ico if needed --}}
     {{-- <link rel="icon" href="{{ asset('favicon.ico') }}"> --}}
 
     <!-- Scripts -->
@@ -43,7 +43,7 @@
         {{-- AUTH AREA --}}
         <div class="relative flex items-center gap-4">
             @guest
-                {{-- BELUM LOGIN --}}
+                {{-- NOT LOGGED IN --}}
                 <a href="{{ route('login') }}"
                    class="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">
                     Login
@@ -313,7 +313,7 @@
                 Tarsan Homestay
             </h4>
 
-            <a 
+            <a
                 href="https://maps.app.goo.gl/7pmmdcZEvY4FtAEk6"
                 target="_blank"
                 class="hover:text-white underline transition-colors"
@@ -325,12 +325,12 @@
         {{-- Kontak --}}
         <div>
             <h4 class="font-semibold mb-6 text-white uppercase tracking-wider">Contact</h4>
-            <p>Email: 
+            <p>Email:
                 <a href="mailto:tarsanhomestay@gmail.com" class="hover:text-white underline">
                     tarsanhomestay@gmail.com
                 </a>
             </p>
-            <p>Phone: 
+            <p>Phone:
                 <a href="tel:082146562293" class="hover:text-white underline">
                     0821-4656-2293
                 </a>

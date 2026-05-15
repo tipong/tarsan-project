@@ -13,10 +13,18 @@ class RoleMiddleware
             abort(403);
         }
 
-        if (! in_array(auth()->user()->role, $roles)) {
+        $userRole = auth()->user()->role;
+
+        // Owner can access all admin routes
+        if ($userRole === 'owner' && in_array('admin', $roles)) {
+            return $next($request);
+        }
+
+        if (! in_array($userRole, $roles)) {
             abort(403);
         }
 
         return $next($request);
     }
 }
+
