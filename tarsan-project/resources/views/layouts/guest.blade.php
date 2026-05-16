@@ -18,7 +18,8 @@
     <link href="https://fonts.bunny.net/css?family=figtree:300,400,500,600&display=swap" rel="stylesheet" />
 
     <!-- Scripts -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- Assets -->
+    @include('layouts.assets')
 </head>
 
     <body class="font-[Figtree] text-slate-800 antialiased selection:bg-slate-200 selection:text-slate-900">

@@ -19,79 +19,75 @@ class PaymentController extends Controller
     /**
      * PAYMENT PAGE
      */
-    public function index()
-    {
-        $cart     = session('cart', []);
-        $guest    = session('guest'); // ⬅️ ARRAY: name & phone
-        $booking  = session('booking_filter');
-        $discount = session('voucher.discount', 0);
-
-        if (empty($cart) || empty($guest) || empty($booking)) {
-            return redirect()
-                ->route('tamu.booking.index')
-                ->with('error', 'Booking data not complete');
-        }
-
-        $subtotal   = collect($cart)->sum('subtotal');
-        $finalTotal = max($subtotal - $discount, 0);
-
-        return view('tamu.payment.index', compact(
-            'cart',
-            'guest',
-            'subtotal',
-            'discount',
-            'finalTotal'
-        ));
-    }
-
-    /**
-     * CREATE SNAP TOKEN
-     */
-    public function pay(Request $request)
+    public function index(Order $order = null)
     {
         try {
-            $cart     = session('cart', []);
-            $guest    = session('guest');
-            $booking  = session('booking_filter');
-            $discount = session('voucher.discount', 0);
-            $firstCartItem = collect($cart)->first();
-            $checkIn = $booking['check_in'] ?? $firstCartItem['check_in'] ?? null;
-            $checkOut = $booking['check_out'] ?? $firstCartItem['check_out'] ?? null;
-
-            if (empty($cart) || empty($guest) || ! $checkIn || ! $checkOut) {
-                return response()->json([
-                    'error' => 'Session data incomplete'
-                ], 422);
+            // If an order is explicitly passed in the URL, use it
+            if ($order && $order->exists) {
+                $this->ensureOrderBelongsToUser($order);
+                
+                if ($order->payment_status === 'paid') {
+                    return redirect()->route('tamu.orders')->with('success', 'Order is already paid.');
+                }
+                
+                session()->put('payment.order_id', $order->id);
             }
 
-            $subtotal   = collect($cart)->sum('subtotal');
-            $finalTotal = max($subtotal - $discount, 0);
+            $orderId = session('payment.order_id');
+            $order = null;
 
-            $midtransPayment = app(MidtransPaymentService::class);
-            $order = $this->findExistingPendingOrder($finalTotal, $checkIn, $checkOut);
+            if ($orderId) {
+                $order = Order::with('items.room')->find($orderId);
+            }
 
-            if ($order) {
-                $order = $midtransPayment->syncOrderStatus($order);
+            // If order exists and is still pending, use its data
+            if ($order && $order->status === 'pending' && $order->payment_status !== 'paid') {
+                $cart = $order->items->map(function ($item) {
+                    return [
+                        'room_id' => $item->room_id,
+                        'room_name' => $item->room->room_name,
+                        'price' => $item->price_per_night,
+                        'nights' => $item->nights,
+                        'subtotal' => $item->subtotal,
+                        'check_in' => $item->order->check_in,
+                        'check_out' => $item->order->check_out,
+                    ];
+                });
+                
+                $guest = [
+                    'name' => $order->guest_name,
+                    'phone' => $order->guest_phone,
+                ];
+                
+                $subtotal = $order->total_price;
+                $discount = 0;
+                $finalTotal = $order->total_price;
+            } else {
+                $cart     = session('cart', []);
+                $guest    = session('guest');
+                $booking  = session('booking_filter');
+                $discount = session('voucher.discount', 0);
 
-                if ($order->payment_status === 'paid') {
-                    $this->clearCheckoutSession($order);
-
-                    return response()->json([
-                        'error' => 'This order has already been paid.'
-                    ], 422);
+                if (empty($cart) || empty($guest)) {
+                    return redirect()
+                        ->route('tamu.booking.index')
+                        ->with('error', 'Booking data not complete');
                 }
 
-                $payment = $midtransPayment->hasReusableSnapToken($order)
-                    ? $midtransPayment->getReusableSnapToken($order)
-                    : $midtransPayment->generateSnapToken($order, true);
-            } else {
-                $order = DB::transaction(function () use (
-                    $cart,
-                    $checkIn,
-                    $checkOut,
-                    $finalTotal,
-                    $guest
-                ) {
+                $subtotal   = collect($cart)->sum('subtotal');
+                $finalTotal = max($subtotal - $discount, 0);
+
+                $firstCartItem = collect($cart)->first();
+                $checkIn = $booking['check_in'] ?? $firstCartItem['check_in'] ?? null;
+                $checkOut = $booking['check_out'] ?? $firstCartItem['check_out'] ?? null;
+
+                if (!$checkIn || !$checkOut) {
+                    return redirect()
+                        ->route('tamu.booking.index')
+                        ->with('error', 'Check-in and check-out dates are missing.');
+                }
+
+                $order = DB::transaction(function () use ($cart, $checkIn, $checkOut, $finalTotal, $guest) {
                     $order = Order::create([
                         'order_code'     => 'ORD-' . strtoupper(Str::random(10)),
                         'user_id'        => Auth::id(),
@@ -111,12 +107,11 @@ class PaymentController extends Controller
                         OrderItem::createBookingItem([
                             'order_id' => $order->id,
                             'room_id' => $item['room_id'],
-                            'price_per_night' => $item['price_per_night'] ?? $item['price'] ?? null,
+                            'price_per_night' => $item['price'] ?? null,
                             'nights' => $item['nights'],
                             'subtotal' => $item['subtotal'],
                         ]);
                     }
-
                     if (Schema::hasTable('notifications')) {
                         Notification::create([
                             'user_id' => Auth::id(),
@@ -126,12 +121,81 @@ class PaymentController extends Controller
                             'order_id' => $order->id
                         ]);
                     }
-
                     return $order;
                 });
 
-                $payment = $midtransPayment->generateSnapToken($order);
+                session()->put('payment.order_id', $order->id);
+                
+                // Clear cart session now that order is created
+                session()->forget(['cart', 'booking_filter', 'voucher']);
             }
+
+            return view('tamu.payment.index', compact(
+                'cart',
+                'guest',
+                'subtotal',
+                'discount',
+                'finalTotal',
+                'order'
+            ));
+        } catch (\Throwable $e) {
+            Log::error('PAYMENT INDEX ERROR: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return redirect()->route('tamu.booking.index')->with('error', 'Something went wrong.');
+        }
+    }
+
+    /**
+     * CREATE SNAP TOKEN
+     */
+    public function pay(Request $request, MidtransPaymentService $midtransPayment)
+    {
+        try {
+            $orderId = session('payment.order_id');
+            $order = null;
+
+            if ($orderId) {
+                $order = Order::find($orderId);
+            }
+
+            if (!$order) {
+                // Fallback to original logic if order_id is missing (should not happen in new flow)
+                $cart     = session('cart', []);
+                $guest    = session('guest');
+                $booking  = session('booking_filter');
+                $discount = session('voucher.discount', 0);
+                $firstCartItem = collect($cart)->first();
+                $checkIn = $booking['check_in'] ?? $firstCartItem['check_in'] ?? null;
+                $checkOut = $booking['check_out'] ?? $firstCartItem['check_out'] ?? null;
+
+                if (empty($cart) || empty($guest) || ! $checkIn || ! $checkOut) {
+                    return response()->json(['error' => 'Session data incomplete'], 422);
+                }
+
+                $subtotal   = collect($cart)->sum('subtotal');
+                $finalTotal = max($subtotal - $discount, 0);
+
+                $order = $this->findExistingPendingOrder($finalTotal, $checkIn, $checkOut);
+            }
+
+            if (!$order) {
+                return response()->json(['error' => 'No active booking found.'], 404);
+            }
+
+            $this->ensureOrderBelongsToUser($order);
+
+            $order = $midtransPayment->syncOrderStatus($order);
+
+            if ($order->payment_status === 'paid') {
+                $this->clearCheckoutSession($order);
+
+                return response()->json([
+                    'error' => 'This order has already been paid.'
+                ], 422);
+            }
+
+            $payment = $midtransPayment->hasReusableSnapToken($order)
+                ? $midtransPayment->getReusableSnapToken($order)
+                : $midtransPayment->generateSnapToken($order, true);
 
             session()->put('payment.order_id', $order->id);
 
@@ -229,7 +293,7 @@ class PaymentController extends Controller
         }
     }
 
-    protected function findExistingPendingOrder(int $finalTotal, string $checkIn, string $checkOut): ?Order
+    protected function findExistingPendingOrder($finalTotal, $checkIn, $checkOut): ?Order
     {
         $orderId = session('payment.order_id');
 
@@ -269,5 +333,22 @@ class PaymentController extends Controller
         }
 
         session()->put('payment.order_id', $order->id);
+    }
+
+    public function cancel(Order $order)
+    {
+        $this->ensureOrderBelongsToUser($order);
+
+        if ($order->payment_status === 'paid') {
+            return redirect()->route('tamu.orders')->with('error', 'Paid orders cannot be cancelled.');
+        }
+
+        DB::transaction(function () use ($order) {
+            $order->update(['status' => 'cancelled']);
+        });
+
+        session()->forget(['cart', 'guest', 'booking_filter', 'voucher', 'payment']);
+
+        return redirect()->route('tamu.booking.index')->with('success', 'Booking has been cancelled.');
     }
 }

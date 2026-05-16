@@ -190,12 +190,10 @@
         @endif
 
         @if($order->status === 'pending' && $order->payment_status !== 'paid')
-            <button type="button"
-                    data-continue-payment
-                    data-order-id="{{ $order->id }}"
-                    class="px-6 py-2 bg-green-600 text-white rounded-2xl hover:bg-green-700 transition">
+            <a href="{{ route('tamu.payment.index', $order->id) }}"
+               class="px-6 py-2 bg-green-600 text-white rounded-2xl hover:bg-green-700 transition font-medium text-center">
                 💳 Continue Payment
-            </button>
+            </a>
         @endif
 
         @if(in_array($order->status, ['pending', 'confirmed']))

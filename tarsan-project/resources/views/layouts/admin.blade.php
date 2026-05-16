@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Admin - Tarsan Homestay</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- Assets -->
+    @include('layouts.assets')
 </head>
 <body class="bg-gray-100">
 

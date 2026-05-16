@@ -6,7 +6,8 @@
 
     <title>Tarsan Homestay</title>
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- Assets -->
+    @include('layouts.assets')
 </head>
 
 <body class="bg-gray-50 font-sans antialiased">

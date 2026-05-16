@@ -104,6 +104,15 @@
                         💳 Continue Payment
                     </button>
 
+                    <form action="{{ route('tamu.payment.cancel', $order->id) }}" method="POST" class="mt-3">
+                        @csrf
+                        <button type="submit" 
+                                class="w-full px-6 py-3 bg-white border border-slate-300 text-slate-700 rounded-2xl hover:bg-slate-50 transition duration-200 font-semibold text-center"
+                                onclick="return confirm('Are you sure you want to cancel this booking? This will release the room for others.')">
+                            ❌ Cancel Booking
+                        </button>
+                    </form>
+
                     <p class="text-xs text-slate-500 text-center mt-4">
                         Your payment is protected by Midtrans
                     </p>

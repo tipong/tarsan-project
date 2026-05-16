@@ -14,6 +14,11 @@ class UserController extends Controller
     {
         $query = User::query();
 
+        // 👮 RESTRICT ADMIN VIEW: Admins cannot see other admins or owners
+        if (auth()->user()->role === 'admin') {
+            $query->whereNotIn('role', ['admin', 'owner']);
+        }
+
         // 🔍 SEARCH
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {

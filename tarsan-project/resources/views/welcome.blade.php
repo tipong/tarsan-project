@@ -17,7 +17,8 @@
     {{-- <link rel="icon" href="{{ asset('favicon.ico') }}"> --}}
 
     <!-- Scripts -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- Assets -->
+    @include('layouts.assets')
 </head>
 
 <body class="bg-gray-50 font-[Figtree] text-slate-800 antialiased selection:bg-slate-200 selection:text-slate-900">
@@ -33,7 +34,7 @@
 
         {{-- MENU --}}
         <div class="hidden md:flex items-center space-x-8 text-sm font-medium">
-            <a href="#beranda" class="text-slate-600 hover:text-slate-900 transition-colors">Home</a>
+            <a href="{{ route('tamu.dashboard') }}" class="text-slate-600 hover:text-slate-900 transition-colors">Home</a>
             <a href="#tentang" class="text-slate-600 hover:text-slate-900 transition-colors">About</a>
             <a href="#fasilitas" class="text-slate-600 hover:text-slate-900 transition-colors">Facilities</a>
             <a href="{{ route('kamar.index') }}" class="text-slate-600 hover:text-slate-900 transition-colors">Rooms</a>

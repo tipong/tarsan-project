@@ -6,7 +6,8 @@ const orderBaseUrl = "{{ url('/tamu/orders') }}";
 const paymentOrderBaseUrl = "{{ url('/tamu/payment/orders') }}";
 
 async function syncExistingOrderPayment(orderId, result = {}) {
-    const response = await fetch(`${paymentOrderBaseUrl}/${orderId}/sync`, {
+    const url = "{{ route('tamu.payment.sync', ':id') }}".replace(':id', orderId);
+    const response = await fetch(url, {
         method: 'POST',
         headers: {
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -31,7 +32,8 @@ async function continuePayment(orderId, button) {
     button.innerHTML = '⏳ Memproses...';
 
     try {
-        const response = await fetch(`${paymentOrderBaseUrl}/${orderId}/continue`, {
+        const url = "{{ route('tamu.payment.continue', ':id') }}".replace(':id', orderId);
+        const response = await fetch(url, {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,

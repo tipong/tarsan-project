@@ -121,12 +121,10 @@
                             </a>
 
                             @if($order->status === 'pending' && $order->payment_status !== 'paid')
-                                <button type="button"
-                                        data-continue-payment
-                                        data-order-id="{{ $order->id }}"
-                                        class="px-4 py-2 bg-green-600 text-white rounded-2xl hover:bg-green-700 transition duration-200 font-medium text-sm">
+                                <a href="{{ route('tamu.payment.index', $order->id) }}"
+                                   class="px-4 py-2 bg-green-600 text-white rounded-2xl hover:bg-green-700 transition duration-200 font-medium text-sm text-center">
                                     Continue Payment
-                                </button>
+                                </a>
                             @endif
 
                             @if($order->payment_status === 'paid')
@@ -289,18 +287,7 @@ function openReviewModal(orderId) {
 
 function closeReviewModal() {
     const modal = document.getElementById('reviewModal');
-    modal.classList.add('hidden');
 }
-
-// Continue Payment Button Handler
-document.addEventListener('DOMContentLoaded', function() {
-    const continueButtons = document.querySelectorAll('[data-continue-payment]');
-    continueButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const orderId = this.getAttribute('data-order-id');
-            window.location.href = `/tamu/payment/${orderId}`;
-        });
-    });
-});
 </script>
+@include('tamu.orders.partials.continue-payment-script')
 @endsection

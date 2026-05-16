@@ -6,7 +6,8 @@
     <title>Owner Dashboard - Tarsan Homestay</title>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:300,400,500,600&display=swap" rel="stylesheet" />
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- Assets -->
+    @include('layouts.assets')
 </head>
 
 <body class="bg-slate-50 font-[Figtree] text-slate-800 antialiased min-h-screen flex selection:bg-indigo-100 selection:text-indigo-900">

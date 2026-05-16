@@ -33,6 +33,10 @@
                 <option value="">All Roles</option>
                 <option value="tamu" {{ request('role')=='tamu'?'selected' : '' }}>Guest</option>
                 <option value="resepsionis" {{ request('role')=='resepsionis'?'selected' : '' }}>Receptionist</option>
+                @if(auth()->user()->role === 'owner')
+                    <option value="admin" {{ request('role')=='admin'?'selected' : '' }}>Admin</option>
+                    <option value="owner" {{ request('role')=='owner'?'selected' : '' }}>Owner</option>
+                @endif
             </select>
         </div>
 
@@ -197,8 +201,10 @@
                             class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-indigo-600 text-slate-900 font-medium outline-none transition-all appearance-none cursor-pointer">
                         <option value="tamu">Guest</option>
                         <option value="resepsionis">Receptionist</option>
-                        <option value="admin">Admin</option>
-                        <option value="owner">Owner</option>
+                        @if(auth()->user()->role === 'owner')
+                            <option value="admin">Admin</option>
+                            <option value="owner">Owner</option>
+                        @endif
                     </select>
                 </div>
 

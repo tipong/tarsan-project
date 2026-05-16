@@ -191,7 +191,7 @@ Route::middleware(['auth', 'role:tamu'])
                 [ReservationController::class, 'applyGuestInfo']
             )->name('reservation.guest');
 
-        Route::get('/payment',
+        Route::get('/payment/{order?}',
             [PaymentController::class, 'index']
         )->name('payment.index');
 
@@ -202,6 +202,8 @@ Route::middleware(['auth', 'role:tamu'])
             ->name('payment.sync');
         Route::post('/payment/orders/{order}/continue', [PaymentController::class, 'continuePayment'])
             ->name('payment.continue');
+        Route::post('/payment/orders/{order}/cancel', [PaymentController::class, 'cancel'])
+            ->name('payment.cancel');
 
         Route::get('/payment/success', function () {
             return redirect()->route('tamu.orders')
