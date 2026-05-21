@@ -1,38 +1,41 @@
-@extends('layouts.app')
+@extends('layouts.tamu-inner')
+@section('title', 'Edit Profile – Tarsan Homestay')
+@section('page-tag', 'Account')
+@section('page-title', 'Edit Profile')
+@section('page-sub', 'Manage your account information and security')
 
-@section('title', 'Edit Profile')
+@push('styles')
+<style>
+.profile-wrap{max-width:800px;margin:0 auto}
+.profile-box{background:#fff;border:1px solid rgba(0,0,0,.07);padding:40px;margin-bottom:24px}
+.profile-box header h2{font-family:'Playfair Display',serif;font-size:24px;font-weight:400;color:#1a1a1a;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.profile-box header p{font-size:13px;color:#888}
+.profile-box label{font-size:11px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:#8a7a65;margin-bottom:8px;display:block}
+.profile-box input[type="text"], .profile-box input[type="email"], .profile-box input[type="password"]{width:100%;background:#f8f5ef;border:1px solid rgba(0,0,0,.1);padding:12px 16px;font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:border-color .3s;border-radius:0}
+.profile-box input:focus{border-color:#6b5c47}
+.profile-box .btn-save{padding:12px 24px;background:#1a1a1a;color:#fff;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;border:none;cursor:pointer;transition:background .3s}
+.profile-box .btn-save:hover{background:#333}
+.profile-box .btn-danger{padding:12px 24px;background:transparent;color:#dc2626;border:1px solid #dc2626;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .3s}
+.profile-box .btn-danger:hover{background:#dc2626;color:#fff}
+</style>
+@endpush
 
-@section('content')
-<div class="min-h-screen bg-gray-50">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {{-- Header --}}
-        <div class="mb-8">
-            <a href="{{ route('tamu.dashboard') }}" class="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition duration-200 mb-4">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                </svg>
-                Back to Dashboard
-            </a>
-            <h1 class="text-3xl font-bold text-gray-900">Edit Profile</h1>
-            <p class="text-gray-600 mt-1">Manage your account information here</p>
-        </div>
+@section('inner-content')
+<div class="breadcrumb" style="max-width:800px;margin:0 auto 24px;font-size:12px">
+    <a href="{{ route('tamu.dashboard') }}" style="color:#6b5c47;text-decoration:none">← Back to Dashboard</a>
+</div>
 
-        <div class="space-y-6">
-            {{-- Profile Information --}}
-            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                @include('profile.partials.update-profile-information-form')
-            </div>
+<div class="profile-wrap">
+    <div class="profile-box">
+        @include('profile.partials.update-profile-information-form')
+    </div>
 
-            {{-- Update Password --}}
-            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                @include('profile.partials.update-password-form')
-            </div>
+    <div class="profile-box">
+        @include('profile.partials.update-password-form')
+    </div>
 
-            {{-- Delete Account --}}
-            <div class="bg-white p-6 rounded-lg shadow-sm border border-red-200">
-                @include('profile.partials.delete-user-form')
-            </div>
-        </div>
+    <div class="profile-box" style="border-color:rgba(220,38,38,0.2)">
+        @include('profile.partials.delete-user-form')
     </div>
 </div>
 @endsection

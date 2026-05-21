@@ -1,140 +1,132 @@
-@extends('layouts.app')
+@extends('layouts.tamu-inner')
+@section('title', $room->room_name . ' – Tarsan Homestay')
+@section('page-tag', 'Accommodation')
+@section('page-title', $room->room_name)
+@section('page-sub', 'Rp ' . number_format($room->price_per_night, 0, ',', '.') . ' per night · ' . $room->capacity . ' guests · ' . $room->total_rooms . ' unit')
 
-@section('title', $room->room_name)
+@push('styles')
+<style>
+.show-grid{display:grid;grid-template-columns:1fr 360px;gap:2px;align-items:start}
+.show-main{display:flex;flex-direction:column;gap:2px}
+.main-img{height:460px;overflow:hidden;background:#f4f0e6;position:relative}
+.main-img img{width:100%;height:100%;object-fit:cover;transition:transform .6s}
+.main-img:hover img{transform:scale(1.02)}
+.thumb-row{display:flex;gap:2px}
+.thumb{flex:1;height:110px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:border-color .3s}
+.thumb:hover,.thumb.active{border-color:#6b5c47}
+.thumb img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.thumb:hover img{transform:scale(1.06)}
+.show-sidebar{position:sticky;top:84px;display:flex;flex-direction:column;gap:2px}
+.sidebar-box{background:#fff;border:1px solid rgba(0,0,0,.07);padding:28px}
+.sb-label{font-size:10px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#8a7a65;margin-bottom:10px;display:block}
+.sb-price{font-family:'Playfair Display',serif;font-size:36px;font-weight:400;color:#1a1a1a;line-height:1;margin-bottom:4px}
+.sb-price-sub{font-size:12px;color:#aaa;margin-bottom:24px}
+.fac-list{display:flex;flex-direction:column;gap:8px}
+.fac-item{display:flex;align-items:center;gap:10px;font-size:13px;color:#444}
+.fac-item::before{content:'—';color:#6b5c47;font-size:12px;flex-shrink:0}
+.desc-box{background:#fff;border:1px solid rgba(0,0,0,.07);padding:36px;margin-top:2px}
+.desc-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:400;color:#1a1a1a;margin-bottom:18px}
+.desc-text{font-size:15px;font-weight:300;color:#555;line-height:1.9}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.info-item{}
+.info-label{font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:#8a7a65;margin-bottom:5px}
+.info-val{font-family:'Playfair Display',serif;font-size:18px;font-weight:400;color:#1a1a1a}
+.breadcrumb{display:flex;align-items:center;gap:8px;margin-bottom:28px;font-size:12px;color:#aaa}
+.breadcrumb a{color:#6b5c47;text-decoration:none;transition:color .3s}
+.breadcrumb a:hover{color:#1a1a1a}
+@media(max-width:900px){
+  .show-grid{grid-template-columns:1fr}
+  .show-sidebar{position:static}
+  .thumb-row{overflow-x:auto}
+  .thumb{min-width:100px}
+}
+</style>
+@endpush
 
-@section('content')
-<div class="min-h-screen bg-gray-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {{-- Breadcrumb --}}
-        <div class="mb-8 flex items-center gap-2 text-sm text-gray-600">
-            <a href="{{ route('kamar.index') }}" class="hover:text-blue-600 transition">Room List</a>
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-            <span class="text-gray-800">{{ $room->room_name }}</span>
+@section('inner-content')
+<div class="breadcrumb">
+    <a href="{{ route('kamar.index') }}">← All Rooms</a>
+    <span>/</span>
+    <span style="color:#2a2a2a">{{ $room->room_name }}</span>
+</div>
+
+<div class="show-grid">
+    {{-- LEFT: IMAGES + DESCRIPTION --}}
+    <div class="show-main">
+        <div class="main-img">
+            @if($room->images->count() > 0)
+                <img src="{{ asset('storage/'.$room->images->first()->image) }}" alt="{{ $room->room_name }}" id="mainImage">
+            @else
+                <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:14px">No image available</div>
+            @endif
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {{-- Images Section --}}
-            <div class="lg:col-span-2">
-                {{-- Main Image --}}
-                <div class="mb-6 rounded-lg overflow-hidden shadow-lg bg-gray-200">
-                    @if($room->images->count() > 0)
-                        <img src="{{ asset('storage/' . $room->images->first()->image) }}"
-                             alt="{{ $room->room_name }}"
-                             class="w-full h-96 object-cover"
-                             id="mainImage">
-                    @else
-                        <div class="w-full h-96 flex items-center justify-center bg-gray-300">
-                            <span class="text-gray-500 text-lg">Image not available</span>
-                        </div>
-                    @endif
+        @if($room->images->count() > 1)
+        <div class="thumb-row">
+            @foreach($room->images as $idx => $image)
+                <div class="thumb {{ $idx === 0 ? 'active' : '' }}" onclick="switchImage('{{ asset('storage/'.$image->image) }}', this)">
+                    <img src="{{ asset('storage/'.$image->image) }}" alt="Gallery">
                 </div>
+            @endforeach
+        </div>
+        @endif
 
-                {{-- Gallery Thumbnails --}}
-                @if($room->images->count() > 1)
-                    <div class="grid grid-cols-4 md:grid-cols-5 gap-3">
-                        @foreach($room->images as $image)
-                            <button
-                                onclick="document.getElementById('mainImage').src = '{{ asset('storage/' . $image->image) }}'"
-                                class="relative h-20 rounded-lg overflow-hidden border-2 border-transparent hover:border-blue-600 transition group">
-                                <img src="{{ asset('storage/' . $image->image) }}"
-                                     alt="Gallery"
-                                     class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
-                            </button>
-                        @endforeach
-                    </div>
-                @endif
+        <div class="desc-box">
+            <h2 class="desc-title">About This Room</h2>
+            <p class="desc-text">{{ $room->description }}</p>
+        </div>
+    </div>
+
+    {{-- RIGHT: SIDEBAR --}}
+    <div class="show-sidebar">
+        <div class="sidebar-box">
+            <span class="sb-label">Price Per Night</span>
+            <div class="sb-price">Rp {{ number_format($room->price_per_night, 0, ',', '.') }}</div>
+            <div class="sb-price-sub">per night, excluding tax</div>
+
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">Capacity</div>
+                    <div class="info-val">{{ $room->capacity }} guests</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Units</div>
+                    <div class="info-val">{{ $room->total_rooms }} rooms</div>
+                </div>
             </div>
 
-            {{-- Info Sidebar --}}
-            <div class="space-y-6">
-                {{-- Title & Price --}}
-                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <h1 class="text-3xl font-bold text-gray-900 mb-4">{{ $room->room_name }}</h1>
-                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                        <p class="text-sm text-gray-600 mb-1">Price Per Night</p>
-                        <p class="text-3xl font-bold text-blue-600">
-                            Rp {{ number_format($room->price_per_night, 0, ',', '.') }}
-                        </p>
-                    </div>
-                </div>
-
-                {{-- Key Information --}}
-                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                    <h3 class="font-bold text-gray-900 mb-4">Room Information</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-start gap-3">
-                            <svg class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"></path>
-                            </svg>
-                            <div>
-                                <p class="text-sm text-gray-600">Kapasitas</p>
-                                <p class="font-semibold text-gray-900">{{ $room->capacity }} orang</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-3">
-                            <svg class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
-                            </svg>
-                            <div>
-                                <p class="text-sm text-gray-600">Jumlah Unit</p>
-                                <p class="font-semibold text-gray-900">{{ $room->total_rooms }} room</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- Facilities --}}
-                @if($room->facility_names->isNotEmpty())
-                    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-                        <h3 class="font-bold text-gray-900 mb-4">Fasilitas</h3>
-                        <div class="space-y-2">
-                            @foreach($room->facility_names as $facilityName)
-                                <div class="flex items-center gap-3">
-                                    <svg class="w-4 h-4 text-green-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                    </svg>
-                                    <span class="text-gray-700">{{ $facilityName }}</span>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
+            @auth
+                @if(auth()->user()->role === 'tamu')
+                    <a href="{{ route('tamu.booking.index') }}?room_id={{ $room->id }}" class="btn-fill" style="display:block;text-align:center;width:100%;margin-bottom:8px">Book This Room</a>
+                @else
+                    <div style="padding:12px 16px;background:#fff5f5;border-left:3px solid #dc2626;font-size:13px;color:#991b1b;margin-bottom:8px">Only guests can book rooms</div>
                 @endif
+            @else
+                <a href="{{ route('login') }}" class="btn-fill" style="display:block;text-align:center;width:100%;margin-bottom:8px">Login to Book</a>
+            @endauth
+            <a href="{{ route('kamar.index') }}" class="btn-dark" style="display:block;text-align:center;width:100%">Back to Rooms</a>
+        </div>
 
-                {{-- Booking Buttons --}}
-                <div class="space-y-3">
-                    @auth
-                        @if(auth()->user()->role === 'tamu')
-                            <a href="{{ route('tamu.booking.index') }}?room_id={{ $room->id }}"
-                               class="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200 font-semibold text-center block">
-                                Book This Room
-                            </a>
-                        @else
-                            <div class="p-4 bg-red-50 border border-red-200 rounded-lg">
-                                <p class="text-sm text-red-700">Only guests can book rooms</p>
-                            </div>
-                        @endif
-                    @else
-                        <a href="{{ route('login') }}"
-                           class="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200 font-semibold text-center block">
-                            Login to Book
-                        </a>
-                    @endauth
-
-                    <a href="{{ route('kamar.index') }}"
-                       class="w-full px-6 py-3 bg-gray-200 text-gray-900 rounded-lg hover:bg-gray-300 transition duration-200 font-semibold text-center block">
-                        Back
-                    </a>
-                </div>
+        @if($room->facility_names->isNotEmpty())
+        <div class="sidebar-box">
+            <span class="sb-label">Room Facilities</span>
+            <div class="fac-list">
+                @foreach($room->facility_names as $facilityName)
+                    <div class="fac-item">{{ $facilityName }}</div>
+                @endforeach
             </div>
         </div>
-
-        {{-- Description --}}
-        <div class="mt-12 bg-white p-8 rounded-lg shadow-sm border border-gray-200">
-            <h2 class="text-2xl font-bold text-gray-900 mb-4">Description</h2>
-            <p class="text-gray-700 leading-relaxed">{{ $room->description }}</p>
-        </div>
+        @endif
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+function switchImage(src, el){
+    document.getElementById('mainImage').src = src;
+    document.querySelectorAll('.thumb').forEach(t=>t.classList.remove('active'));
+    el.classList.add('active');
+}
+</script>
+@endpush

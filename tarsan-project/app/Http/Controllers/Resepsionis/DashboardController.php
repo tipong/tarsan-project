@@ -22,6 +22,7 @@ class DashboardController extends Controller
 
             'todayCheckin' => Order::whereDate('check_in', today())
                 ->where('status', '!=', 'cancelled')
+                ->where('payment_status', 'paid')
                 ->count(),
 
             'todayCheckout' => Order::whereDate('check_out', today())

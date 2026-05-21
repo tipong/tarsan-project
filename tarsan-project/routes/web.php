@@ -25,6 +25,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', fn () => view('welcome'))->name('beranda');
 Route::get('/kamar', [TamuRoomController::class, 'index'])->name('kamar.index');
 Route::get('/kamar/{room}', [TamuRoomController::class, 'show'])->name('kamar.show');
+Route::view('/fasilitas', 'tamu.facilities')->name('tamu.facilities');
+Route::view('/dining', 'tamu.dining')->name('tamu.dining');
 Route::post('/midtrans/callback', [MidtransCallbackController::class, 'handle'])
     ->name('midtrans.callback');
 
@@ -191,24 +193,26 @@ Route::middleware(['auth', 'role:tamu'])
                 [ReservationController::class, 'applyGuestInfo']
             )->name('reservation.guest');
 
+        Route::get('/payment/success', function () {
+            return redirect()->route('tamu.orders')
+                ->with('success', 'Payment successful. Your order has been confirmed.');
+        })->name('payment.success');
+
         Route::get('/payment/{order?}',
             [PaymentController::class, 'index']
         )->name('payment.index');
 
         Route::post('/payment/pay', [PaymentController::class, 'pay'])
-        ->name('payment.pay');
+            ->name('payment.pay');
 
         Route::post('/payment/orders/{order}/sync', [PaymentController::class, 'sync'])
             ->name('payment.sync');
+
         Route::post('/payment/orders/{order}/continue', [PaymentController::class, 'continuePayment'])
             ->name('payment.continue');
+
         Route::post('/payment/orders/{order}/cancel', [PaymentController::class, 'cancel'])
             ->name('payment.cancel');
-
-        Route::get('/payment/success', function () {
-            return redirect()->route('tamu.orders')
-                ->with('success', 'Payment successful. Your order has been confirmed.');
-        })->name('payment.success');
 
         Route::get('/orders', [\App\Http\Controllers\Tamu\OrderController::class, 'index'])
         ->middleware('auth')

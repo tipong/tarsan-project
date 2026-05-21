@@ -1,132 +1,109 @@
-@extends('layouts.app')
+@extends('layouts.tamu-inner')
+@section('title', 'Payment – Tarsan Homestay')
+@section('page-tag', 'Payment')
+@section('page-title', 'Payment Confirmation')
+@section('page-sub', 'Review your order before proceeding to secure payment')
 
-@section('content')
-<div class="min-h-screen bg-gray-50">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {{-- Header --}}
-        <div class="mb-12">
-            <h1 class="text-3xl md:text-4xl font-bold text-slate-900 mb-2">Payment Confirmation</h1>
-            <p class="text-slate-600">Review your order before payment</p>
+@push('styles')
+<style>
+.pay-grid{display:grid;grid-template-columns:1fr 400px;gap:24px;align-items:start}
+.pay-box{background:#fff;border:1px solid rgba(0,0,0,.07);padding:32px;margin-bottom:24px}
+.pay-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:400;color:#1a1a1a;margin-bottom:20px}
+.pay-item{display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid rgba(0,0,0,.06)}
+.pay-item:last-child{border-bottom:none;padding-bottom:0}
+.pi-name{font-size:14px;font-weight:500;color:#1a1a1a;margin-bottom:4px}
+.pi-meta{font-size:12px;color:#666}
+.pi-price{font-family:'Playfair Display',serif;font-size:16px;font-weight:400;color:#1a1a1a;text-align:right}
+.pay-total{display:flex;justify-content:space-between;align-items:center;padding-top:20px;border-top:1px solid rgba(0,0,0,.06);margin-top:20px}
+.pt-label{font-size:12px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:#1a1a1a}
+.pt-val{font-family:'Playfair Display',serif;font-size:28px;font-weight:400;color:#1a1a1a}
+.g-row{margin-bottom:12px}
+.g-label{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#8a7a65;margin-bottom:4px}
+.g-val{font-size:14px;color:#1a1a1a}
+.pm-list{margin-bottom:24px;font-size:13px;color:#555;line-height:1.8}
+.pm-list ul{padding-left:0;list-style:none;margin-top:10px}
+.pm-list li{display:flex;align-items:center;gap:8px}
+.pm-list li::before{content:'✓';color:#6b5c47;font-weight:bold}
+.secure-note{font-size:11px;color:#888;text-align:center;margin-top:16px;letter-spacing:.05em}
+@media(max-width:900px){.pay-grid{grid-template-columns:1fr}}
+</style>
+@endpush
+
+@section('inner-content')
+<div class="pay-grid">
+    {{-- LEFT --}}
+    <div>
+        <div class="pay-box">
+            <h2 class="pay-title">Order Summary</h2>
+            @foreach($cart as $item)
+                <div class="pay-item">
+                    <div>
+                        <div class="pi-name">{{ $item['room_name'] }}</div>
+                        <div class="pi-meta">
+                            {{ \Carbon\Carbon::parse($item['check_in'])->format('d M Y') }} – {{ \Carbon\Carbon::parse($item['check_out'])->format('d M Y') }}<br>
+                            {{ $item['nights'] }} nights
+                        </div>
+                    </div>
+                    <div>
+                        <div class="pi-price">Rp {{ number_format($item['subtotal']) }}</div>
+                        <div class="pi-meta" style="text-align:right;margin-top:2px">Rp {{ number_format($item['price'] ?? 0) }}/night</div>
+                    </div>
+                </div>
+            @endforeach
+            <div class="pay-total">
+                <span class="pt-label">Total Payment</span>
+                <span class="pt-val">Rp {{ number_format($finalTotal) }}</span>
+            </div>
         </div>
 
-        <div class="grid md:grid-cols-3 gap-6">
-            {{-- LEFT: Order Details --}}
-            <div class="md:col-span-2 space-y-6">
-                {{-- Booking Summary Card --}}
-                <div class="bg-white p-6 rounded-2xl shadow border border-slate-200">
-                    <h2 class="text-lg font-bold text-slate-900 mb-4">Order Summary</h2>
+        <div class="pay-box">
+            <h2 class="pay-title">Guest Data</h2>
+            <div class="g-row">
+                <div class="g-label">Guest Name</div>
+                <div class="g-val">{{ session('guest.name', 'N/A') }}</div>
+            </div>
+            <div class="g-row">
+                <div class="g-label">Phone Number</div>
+                <div class="g-val">{{ session('guest.phone', 'N/A') }}</div>
+            </div>
+            <div class="g-row">
+                <div class="g-label">Email</div>
+                <div class="g-val">{{ auth()->user()->email }}</div>
+            </div>
+        </div>
+    </div>
 
-                    <div class="space-y-4">
-                        @foreach($cart as $item)
-                            <div class="flex justify-between items-start pb-4 border-b border-slate-200 last:border-0">
-                                <div class="flex-1">
-                                    <p class="font-semibold text-slate-900">{{ $item['room_name'] }}</p>
-                                    <p class="text-sm text-slate-600 mt-2">
-                                        📅 {{ \Carbon\Carbon::parse($item['check_in'])->format('d M Y') }} - {{ \Carbon\Carbon::parse($item['check_out'])->format('d M Y') }}
-                                    </p>
-                                    <p class="text-sm text-slate-600">🌙 {{ $item['nights'] }} nights</p>
-                                </div>
-                                <div class="text-right">
-                                    <p class="font-bold text-slate-900">Rp {{ number_format($item['subtotal']) }}</p>
-                                    <p class="text-xs text-slate-500 mt-1">Rp {{ number_format($item['price'] ?? 0) }}/night</p>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-
-                    {{-- Divider --}}
-                    <div class="border-t border-slate-200 my-4"></div>
-
-                    {{-- Total --}}
-                    <div class="flex justify-between items-center">
-                        <span class="text-lg font-bold text-slate-900">Total Payment</span>
-                        <span class="text-2xl font-bold text-indigo-600">Rp {{ number_format($finalTotal) }}</span>
-                    </div>
-                </div>
-
-                {{-- Guest Information Card --}}
-                <div class="bg-white p-6 rounded-2xl shadow border border-slate-200">
-                    <h3 class="text-lg font-bold text-slate-900 mb-4">Guest Data</h3>
-                    <div class="space-y-3">
-                        <div>
-                            <p class="text-sm text-slate-600">Guest Name</p>
-                            <p class="font-semibold text-slate-900">{{ session('guest.name', 'N/A') }}</p>
-                        </div>
-                        <div>
-                            <p class="text-sm text-slate-600">Phone Number</p>
-                            <p class="font-semibold text-slate-900">{{ session('guest.phone', 'N/A') }}</p>
-                        </div>
-                        <div>
-                            <p class="text-sm text-slate-600">Email</p>
-                            <p class="font-semibold text-slate-900">{{ auth()->user()->email }}</p>
-                        </div>
-                    </div>
-                </div>
+    {{-- RIGHT --}}
+    <div>
+        <div class="pay-box" style="position:sticky;top:84px">
+            <h2 class="pay-title">Payment Methods</h2>
+            <div class="pm-list">
+                Powered by <strong>Midtrans</strong>. We accept:
+                <ul>
+                    <li>Credit / Debit Card</li>
+                    <li>Bank Transfer (Virtual Account)</li>
+                    <li>E-Wallet (GoPay, OVO, ShopeePay)</li>
+                    <li>QRIS</li>
+                </ul>
             </div>
 
-            {{-- RIGHT: Payment Methods --}}
-            <div>
-                <div class="bg-white p-6 rounded-2xl shadow border border-slate-200 sticky top-24">
-                    <h3 class="text-lg font-bold text-slate-900 mb-4">Payment Methods</h3>
+            <button id="pay-button" class="btn-fill" style="width:100%;text-align:center;margin-bottom:12px">💳 Continue Payment</button>
 
-                    <div class="space-y-3 mb-6 text-sm text-slate-600">
-                        <p><strong>Midtrans Snap</strong> accepts various payment methods:</p>
-                        <ul class="space-y-2 text-sm">
-                            <li class="flex items-center gap-2">
-                                <svg class="w-4 h-4 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                </svg>
-                                Credit / Debit Card
-                            </li>
-                            <li class="flex items-center gap-2">
-                                <svg class="w-4 h-4 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                </svg>
-                                Bank Transfer
-                            </li>
-                            <li class="flex items-center gap-2">
-                                <svg class="w-4 h-4 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                </svg>
-                                E-Wallet (GCash, OVO, Dana)
-                            </li>
-                            <li class="flex items-center gap-2">
-                                <svg class="w-4 h-4 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                </svg>
-                                QRIS & Retail Stores
-                            </li>
-                        </ul>
-                    </div>
-
-                    <button id="pay-button"
-                            class="w-full px-6 py-3 bg-slate-900 text-white rounded-2xl hover:bg-slate-800 transition duration-200 font-bold text-center">
-                        💳 Continue Payment
-                    </button>
-
-                    <form action="{{ route('tamu.payment.cancel', $order->id) }}" method="POST" class="mt-3">
-                        @csrf
-                        <button type="submit" 
-                                class="w-full px-6 py-3 bg-white border border-slate-300 text-slate-700 rounded-2xl hover:bg-slate-50 transition duration-200 font-semibold text-center"
-                                onclick="return confirm('Are you sure you want to cancel this booking? This will release the room for others.')">
-                            ❌ Cancel Booking
-                        </button>
-                    </form>
-
-                    <p class="text-xs text-slate-500 text-center mt-4">
-                        Your payment is protected by Midtrans
-                    </p>
-                </div>
-            </div>
+            <form action="{{ route('tamu.payment.cancel', $order->id) }}" method="POST">
+                @csrf
+                <button type="submit" class="btn-dark" style="width:100%;text-align:center;background:transparent;border:1px solid #dc2626;color:#dc2626" onclick="return confirm('Cancel this booking? The room will be released.')">
+                    ❌ Cancel Booking
+                </button>
+            </form>
+            
+            <div class="secure-note">🔒 Secured by Midtrans</div>
         </div>
     </div>
 </div>
 @endsection
 
-@section('scripts')
-<script src="https://app.sandbox.midtrans.com/snap/snap.js"
-        data-client-key="{{ config('midtrans.client_key') }}"></script>
-
+@push('scripts')
+<script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
 <script>
 const orderBaseUrl = "{{ url('/tamu/orders') }}";
 const paymentOrderBaseUrl = "{{ url('/tamu/payment/orders') }}";
@@ -134,61 +111,40 @@ const paymentOrderBaseUrl = "{{ url('/tamu/payment/orders') }}";
 async function syncPaymentStatus(orderId, result = {}) {
     const response = await fetch(`${paymentOrderBaseUrl}/${orderId}/sync`, {
         method: "POST",
-        headers: {
-            "X-CSRF-TOKEN": "{{ csrf_token() }}",
-            "Accept": "application/json",
-            "Content-Type": "application/json"
-        },
+        headers: {"X-CSRF-TOKEN": "{{ csrf_token() }}","Accept": "application/json","Content-Type": "application/json"},
         body: JSON.stringify(result)
     });
-
     const data = await response.json();
-
-    if (!response.ok) {
-        throw new Error(data.error ?? 'Failed to sync payment status.');
-    }
-
+    if (!response.ok) throw new Error(data.error ?? 'Failed to sync payment status.');
     return data;
 }
 
 document.getElementById('pay-button').addEventListener('click', async function () {
     const button = this;
     button.disabled = true;
-    button.innerHTML = '⏳ Memproses...';
+    button.innerHTML = '⏳ Processing...';
 
     try {
         const response = await fetch("{{ route('tamu.payment.pay') }}", {
             method: "POST",
-            headers: {
-                "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            }
+            headers: {"X-CSRF-TOKEN": "{{ csrf_token() }}","Accept": "application/json","Content-Type": "application/json"}
         });
 
         if (!response.ok) {
-            let serverMessage = 'An error occurred on the server. Please try again.';
-
+            let serverMessage = 'An error occurred. Please try again.';
             try {
                 const errorData = await response.json();
                 serverMessage = errorData.error ?? serverMessage;
-                console.error('SERVER ERROR:', errorData);
-            } catch (parseError) {
-                const text = await response.text();
-                console.error('SERVER ERROR:', text, parseError);
-            }
-
-            Swal.fire('Error', serverMessage, 'error');
+            } catch (e) {}
+            alert('Error: ' + serverMessage);
             button.disabled = false;
             button.innerHTML = '💳 Continue Payment';
             return;
         }
 
         const data = await response.json();
-        console.log('PAYMENT RESPONSE:', data);
-
         if (!data.snap_token) {
-            Swal.fire('Error', data.error ?? 'Failed to create payment token', 'error');
+            alert('Error: ' + (data.error ?? 'Failed to create payment token'));
             button.disabled = false;
             button.innerHTML = '💳 Continue Payment';
             return;
@@ -198,33 +154,27 @@ document.getElementById('pay-button').addEventListener('click', async function (
             onSuccess: async function (result) {
                 try {
                     await syncPaymentStatus(data.order_id, result);
-
-                    Swal.fire('Success!', 'Payment successful. Thank you!', 'success').then(() => {
-                        window.location.href = "{{ route('tamu.payment.success') }}";
-                    });
-                } catch (syncError) {
-                    console.error('SYNC ERROR:', syncError);
+                    alert('Payment successful!');
+                    window.location.href = "{{ route('tamu.payment.success') }}";
+                } catch (e) {
                     button.disabled = false;
                     button.innerHTML = '💳 Continue Payment';
-                    Swal.fire('Error', syncError.message, 'error');
+                    alert('Error: ' + e.message);
                 }
             },
             onPending: async function (result) {
                 try {
                     await syncPaymentStatus(data.order_id, result);
-
-                    Swal.fire('Pending', 'Your payment is being processed...', 'info').then(() => {
-                        window.location.href = `${orderBaseUrl}/${data.order_id}`;
-                    });
-                } catch (syncError) {
-                    console.error('SYNC ERROR:', syncError);
+                    alert('Your payment is being processed.');
+                    window.location.href = `${orderBaseUrl}/${data.order_id}`;
+                } catch (e) {
                     button.disabled = false;
                     button.innerHTML = '💳 Continue Payment';
-                    Swal.fire('Error', syncError.message, 'error');
+                    alert('Error: ' + e.message);
                 }
             },
             onError: function () {
-                Swal.fire('Failed', 'Payment failed. Please try again.', 'error');
+                alert('Payment failed. Please try again.');
                 button.disabled = false;
                 button.innerHTML = '💳 Continue Payment';
             },
@@ -234,11 +184,10 @@ document.getElementById('pay-button').addEventListener('click', async function (
             }
         });
     } catch (error) {
-        console.error('ERROR:', error);
-        Swal.fire('Error', 'An error occurred. Please try again.', 'error');
+        alert('An error occurred. Please try again.');
         button.disabled = false;
         button.innerHTML = '💳 Continue Payment';
     }
 });
 </script>
-@endsection
+@endpush

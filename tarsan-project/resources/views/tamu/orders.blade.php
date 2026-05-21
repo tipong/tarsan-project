@@ -1,239 +1,181 @@
-@extends('layouts.app')
+@extends('layouts.tamu-inner')
+@section('title', 'My Orders – Tarsan Homestay')
+@section('page-tag', 'Account')
+@section('page-title', 'My Orders')
+@section('page-sub', 'Manage all your reservations and bookings')
 
-@section('title', 'My Orders')
+@push('styles')
+<style>
+.order-card{background:#fff;border:1px solid rgba(0,0,0,.07);margin-bottom:2px;transition:box-shadow .3s}
+.order-card:hover{box-shadow:0 4px 24px rgba(0,0,0,.08)}
+.order-inner{padding:28px 32px}
+.order-grid{display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr 1.2fr;gap:24px;margin-bottom:24px}
+.order-field-label{font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:#8a7a65;margin-bottom:6px}
+.order-code{font-family:'Playfair Display',serif;font-size:20px;font-weight:500;color:#1a1a1a}
+.order-date{font-size:12px;color:#888;margin-top:4px}
+.order-dates{font-family:'Playfair Display',serif;font-size:18px;font-weight:400;color:#1a1a1a}
+.order-nights{font-size:12px;color:#888;margin-top:4px}
+.order-total{font-family:'Playfair Display',serif;font-size:22px;font-weight:400;color:#1a1a1a}
+.order-actions{display:flex;flex-wrap:wrap;gap:8px;padding-top:20px;border-top:1px solid rgba(0,0,0,.06)}
+.oa{padding:9px 20px;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;transition:all .3s;cursor:pointer;font-family:'Inter',sans-serif;border:none}
+.oa-detail{border:1px solid #1a1a1a;color:#1a1a1a;background:transparent}
+.oa-detail:hover{background:#1a1a1a;color:#fff}
+.oa-pay{border:1px solid #059669;background:#059669;color:#fff}
+.oa-pay:hover{background:#047857}
+.oa-invoice{border:1px solid #7c3aed;background:#7c3aed;color:#fff}
+.oa-invoice:hover{background:#6d28d9}
+.oa-pdf{border:1px solid #059669;background:#059669;color:#fff}
+.oa-pdf:hover{background:#047857}
+.oa-cancel{border:1px solid #dc2626;color:#dc2626;background:transparent}
+.oa-cancel:hover{background:#dc2626;color:#fff}
+.oa-review{border:1px solid #d97706;background:#d97706;color:#fff}
+.oa-review:hover{background:#b45309}
+.cancel-note{margin-top:16px;padding:14px 20px;background:#fff5f5;border-left:3px solid #dc2626;font-size:13px;color:#991b1b}
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;align-items:center;justify-content:center;padding:24px}
+.modal-overlay.open{display:flex}
+.modal-box{background:#fff;padding:40px;max-width:480px;width:100%;position:relative}
+.modal-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:400;color:#1a1a1a;margin-bottom:8px}
+.modal-sub{font-size:13px;font-weight:300;color:#888;margin-bottom:28px}
+.modal-label{font-size:11px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:#8a7a65;display:block;margin-bottom:16px}
+.modal-radio{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid rgba(0,0,0,.06);cursor:pointer}
+.modal-radio input{accent-color:#6b5c47}
+.modal-radio span{font-size:13px;color:#444}
+.modal-actions{display:flex;gap:8px;margin-top:24px}
+.star-select{display:flex;gap:8px;margin-bottom:16px}
+.star-select select{width:100%;background:#f8f5ef;border:1px solid rgba(0,0,0,.1);padding:10px 14px;font-size:13px;font-family:'Inter',sans-serif;outline:none}
+.review-textarea{width:100%;background:#f8f5ef;border:1px solid rgba(0,0,0,.1);padding:12px 14px;font-size:13px;font-family:'Inter',sans-serif;outline:none;resize:vertical;min-height:100px;margin-top:4px}
+@media(max-width:900px){.order-grid{grid-template-columns:1fr 1fr;gap:16px}}
+@media(max-width:600px){.order-grid{grid-template-columns:1fr}}
+</style>
+@endpush
 
-@section('content')
-<div class="min-h-screen bg-gray-50">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {{-- Header --}}
-        <div class="mb-12">
-            <h1 class="text-3xl md:text-4xl font-bold text-slate-900 mb-2">My Orders</h1>
-            <p class="text-slate-600">Manage all your hotel orders here</p>
-        </div>
+@section('inner-content')
+@if(session('success'))
+    <div class="flash-success">{{ session('success') }}</div>
+@endif
+@if(session('error'))
+    <div class="flash-error">{{ session('error') }}</div>
+@endif
 
-        @if(session('success'))
-            <div class="mb-6 p-4 bg-green-50 border border-green-200 text-green-700 rounded-2xl">
-                {{ session('success') }}
-            </div>
-        @endif
-
-        @if(session('error'))
-            <div class="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-2xl">
-                {{ session('error') }}
-            </div>
-        @endif
-
-        @if($orders->isEmpty())
-            <div class="bg-white p-12 rounded-2xl shadow border border-slate-200 text-center">
-                <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-                <p class="text-slate-600 text-lg mb-4">You don't have any orders yet</p>
-                <a href="{{ route('kamar.index') }}" class="inline-flex items-center gap-2 px-6 py-2 bg-slate-900 text-white rounded-2xl hover:bg-slate-800 transition duration-200 font-medium">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                    </svg>
-                    Book a Room
-                </a>
-            </div>
-        @else
-            <div class="space-y-4">
-                @foreach($orders as $order)
-                    <div class="bg-white p-6 rounded-2xl shadow border border-slate-200 hover:shadow-md transition">
-                        <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-4">
-                            {{-- Order Code & Date --}}
-                            <div>
-                                <p class="text-xs text-slate-600 uppercase font-medium mb-1">Order Code</p>
-                                <p class="text-lg font-bold text-slate-900">{{ $order->order_code ?? 'N/A' }}</p>
-                                <p class="text-xs text-slate-500 mt-1">{{ $order->created_at->format('d M Y H:i') }}</p>
-                            </div>
-
-                            {{-- Check-in & Check-out --}}
-                            <div>
-                                <p class="text-xs text-slate-600 uppercase font-medium mb-1">Dates</p>
-                                @if($order->check_in_date && $order->check_out_date)
-                                    <p class="text-lg font-bold text-slate-900">
-                                        {{ $order->check_in_date->format('d M') }} - {{ $order->check_out_date->format('d M') }}
-                                    </p>
-                                @else
-                                    <p class="text-lg font-bold text-slate-900">N/A</p>
-                                @endif
-                                <p class="text-xs text-slate-500 mt-1">{{ $order->nights ?? 1 }} nights</p>
-                            </div>
-
-                            {{-- Status --}}
-                            <div>
-                                <p class="text-xs text-slate-600 uppercase font-medium mb-1">Order Status</p>
-                                <div class="mt-1">
-                                    @if($order->status === 'pending')
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                            Pending
-                                        </span>
-                                    @elseif($order->status === 'confirmed')
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                            Confirmed
-                                        </span>
-                                    @elseif($order->status === 'cancelled')
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                            Cancelled
-                                        </span>
-                                    @else
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-50 text-slate-800">
-                                            {{ $order->status }}
-                                        </span>
-                                    @endif
-                                </div>
-                            </div>
-
-                            {{-- Payment Status --}}
-                            <div>
-                                <p class="text-xs text-slate-600 uppercase font-medium mb-1">Payment</p>
-                                @if($order->payment_status === 'paid')
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                        Paid
-                                    </span>
-                                @elseif($order->payment_status === 'pending')
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                        Pending
-                                    </span>
-                                @else
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-50 text-slate-800">
-                                        {{ $order->payment_status }}
-                                    </span>
-                                @endif
-                                <p class="text-sm font-semibold text-slate-900 mt-1">
-                                    Rp {{ number_format($order->total_price, 0, ',', '.') }}
-                                </p>
-                            </div>
-
-                            {{-- Total Price --}}
-                            <div>
-                                <p class="text-xs text-slate-600 uppercase font-medium mb-1">Total</p>
-                                <p class="text-2xl font-bold text-indigo-600">Rp {{ number_format($order->total_price, 0, ',', '.') }}</p>
-                            </div>
-                        </div>
-
-                        {{-- Action Buttons --}}
-                        <div class="flex flex-wrap gap-2 pt-4 border-t border-slate-200">
-                            <a href="{{ route('tamu.orders.show', $order) }}"
-                               class="px-4 py-2 bg-slate-900 text-white rounded-2xl hover:bg-slate-800 transition duration-200 font-medium text-sm">
-                                View Details
-                            </a>
-
-                            @if($order->status === 'pending' && $order->payment_status !== 'paid')
-                                <a href="{{ route('tamu.payment.index', $order->id) }}"
-                                   class="px-4 py-2 bg-green-600 text-white rounded-2xl hover:bg-green-700 transition duration-200 font-medium text-sm text-center">
-                                    Continue Payment
-                                </a>
-                            @endif
-
-                            @if($order->payment_status === 'paid')
-                                <a href="{{ route('tamu.invoice.show', $order) }}"
-                                   class="px-4 py-2 bg-purple-600 text-white rounded-2xl hover:bg-purple-700 transition duration-200 font-medium text-sm">
-                                    View Invoice
-                                </a>
-                                <a href="{{ route('tamu.invoice.download', $order) }}"
-                                   class="px-4 py-2 bg-green-600 text-white rounded-2xl hover:bg-green-700 transition duration-200 font-medium text-sm">
-                                    Download PDF
-                                </a>
-                            @endif
-
-                            @if(in_array($order->status, ['pending', 'confirmed']) && $order->payment_status !== 'paid')
-                                <button type="button" onclick="cancelOrder({{ $order->id }})"
-                                        class="px-4 py-2 bg-red-600 text-white rounded-2xl hover:bg-red-700 transition duration-200 font-medium text-sm">
-                                    Cancel Order
-                                </button>
-                            @endif
-
-                            @if($order->checked_out_at && !$order->review)
-                                <button type="button" onclick="openReviewModal({{ $order->id }})"
-                                        class="px-4 py-2 bg-yellow-500 text-white rounded-2xl hover:bg-yellow-600 transition duration-200 font-medium text-sm">
-                                    Leave Review
-                                </button>
-                            @elseif($order->review)
-                                <span class="px-4 py-2 bg-gray-100 text-gray-600 rounded-2xl font-medium text-sm">
-                                    ⭐ {{ $order->review->rating }} / 5
-                                </span>
-                            @endif
-                        </div>
-
-                        {{-- Cancellation Reason Display --}}
-                        @if($order->status === 'cancelled' && $order->cancelled_reason)
-                            <div class="mt-4 p-3 bg-red-50 border border-red-200 rounded-2xl">
-                                <p class="text-sm text-red-700 font-medium mb-1">Cancellation Reason:</p>
-                                <p class="text-sm text-red-600">{{ $order->cancelled_reason }}</p>
-                            </div>
-                        @endif
-                    </div>
-                @endforeach
-            </div>
-
-            {{-- Pagination --}}
-            <div class="mt-8">
-                {{ $orders->links() }}
-            </div>
-        @endif
-    </div>
+@if($orders->isEmpty())
+<div class="empty">
+    <div class="empty-icon">📋</div>
+    <h3 class="empty-title">No Orders Yet</h3>
+    <p class="empty-sub">You haven't made any reservations. Start exploring our rooms!</p>
+    <a href="{{ route('kamar.index') }}" class="btn-fill">Explore Rooms</a>
 </div>
-
-{{-- Modal Cancel Order --}}
-<div id="cancelModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-    <div class="bg-white p-6 rounded-2xl shadow-lg max-w-md w-full">
-        <h3 class="text-xl font-bold text-slate-900 mb-4">Cancel Order</h3>
-        <p class="text-slate-600 mb-4">Why do you want to cancel this order?</p>
-
-        <form id="cancelForm" method="POST" class="space-y-4">
-            @csrf
-            <div>
-                <label class="block text-sm font-medium text-slate-700 mb-3">Cancellation Reason</label>
-                <div class="space-y-2">
-                    <label class="flex items-center">
-                        <input type="radio" name="reason" value="Change of plans" class="w-4 h-4 text-red-600">
-                        <span class="ml-3 text-sm text-slate-700">Change of plans</span>
-                    </label>
-                    <label class="flex items-center">
-                        <input type="radio" name="reason" value="Found better accommodation" class="w-4 h-4 text-red-600">
-                        <span class="ml-3 text-sm text-slate-700">Found better accommodation</span>
-                    </label>
-                    <label class="flex items-center">
-                        <input type="radio" name="reason" value="Schedule conflict" class="w-4 h-4 text-red-600">
-                        <span class="ml-3 text-sm text-slate-700">Schedule conflict</span>
-                    </label>
-                    <label class="flex items-center">
-                        <input type="radio" name="reason" value="Financial reasons" class="w-4 h-4 text-red-600">
-                        <span class="ml-3 text-sm text-slate-700">Financial reasons</span>
-                    </label>
-                    <label class="flex items-center">
-                        <input type="radio" name="reason" value="Other reasons" class="w-4 h-4 text-red-600">
-                        <span class="ml-3 text-sm text-slate-700">Other reasons</span>
-                    </label>
+@else
+<div>
+    @foreach($orders as $order)
+    <div class="order-card">
+        <div class="order-inner">
+            <div class="order-grid">
+                <div>
+                    <div class="order-field-label">Order Code</div>
+                    <div class="order-code">{{ $order->order_code ?? 'N/A' }}</div>
+                    <div class="order-date">{{ $order->created_at->format('d M Y · H:i') }}</div>
+                </div>
+                <div>
+                    <div class="order-field-label">Dates</div>
+                    @if($order->check_in_date && $order->check_out_date)
+                        <div class="order-dates">{{ $order->check_in_date->format('d M') }} – {{ $order->check_out_date->format('d M Y') }}</div>
+                        <div class="order-nights">{{ $order->nights ?? 1 }} nights</div>
+                    @else
+                        <div class="order-dates">N/A</div>
+                    @endif
+                </div>
+                <div>
+                    <div class="order-field-label">Order Status</div>
+                    @if($order->status === 'pending')
+                        <span class="badge badge-pending">Pending</span>
+                    @elseif($order->status === 'confirmed')
+                        <span class="badge badge-confirmed">Confirmed</span>
+                    @elseif($order->status === 'cancelled')
+                        <span class="badge badge-cancelled">Cancelled</span>
+                    @else
+                        <span class="badge" style="background:#f1f5f9;color:#475569">{{ $order->status }}</span>
+                    @endif
+                </div>
+                <div>
+                    <div class="order-field-label">Payment</div>
+                    @if($order->payment_status === 'paid')
+                        <span class="badge badge-paid">Paid</span>
+                    @elseif($order->payment_status === 'pending')
+                        <span class="badge badge-pending">Pending</span>
+                    @else
+                        <span class="badge" style="background:#f1f5f9;color:#475569">{{ $order->payment_status }}</span>
+                    @endif
+                </div>
+                <div>
+                    <div class="order-field-label">Total</div>
+                    <div class="order-total">Rp {{ number_format($order->total_price, 0, ',', '.') }}</div>
                 </div>
             </div>
 
-            <div class="flex gap-3">
-                <button type="button" onclick="closeCancelModal()"
-                        class="flex-1 px-4 py-2 bg-gray-300 text-slate-700 rounded-2xl hover:bg-gray-400 transition duration-200 font-medium">
-                    Cancel
-                </button>
-                <button type="submit"
-                        class="flex-1 px-4 py-2 bg-red-600 text-white rounded-2xl hover:bg-red-700 transition duration-200 font-medium">
-                    Confirm Cancellation
-                </button>
+            <div class="order-actions">
+                <a href="{{ route('tamu.orders.show', $order) }}" class="oa oa-detail">View Details</a>
+                @if($order->status === 'pending' && $order->payment_status !== 'paid')
+                    <a href="{{ route('tamu.payment.index', $order->id) }}" class="oa oa-pay">Continue Payment</a>
+                @endif
+                @if($order->payment_status === 'paid')
+                    <a href="{{ route('tamu.invoice.show', $order) }}" class="oa oa-invoice">View Invoice</a>
+                    <a href="{{ route('tamu.invoice.download', $order) }}" class="oa oa-pdf">Download PDF</a>
+                @endif
+                @if(in_array($order->status, ['pending', 'confirmed']) && $order->payment_status !== 'paid')
+                    <button type="button" onclick="cancelOrder({{ $order->id }})" class="oa oa-cancel">Cancel Order</button>
+                @endif
+                @if($order->checked_out_at && !$order->review)
+                    <button type="button" onclick="openReviewModal({{ $order->id }})" class="oa oa-review">Leave Review</button>
+                @elseif($order->review)
+                    <span class="oa" style="border:1px solid rgba(0,0,0,.08);color:#6b5c47;cursor:default">⭐ {{ $order->review->rating }} / 5</span>
+                @endif
+            </div>
+
+            @if($order->status === 'cancelled' && $order->cancelled_reason)
+                <div class="cancel-note">
+                    <strong>Cancellation Reason:</strong> {{ $order->cancelled_reason }}
+                </div>
+            @endif
+        </div>
+    </div>
+    @endforeach
+</div>
+{{ $orders->links() }}
+@endif
+
+{{-- CANCEL MODAL --}}
+<div class="modal-overlay" id="cancelModal">
+    <div class="modal-box">
+        <h3 class="modal-title">Cancel Order</h3>
+        <p class="modal-sub">Please select a cancellation reason</p>
+        <form id="cancelForm" method="POST">
+            @csrf
+            <span class="modal-label">Reason</span>
+            @foreach(['Change of plans', 'Found better accommodation', 'Schedule conflict', 'Financial reasons', 'Other reasons'] as $reason)
+                <label class="modal-radio">
+                    <input type="radio" name="reason" value="{{ $reason }}">
+                    <span>{{ $reason }}</span>
+                </label>
+            @endforeach
+            <div class="modal-actions">
+                <button type="button" onclick="document.getElementById('cancelModal').classList.remove('open')" class="btn-dark" style="flex:1">Back</button>
+                <button type="submit" class="oa oa-cancel" style="flex:1;padding:11px 20px">Confirm Cancel</button>
             </div>
         </form>
     </div>
 </div>
-{{-- Modal Review --}}
-<div id="reviewModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-    <div class="bg-white p-6 rounded-2xl shadow-lg max-w-md w-full">
-        <h3 class="text-xl font-bold text-slate-900 mb-4">Leave Review</h3>
-        <p class="text-slate-600 mb-4">How was your stay experience?</p>
 
-        <form id="reviewForm" method="POST" class="space-y-4">
+{{-- REVIEW MODAL --}}
+<div class="modal-overlay" id="reviewModal">
+    <div class="modal-box">
+        <h3 class="modal-title">Leave a Review</h3>
+        <p class="modal-sub">How was your stay experience?</p>
+        <form id="reviewForm" method="POST">
             @csrf
-            <div>
-                <label class="block text-sm font-medium text-slate-700 mb-2">Rating (1-5)</label>
-                <select name="rating" class="w-full px-4 py-2 border border-slate-200 rounded-2xl text-sm focus:ring-2 focus:ring-indigo-600 outline-none" required>
+            <span class="modal-label">Rating</span>
+            <div class="star-select">
+                <select name="rating" required>
                     <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
                     <option value="4">⭐⭐⭐⭐ Good</option>
                     <option value="3">⭐⭐⭐ Fair</option>
@@ -241,53 +183,27 @@
                     <option value="1">⭐ Very Poor</option>
                 </select>
             </div>
-            <div>
-                <label class="block text-sm font-medium text-slate-700 mb-2">Review (Optional)</label>
-                <textarea name="review"
-                          class="w-full px-4 py-2 border border-slate-200 rounded-2xl text-sm focus:ring-2 focus:ring-indigo-600 focus:border-transparent outline-none transition"
-                          placeholder="Tell us about your experience..."></textarea>
-            </div>
-
-            <div class="flex gap-3 mt-4">
-                <button type="button" onclick="closeReviewModal()"
-                        class="flex-1 px-4 py-2 bg-gray-300 text-slate-700 rounded-2xl hover:bg-gray-400 transition duration-200 font-medium">
-                    Cancel
-                </button>
-                <button type="submit"
-                        class="flex-1 px-4 py-2 bg-yellow-500 text-white rounded-2xl hover:bg-yellow-600 transition duration-200 font-medium">
-                    Submit Review
-                </button>
+            <span class="modal-label">Review (optional)</span>
+            <textarea name="review" class="review-textarea" placeholder="Tell us about your experience..."></textarea>
+            <div class="modal-actions" style="margin-top:20px">
+                <button type="button" onclick="document.getElementById('reviewModal').classList.remove('open')" class="btn-dark" style="flex:1">Cancel</button>
+                <button type="submit" class="oa oa-review" style="flex:1;padding:11px 20px">Submit Review</button>
             </div>
         </form>
     </div>
 </div>
-
 @endsection
 
-@section('scripts')
+@push('scripts')
 <script>
-function cancelOrder(orderId) {
-    const modal = document.getElementById('cancelModal');
-    const form = document.getElementById('cancelForm');
-    form.action = `/tamu/orders/${orderId}/cancel`;
-    modal.classList.remove('hidden');
+function cancelOrder(id){
+    document.getElementById('cancelForm').action=`/tamu/orders/${id}/cancel`;
+    document.getElementById('cancelModal').classList.add('open');
 }
-
-function closeCancelModal() {
-    const modal = document.getElementById('cancelModal');
-    modal.classList.add('hidden');
-}
-
-function openReviewModal(orderId) {
-    const modal = document.getElementById('reviewModal');
-    const form = document.getElementById('reviewForm');
-    form.action = `/tamu/orders/${orderId}/review`;
-    modal.classList.remove('hidden');
-}
-
-function closeReviewModal() {
-    const modal = document.getElementById('reviewModal');
+function openReviewModal(id){
+    document.getElementById('reviewForm').action=`/tamu/orders/${id}/review`;
+    document.getElementById('reviewModal').classList.add('open');
 }
 </script>
 @include('tamu.orders.partials.continue-payment-script')
-@endsection
+@endpush
