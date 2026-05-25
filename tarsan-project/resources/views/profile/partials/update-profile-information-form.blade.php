@@ -16,7 +16,6 @@
           enctype="multipart/form-data"
           class="space-y-6">
         @csrf
-        @method('patch')
 
         {{-- PROFILE PHOTO --}}
         <div>
@@ -24,9 +23,7 @@
             <div class="flex items-center gap-4">
                 <img
                     id="photoPreview"
-                    src="{{ $user->photo
-                        ? asset('storage/' . $user->photo)
-                        : asset('images/default-avatar.png') }}"
+                    src="{{ image_url($user->photo) }}"
                     class="h-20 w-20 rounded-full object-cover border-2 border-gray-200">
 
                 <div class="flex-1">

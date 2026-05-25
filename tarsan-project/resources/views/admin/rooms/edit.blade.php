@@ -21,7 +21,6 @@
           class="bg-white p-6 rounded-xl shadow"
           enctype="multipart/form-data">
         @csrf
-        @method('PUT')
 
         <div class="space-y-6">
             <div>
@@ -112,16 +111,19 @@
                     <label class="block text-sm font-medium text-slate-800 font-semibold mb-2">Existing Images</label>
                     <div class="grid grid-cols-3 gap-3">
                         @foreach($room->images as $image)
-                            <label class="relative cursor-pointer group">
+                            <label class="relative cursor-pointer group aspect-square rounded-xl overflow-hidden block border">
                                 <input type="checkbox"
                                        name="delete_images[]"
                                        value="{{ $image->id }}"
-                                       class="absolute top-2 left-2 w-4 h-4 z-10 accent-red-600">
-                                <img src="{{ asset('storage/' . $image->image) }}"
-                                     class="w-full h-24 object-cover rounded-xl border group-hover:opacity-80 transition">
-                                <span class="absolute bottom-1 left-1 bg-black/60 text-white text-xs px-2 py-1 rounded">
-                                    Delete
-                                </span>
+                                       class="hidden peer">
+                                <img src="{{ image_url($image->image) }}"
+                                     class="w-full h-full object-cover peer-checked:opacity-40 transition duration-200">
+                                <div class="absolute inset-0 bg-red-600/40 opacity-0 peer-checked:opacity-100 transition duration-200 flex items-center justify-center">
+                                    <span class="bg-red-600 text-white px-2 py-1 rounded-lg text-[10px] font-black uppercase shadow">DELETING</span>
+                                </div>
+                                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 peer-checked:hidden transition duration-200 flex items-center justify-center">
+                                    <span class="bg-white text-red-600 px-2 py-1 rounded-lg text-[10px] font-black uppercase shadow">MARK DELETE</span>
+                                </div>
                             </label>
                         @endforeach
                     </div>

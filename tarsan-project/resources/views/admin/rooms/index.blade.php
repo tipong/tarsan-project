@@ -26,6 +26,22 @@
     </div>
 @endif
 
+@if ($errors->any())
+    <div class="mb-6 p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-2xl animate-in fade-in slide-in-from-top-4">
+        <div class="flex items-center gap-3 mb-2">
+            <svg class="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span class="font-bold text-sm">Ada kesalahan input:</span>
+        </div>
+        <ul class="list-disc pl-8 text-xs space-y-1 font-medium text-rose-600">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
 <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
     <div class="overflow-x-auto">
         <table class="w-full text-sm">
@@ -46,7 +62,7 @@
                             <div class="flex items-center gap-4">
                                 <div class="relative group">
                                     @if($room->images->first())
-                                        <img src="{{ asset('storage/' . $room->images->first()->image) }}"
+                                        <img src="{{ image_url($room->images->first()->image) }}"
                                              class="w-16 h-12 rounded-xl object-cover shadow-sm group-hover:scale-105 transition duration-300">
                                     @else
                                         <div class="w-16 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400 text-[10px] font-bold uppercase">
@@ -267,7 +283,7 @@
         } else {
             title.innerText = 'Edit Room';
             form.action = `/admin/rooms/${room.id}`;
-            methodInput.value = 'PUT';
+            methodInput.value = 'POST';
             nameInput.value = room.room_name;
             priceInput.value = room.price_per_night;
             capacityInput.value = room.capacity;
@@ -289,18 +305,19 @@
             if(room.images && room.images.length > 0) {
                 imagesContainer.classList.remove('hidden');
                 room.images.forEach(img => {
-                    const div = document.createElement('div');
-                    div.className = 'relative group aspect-square rounded-xl overflow-hidden';
-                    div.innerHTML = `
-                        <img src="/storage/${img.image}" class="w-full h-full object-cover">
-                        <div class="absolute inset-0 bg-red-600/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
-                            <label class="cursor-pointer">
-                                <input type="checkbox" name="delete_images[]" value="${img.id}" class="hidden peer">
-                                <span class="bg-white text-red-600 px-2 py-1 rounded-lg text-[8px] font-black peer-checked:bg-red-200">DELETE</span>
-                            </label>
+                    const label = document.createElement('label');
+                    label.className = 'relative group aspect-square rounded-xl overflow-hidden cursor-pointer block border';
+                    label.innerHTML = `
+                        <input type="checkbox" name="delete_images[]" value="${img.id}" class="hidden peer">
+                        <img src="${img.image.startsWith('http') ? img.image : '/storage/' + img.image}" class="w-full h-full object-cover peer-checked:opacity-40 transition duration-200">
+                        <div class="absolute inset-0 bg-red-600/40 opacity-0 peer-checked:opacity-100 transition duration-200 flex items-center justify-center">
+                            <span class="bg-red-600 text-white px-2 py-1 rounded-lg text-[8px] font-black uppercase shadow">DELETING</span>
+                        </div>
+                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 peer-checked:hidden transition duration-200 flex items-center justify-center">
+                            <span class="bg-white text-red-600 px-2 py-1 rounded-lg text-[8px] font-black uppercase shadow">MARK DELETE</span>
                         </div>
                     `;
-                    imagesContainer.appendChild(div);
+                    imagesContainer.appendChild(label);
                 });
             }
         }

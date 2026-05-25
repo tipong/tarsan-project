@@ -51,11 +51,10 @@
 </div>
 
 <div class="show-grid">
-    {{-- LEFT: IMAGES + DESCRIPTION --}}
     <div class="show-main">
         <div class="main-img">
             @if($room->images->count() > 0)
-                <img src="{{ asset('storage/'.$room->images->first()->image) }}" alt="{{ $room->room_name }}" id="mainImage">
+                <img src="{{ image_url($room->images->first()->image) }}" alt="{{ $room->room_name }}" id="mainImage">
             @else
                 <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:14px">No image available</div>
             @endif
@@ -64,8 +63,8 @@
         @if($room->images->count() > 1)
         <div class="thumb-row">
             @foreach($room->images as $idx => $image)
-                <div class="thumb {{ $idx === 0 ? 'active' : '' }}" onclick="switchImage('{{ asset('storage/'.$image->image) }}', this)">
-                    <img src="{{ asset('storage/'.$image->image) }}" alt="Gallery">
+                <div class="thumb {{ $idx === 0 ? 'active' : '' }}" onclick="switchImage('{{ image_url($image->image) }}', this)">
+                    <img src="{{ image_url($image->image) }}" alt="Gallery">
                 </div>
             @endforeach
         </div>

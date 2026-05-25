@@ -59,10 +59,7 @@
 
             <div class="relative" x-data="{ open: false }" id="profileDropdown">
                 <button onclick="toggleProfileDropdown()" class="flex items-center gap-3 focus:outline-none group">
-                    <img
-                        src="{{ Auth::user()->photo
-                            ? asset('storage/' . Auth::user()->photo)
-                            : asset('images/default-avatar.png') }}"
+                    <img src="{{ image_url(Auth::user()->photo) }}"
                         class="h-9 w-9 rounded-full object-cover ring-2 ring-slate-200 group-hover:ring-indigo-100 transition shadow-sm">
                     <div class="text-left">
                         <p class="font-bold text-sm text-slate-900 group-hover:text-indigo-600 transition">{{ Auth::user()->name }}</p>

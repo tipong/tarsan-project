@@ -54,10 +54,27 @@
 @endpush
 
 @section('inner-content')
+@if(session('success'))
+    <div class="flash-success">{{ session('success') }}</div>
+@endif
+
+@if(session('error'))
+    <div class="flash-error">{{ session('error') }}</div>
+@endif
+
+@if($errors->any())
+    <div class="flash-error">
+        <ul style="margin: 0; padding-left: 20px;">
+            @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
 {{-- FILTER --}}
 <div class="filter-bar" style="margin-bottom:28px">
-    <form method="POST" action="{{ route('tamu.booking.search') }}">
-        @csrf
+    <form method="GET" action="{{ route('tamu.booking.index') }}">
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:16px;align-items:end" class="filter-grid">
             <div>
                 <label>Check In</label>
@@ -95,7 +112,7 @@
         <div class="broom-card {{ isset($room->is_available) && !$room->is_available ? 'unavailable' : '' }}">
             <div class="broom-img">
                 @if($room->images->count() > 0)
-                    <img src="{{ asset('storage/'.$room->images->first()->image) }}" alt="{{ $room->room_name }}">
+                    <img src="{{ image_url($room->images->first()->image) }}" alt="{{ $room->room_name }}">
                 @else
                     <div class="no-img">No image</div>
                 @endif
@@ -168,7 +185,7 @@
                     <div class="cart-item-nights">{{ $item['nights'] }} nights</div>
                     <div class="cart-item-price">Rp {{ number_format($item['subtotal']) }}</div>
                     <form method="POST" action="{{ route('tamu.booking.remove', $roomId) }}">
-                        @csrf @method('DELETE')
+                        @csrf
                         <button type="submit" class="cart-item-remove">Remove</button>
                     </form>
                 </div>

@@ -178,7 +178,7 @@ body{font-family:'Inter',sans-serif;background:#f8f5ef;color:#2a2a2a;overflow-x:
             <a href="{{ route('tamu.booking.index') }}" class="btn-outline">Book</a>
             <div class="avatar-wrap">
                 <button class="avatar-btn">
-                    <img src="{{ Auth::user()->photo ? asset('storage/'.Auth::user()->photo) : asset('images/default-avatar.png') }}" alt="">
+                    <img src="{{ image_url(Auth::user()->photo) }}" alt="">
                     <span>{{ auth()->user()->name }}</span>
                 </button>
                 <div class="dropdown">

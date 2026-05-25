@@ -83,7 +83,7 @@
     <div class="room-card">
         <div class="room-img">
             @if($room->images->count() > 0)
-                <img src="{{ asset('storage/'.$room->images->first()->image) }}" alt="{{ $room->room_name }}">
+                <img src="{{ image_url($room->images->first()->image) }}" alt="{{ $room->room_name }}">
             @else
                 <div class="no-img">No image available</div>
             @endif

@@ -206,7 +206,7 @@
         </ul>
     </div>
     <div class="split-image">
-        <img src="{{ asset('images/dining.jpg') }}" alt="Breakfast">
+        <img src="{{ asset('images/dining/Teh-tawar-manis.jpg') }}" alt="Breakfast">
     </div>
 </section>
 
@@ -226,7 +226,7 @@
         </ul>
     </div>
     <div class="split-image">
-        <img src="{{ asset('images/hero.png') }}" alt="Local Cuisine">
+        <img src="{{ asset('images/dining/kopi-hitam.jpg') }}" alt="Local Cuisine">
     </div>
 </section>
 
@@ -251,9 +251,50 @@
         @endauth
     </div>
     <div class="split-image">
-        <img src="{{ asset('images/dining.jpg') }}" alt="Evening Meals">
+        <img src="{{ asset('images/dining/pencake.webp') }}" alt="Evening Meals">
     </div>
 </section>
+
+{{-- LOCAL CUISINE --}}
+<section class="split-section reverse">
+    <div class="split-text fade-up">
+        <div class="split-number">04</div>
+        <span class="split-label">Authentic Flavours</span>
+        <h2 class="split-title"><em>Local cuisine</em><br>done right</h2>
+        <p class="split-desc">
+            Taste the authentic flavours of East Nusa Tenggara with our handpicked local dishes. From fresh seafood to traditional Flores recipes, every meal tells a story of the region's rich culinary heritage.
+        </p>
+        <ul class="split-features">
+            <li>Fresh seafood from local waters</li>
+            <li>Traditional Flores recipes</li>
+            <li>Seasonal local produce</li>
+        </ul>
+    </div>
+    <div class="split-image">
+        <img src="{{ asset('images/dining/Kalori-Indomie-goreng-1.jpg') }}" alt="Local Cuisine">
+    </div>
+</section>
+
+{{-- BREAKFAST --}}
+<section class="split-section">
+    <div class="split-text fade-up">
+        <div class="split-number">05</div>
+        <span class="split-label">Morning Ritual</span>
+        <h2 class="split-title">A warm<br><em>breakfast</em> awaits</h2>
+        <p class="split-desc">
+            Start your day the right way with our wholesome breakfast offerings. Freshly prepared and served in a relaxed setting, our morning meals fuel your adventure through Komodo National Park.
+        </p>
+        <ul class="split-features">
+            <li>Indonesian & Western options</li>
+            <li>Fresh local ingredients</li>
+            <li>Served daily every morning</li>
+        </ul>
+    </div>
+    <div class="split-image">
+        <img src="{{ asset('images/dining/Nasi-Goreng-telor.jpg') }}" alt="Breakfast">
+    </div>
+</section>
+
 
 {{-- MENU SHOWCASE --}}
 <section class="menu-section">
@@ -297,12 +338,11 @@
         <p class="gallery-subtitle">A glimpse into the flavours and moments that make every meal at Tarsan Homestay special.</p>
     </div>
     <div class="gallery-grid">
-        <div class="gallery-item g1"><img src="{{ asset('images/dining.jpg') }}" alt="Dining 1"></div>
-        <div class="gallery-item g2"><img src="{{ asset('images/hero.png') }}" alt="Dining 2"></div>
-        <div class="gallery-item g3"><img src="{{ asset('images/facility.jpg') }}" alt="Dining 3"></div>
-        <div class="gallery-item g4"><img src="{{ asset('images/room.png') }}" alt="Dining 4"></div>
-        <div class="gallery-item g5"><img src="{{ asset('images/dining.jpg') }}" alt="Dining 5"></div>
-        <div class="gallery-item g6"><img src="{{ asset('images/hero.png') }}" alt="Dining 6"></div>
+        <div class="gallery-item g1"><img src="{{ asset('images/dining/Nasi-Goreng-telor.jpg') }}" alt="Dining 1"></div>
+        <div class="gallery-item g2"><img src="{{ asset('images/dining/pencake.webp') }}" alt="Dining 2"></div>
+        <div class="gallery-item g3"><img src="{{ asset('images/dining/Teh-tawar-manis.jpg') }}" alt="Dining 3"></div>
+        <div class="gallery-item g4"><img src="{{ asset('images/dining/Kalori-Indomie-goreng-1.jpg') }}" alt="Dining 4"></div>
+        <div class="gallery-item g5"><img src="{{ asset('images/dining/kopi-hitam.jpg') }}" alt="Dining 5"></div>
     </div>
 </section>
 
@@ -311,7 +351,7 @@
     <div class="cta-bg"></div>
     <div class="cta-content fade-up">
         <p class="cta-tag">Stay & Dine With Us</p>
-        <h2 class="cta-title">Reserve your<br>table & room</h2>
+        <h2 class="cta-title">Start your<br>experience now!</h2>
         @auth
             <a href="{{ route('tamu.booking.index') }}" class="cta-btn">Book Now</a>
         @else

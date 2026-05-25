@@ -6,13 +6,12 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         // Update enum to include 'completed'
-        DB::statement("ALTER TABLE orders MODIFY status ENUM('pending','confirmed','cancelled','completed') DEFAULT 'confirmed'");
+        if (\Illuminate\Support\Facades\DB::getDriverName() === 'mysql') {
+            \Illuminate\Support\Facades\DB::statement("ALTER TABLE orders MODIFY status ENUM('pending','confirmed','cancelled','completed') DEFAULT 'confirmed'");
+        }
     }
 
     /**
@@ -21,6 +20,8 @@ return new class extends Migration
     public function down(): void
     {
         // Revert to original enum
-        DB::statement("ALTER TABLE orders MODIFY status ENUM('pending','confirmed','cancelled') DEFAULT 'confirmed'");
+        if (\Illuminate\Support\Facades\DB::getDriverName() === 'mysql') {
+            \Illuminate\Support\Facades\DB::statement("ALTER TABLE orders MODIFY status ENUM('pending','confirmed','cancelled') DEFAULT 'confirmed'");
+        }
     }
 };

@@ -6,14 +6,13 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::table('order_items', function (Blueprint $table) {
-            $table->integer('qty')->default(1)->after('room_id');
-        });
+        if (!Schema::hasColumn('order_items', 'qty')) {
+            Schema::table('order_items', function (Blueprint $table) {
+                $table->integer('qty')->default(1)->after('room_id');
+            });
+        }
     }
 
     /**
@@ -21,8 +20,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('order_items', function (Blueprint $table) {
-            $table->dropColumn('qty');
-        });
+        if (Schema::hasColumn('order_items', 'qty')) {
+            Schema::table('order_items', function (Blueprint $table) {
+                $table->dropColumn('qty');
+            });
+        }
     }
 };

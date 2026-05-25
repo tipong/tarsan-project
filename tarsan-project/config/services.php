@@ -35,4 +35,11 @@ return [
         ],
     ],
 
+    'cloudinary' => [
+        'cloud_name' => env('CLOUDINARY_CLOUD_NAME'),
+        'api_key' => env('API_KEY_CLOUDINARY'),
+        'api_secret' => env('API_SECRET_CLOUDINARY'),
+    ],
+
 ];
+

@@ -25,7 +25,7 @@ class ProfileController extends Controller
     /**
      * Update the user's profile information.
      */
-    public function update(Request $request)
+    public function update(Request $request, \App\Services\CloudinaryService $cloudinary)
 {
     $user = $request->user();
 
@@ -43,18 +43,22 @@ class ProfileController extends Controller
     if ($request->hasFile('photo')) {
 
         // Delete old photo
-        if ($user->photo && Storage::disk('public')->exists($user->photo)) {
-            Storage::disk('public')->delete($user->photo);
+        if ($user->photo) {
+            $cloudinary->delete($user->photo);
         }
 
-        $path = $request->file('photo')
-                        ->store('profile-photos', 'public');
+        $path = $cloudinary->upload($request->file('photo'), 'profile-photos');
 
         $user->photo = $path;
     }
 
     $user->name = $request->name;
     $user->email = $request->email;
+
+    if ($user->isDirty('email')) {
+        $user->email_verified_at = null;
+    }
+
     $user->save();
 
     return back()->with('status', 'profile-updated');

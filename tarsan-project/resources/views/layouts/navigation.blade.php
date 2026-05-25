@@ -35,7 +35,7 @@
                     
                     <div class="group relative inline-block">
                         <button class="flex items-center gap-3 focus:outline-none bg-gray-50 hover:bg-slate-100 px-2 py-1.5 rounded-full transition border border-slate-200">
-                            <img src="{{ Auth::user()->photo ? asset('storage/' . Auth::user()->photo) : asset('images/default-avatar.png') }}" class="h-8 w-8 rounded-full object-cover shadow">
+                            <img src="{{ image_url(Auth::user()->photo) }}" class="h-8 w-8 rounded-full object-cover shadow">
                             <span class="font-medium text-sm text-slate-700 pr-2">{{ auth()->user()->name }}</span>
                         </button>
                         <div class="absolute right-0 mt-3 w-48 bg-white border border-slate-200 rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">

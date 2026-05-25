@@ -555,7 +555,7 @@
         </ul>
     </div>
     <div class="split-image">
-        <img src="{{ asset('images/facility.jpg') }}" alt="Relaxation Area">
+        <img src="{{ asset('images/fasilitas/rakbuku.HEIC') }}" alt="Relaxation Area">
     </div>
 </section>
 
@@ -575,7 +575,7 @@
         </ul>
     </div>
     <div class="split-image">
-        <img src="{{ asset('images/room.png') }}" alt="Wi-Fi Connectivity">
+        <img src="{{ asset('images/fasilitas/balcone.HEIC') }}" alt="Wi-Fi Connectivity">
     </div>
 </section>
 
@@ -595,7 +595,7 @@
         </ul>
     </div>
     <div class="split-image">
-        <img src="{{ asset('images/facility.jpg') }}" alt="Billiards Room">
+        <img src="{{ asset('images/fasilitas/biliard.HEIC') }}" alt="Billiards Room">
     </div>
 </section>
 
@@ -614,13 +614,13 @@
             <li>Local route recommendations</li>
         </ul>
         @auth
-        <a href="{{ route('tamu.booking.index') }}" class="btn-outline-dark">Book Your Stay</a>
+        <a href="{{ route('tamu.booking.index') }}" class="btn-outline-dark">Book Your room now!</a>
         @else
         <a href="{{ route('login') }}" class="btn-outline-dark">Sign In to Book</a>
         @endauth
     </div>
     <div class="split-image">
-        <img src="{{ asset('images/hero.png') }}" alt="Motorbike Rental">
+        <img src="{{ asset('images/fasilitas/bathroom.HEIC') }}" alt="Motorbike Rental">
     </div>
 </section>
 
@@ -632,22 +632,22 @@
     </div>
     <div class="gallery-grid">
         <div class="gallery-item g1">
-            <img src="{{ asset('images/facility.jpg') }}" alt="Facility 1">
+            <img src="{{ asset('images/fasilitas/rakbuku.HEIC') }}" alt="Facility 1">
         </div>
         <div class="gallery-item g2">
-            <img src="{{ asset('images/room.png') }}" alt="Facility 2">
-        </div>
-        <div class="gallery-item g3">
-            <img src="{{ asset('images/hero.png') }}" alt="Facility 3">
+            <img src="{{ asset('images/fasilitas/balcone.HEIC') }}" alt="Facility 2">
         </div>
         <div class="gallery-item g4">
-            <img src="{{ asset('images/dining.jpg') }}" alt="Facility 4">
+            <img src="{{ asset('images/fasilitas/biliard.HEIC') }}" alt="Facility 3">
         </div>
         <div class="gallery-item g5">
+            <img src="{{ asset('images/fasilitas/bathroom.HEIC') }}" alt="Facility 4">
+        </div>
+        <!-- <div class="gallery-item g5">
             <img src="{{ asset('images/facility.jpg') }}" alt="Facility 5">
         </div>
         <div class="gallery-item g6">
-            <img src="{{ asset('images/room.png') }}" alt="Facility 6">
+            <img src="{{ asset('images/room.png') }}" alt="Facility 6"> -->
         </div>
     </div>
 </section>
@@ -657,7 +657,7 @@
     <div class="cta-bg"></div>
     <div class="cta-content fade-up">
         <p class="cta-tag">Ready to experience it?</p>
-        <h2 class="cta-title">Book your<br>stay today</h2>
+        <h2 class="cta-title">Book your<br>room now!</h2>
         @auth
             <a href="{{ route('tamu.booking.index') }}" class="cta-btn">Reserve Now</a>
         @else

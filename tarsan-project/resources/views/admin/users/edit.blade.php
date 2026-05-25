@@ -21,7 +21,6 @@
           class="bg-white p-6 rounded-xl shadow"
           enctype="multipart/form-data">
         @csrf
-        @method('PUT')
 
         <div class="space-y-6">
             <div>
@@ -56,7 +55,7 @@
                 <label class="block text-sm font-medium text-slate-800 font-semibold mb-2">Photo</label>
                 @if($user->photo)
                     <div class="mb-2">
-                        <img src="{{ asset('storage/' . $user->photo) }}"
+                        <img src="{{ image_url($user->photo) }}"
                              class="h-20 w-20 rounded-full object-cover"
                              alt="Current photo">
                     </div>

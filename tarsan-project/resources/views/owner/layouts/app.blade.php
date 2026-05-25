@@ -47,9 +47,7 @@
 
             <div class="flex items-center gap-3">
                 <img
-                    src="{{ Auth::user()->photo
-                        ? asset('storage/' . Auth::user()->photo)
-                        : asset('images/default-avatar.png') }}"
+                    src="{{ image_url(Auth::user()->photo) }}"
                     class="h-9 w-9 rounded-full object-cover ring-2 ring-slate-200">
 
                 <span class="font-medium text-sm text-slate-700">

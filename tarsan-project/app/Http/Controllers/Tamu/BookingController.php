@@ -9,42 +9,24 @@ use Carbon\Carbon;
 
 class BookingController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $rooms = Room::withRoomRelations()
-            ->where('is_active', 1)
-            ->get();
-        $facilities = Room::facilityOptions();
+        if (!$request->filled('check_in') && !$request->filled('check_out')) {
+            session()->forget('booking_filter');
+        } else {
+            $request->validate([
+                'check_in'  => 'required|date|after_or_equal:today',
+                'check_out' => 'required|date|after:check_in',
+            ]);
 
-        $cart = session('cart', []);
-
-        // Add availability status for rooms
-        $checkIn = request('check_in');
-        $checkOut = request('check_out');
-
-        if ($checkIn && $checkOut) {
-            foreach ($rooms as $room) {
-                $room->is_available = $this->isRoomAvailable($room->id, $checkIn, $checkOut);
-            }
+            session([
+                'booking_filter' => $request->only('check_in', 'check_out', 'room_search', 'facility')
+            ]);
         }
-
-        return view('tamu.booking.index', compact('rooms', 'cart', 'facilities'));
-    }
-
-    public function search(Request $request)
-    {
-        $request->validate([
-            'check_in'  => 'required|date|after_or_equal:today',
-            'check_out' => 'required|date|after:check_in',
-        ]);
-
-        // Save filter in session
-        session([
-            'booking_filter' => $request->only('check_in', 'check_out', 'room_search', 'facility')
-        ]);
 
         return $this->doSearch($request);
     }
+
 
     public function add(Request $request)
     {
@@ -74,15 +56,8 @@ class BookingController extends Controller
 
         session()->put('cart', $cart);
 
-        // Re-render the search results with the stored filter so dates won't reset
         $filter = session('booking_filter', []);
-        if (!empty($filter['check_in']) && !empty($filter['check_out'])) {
-            $filterRequest = new Request($filter);
-            return $this->doSearch($filterRequest)
-                ->with('success', 'Room added to cart');
-        }
-
-        return redirect()->route('tamu.booking.index')
+        return redirect()->route('tamu.booking.index', $filter)
             ->with('success', 'Room added to cart');
     }
 

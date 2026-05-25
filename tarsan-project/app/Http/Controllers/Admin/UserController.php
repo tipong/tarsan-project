@@ -44,7 +44,7 @@ class UserController extends Controller
         return view('admin.users.index', compact('users'));
     }
 
-    public function store(Request $request)
+    public function store(Request $request, \App\Services\CloudinaryService $cloudinary)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -57,7 +57,7 @@ class UserController extends Controller
         $validated['password'] = Hash::make($validated['password']);
 
         if ($request->hasFile('photo')) {
-            $validated['photo'] = $request->file('photo')->store('users', 'public');
+            $validated['photo'] = $cloudinary->upload($request->file('photo'), 'users');
         }
 
         User::create($validated);
@@ -65,7 +65,7 @@ class UserController extends Controller
         return back()->with('success', 'User successfully added');
     }
 
-    public function update(Request $request, User $user)
+    public function update(Request $request, User $user, \App\Services\CloudinaryService $cloudinary)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -76,9 +76,9 @@ class UserController extends Controller
 
         if ($request->hasFile('photo')) {
             if ($user->photo) {
-                Storage::disk('public')->delete($user->photo);
+                $cloudinary->delete($user->photo);
             }
-            $validated['photo'] = $request->file('photo')->store('users', 'public');
+            $validated['photo'] = $cloudinary->upload($request->file('photo'), 'users');
         }
 
         $user->update($validated);
@@ -86,14 +86,14 @@ class UserController extends Controller
         return back()->with('success', 'User successfully updated');
     }
 
-    public function destroy(User $user)
+    public function destroy(User $user, \App\Services\CloudinaryService $cloudinary)
     {
         if ($user->id === auth()->id()) {
             return back()->with('error', 'You cannot delete yourself');
         }
 
         if ($user->photo) {
-            Storage::disk('public')->delete($user->photo);
+            $cloudinary->delete($user->photo);
         }
 
         $user->delete();

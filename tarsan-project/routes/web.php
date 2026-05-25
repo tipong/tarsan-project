@@ -69,8 +69,11 @@ Route::middleware(['auth', 'role:admin,owner'])
 
         Route::get('/dashboard', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'index'])->name('dashboard');
 
-        Route::resource('rooms', RoomController::class);
-        Route::resource('users', UserController::class);
+        Route::post('rooms/{room}', [RoomController::class, 'update'])->name('rooms.update');
+        Route::resource('rooms', RoomController::class)->except(['update']);
+
+        Route::post('users/{user}', [UserController::class, 'update'])->name('users.update');
+        Route::resource('users', UserController::class)->except(['update']);
         Route::resource('vouchers', VoucherController::class);
         Route::resource('facilities', FacilityController::class);
         Route::resource('orders', OrderController::class);
@@ -156,12 +159,15 @@ Route::middleware(['auth', 'role:tamu'])
         Route::get('/booking', [BookingController::class, 'index'])
         ->name('booking.index');
 
-        Route::post('/booking/search', [BookingController::class, 'search'])
-        ->name('booking.search');
-
-        Route::get('/tamu/booking/search', function () {
-            return redirect()->route('tamu.booking.index')
-                ->with('error', 'Please select check-in and check-out date first.');
+        // Fallback routes to prevent 405 Method Not Allowed errors on direct GET access/refreshes
+        Route::match(['get', 'post'], '/booking/search', function () {
+            return redirect()->route('tamu.booking.index');
+        });
+        Route::get('/booking/add', function () {
+            return redirect()->route('tamu.booking.index');
+        });
+        Route::get('/booking/remove/{roomId}', function () {
+            return redirect()->route('tamu.booking.index');
         });
 
         // CART
@@ -171,7 +177,7 @@ Route::middleware(['auth', 'role:tamu'])
         Route::get('/booking/cart', [BookingController::class, 'cart'])
         ->name('booking.cart');
 
-        Route::delete('/booking/remove/{roomId}', [BookingController::class, 'remove'])
+        Route::post('/booking/remove/{roomId}', [BookingController::class, 'remove'])
         ->name('booking.remove');
 
         // CHECKOUT
@@ -250,7 +256,7 @@ Route::middleware(['auth', 'role:tamu'])
 */
 Route::middleware(['auth', 'role:tamu'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 

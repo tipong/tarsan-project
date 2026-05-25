@@ -27,7 +27,7 @@ class RoomController extends Controller
         return view('admin.rooms.create', compact('facilities', 'usesFacilityRelations'));
     }
 
-    public function store(Request $request)
+    public function store(Request $request, \App\Services\CloudinaryService $cloudinary)
     {
         $usesFacilityRelations = Room::supportsFacilityRelations();
 
@@ -69,7 +69,7 @@ class RoomController extends Controller
         // SAVE MULTIPLE IMAGES
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
-                $path = $image->store('rooms', 'public');
+                $path = $cloudinary->upload($image, 'rooms');
 
                 RoomImage::create([
                     'room_id' => $room->id,
@@ -98,7 +98,7 @@ class RoomController extends Controller
         return view('admin.rooms.edit', compact('room', 'facilities', 'usesFacilityRelations'));
     }
 
-    public function update(Request $request, Room $room)
+    public function update(Request $request, Room $room, \App\Services\CloudinaryService $cloudinary)
     {
         $usesFacilityRelations = Room::supportsFacilityRelations();
 
@@ -109,7 +109,7 @@ class RoomController extends Controller
             'total_rooms' => 'required|integer|min:1',
             'description' => 'nullable|string',
             'is_active' => 'nullable|boolean',
-            'images.*' => 'nullable|image|mimes:jpg,jpeg,png|max:51200', // 50MB
+            'images.*' => 'nullable|image|mimes:jpg,jpeg,png,webp,gif|max:51200', // 50MB
         ];
 
         if ($usesFacilityRelations) {
@@ -148,7 +148,7 @@ class RoomController extends Controller
             $images = RoomImage::whereIn('id', $request->delete_images)->get();
 
             foreach ($images as $image) {
-                Storage::disk('public')->delete($image->image);
+                $cloudinary->delete($image->image);
                 $image->delete();
             }
         }
@@ -156,7 +156,7 @@ class RoomController extends Controller
         // ADD NEW IMAGES
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
-                $path = $image->store('rooms', 'public');
+                $path = $cloudinary->upload($image, 'rooms');
 
                 RoomImage::create([
                     'room_id' => $room->id,
@@ -170,8 +170,13 @@ class RoomController extends Controller
             ->with('success', 'Room successfully updated');
     }
 
-    public function destroy(Room $room)
+    public function destroy(Room $room, \App\Services\CloudinaryService $cloudinary)
     {
+        // Delete all associated images from Cloudinary/local
+        foreach ($room->images as $image) {
+            $cloudinary->delete($image->image);
+        }
+
         $room->delete();
 
         return redirect()

@@ -68,6 +68,22 @@
         <span class="font-medium text-sm">{{ session('success') }}</span>
     </div>
 @endif
+ 
+@if ($errors->any())
+    <div class="mb-6 p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-2xl animate-in fade-in slide-in-from-top-4">
+        <div class="flex items-center gap-3 mb-2">
+            <svg class="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span class="font-bold text-sm">Ada kesalahan input:</span>
+        </div>
+        <ul class="list-disc pl-8 text-xs space-y-1 font-medium text-rose-600">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 
 <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
     <div class="overflow-x-auto">
@@ -85,7 +101,7 @@
                     <tr class="hover:bg-slate-50/50 transition duration-150">
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-3">
-                                <img src="{{ $user->photo ? asset('storage/'.$user->photo) : asset('images/default-avatar.png') }}"
+                                <img src="{{ image_url($user->photo) }}"
                                      class="h-10 w-10 rounded-full object-cover ring-2 ring-slate-100"
                                      alt="{{ $user->name }}">
                                 <div>
@@ -254,13 +270,13 @@
         } else {
             title.innerText = 'Edit User';
             form.action = `/admin/users/${user.id}`;
-            methodInput.value = 'PUT';
+            methodInput.value = 'POST';
             nameInput.value = user.name;
             emailInput.value = user.email;
             roleInput.value = user.role;
             passwordContainer.classList.add('hidden');
             document.getElementById('userPassword').required = false;
-            photoPreview.src = user.photo ? `/storage/${user.photo}` : "{{ asset('images/default-avatar.png') }}";
+            photoPreview.src = user.photo ? (user.photo.startsWith('http') ? user.photo : `/storage/${user.photo}`) : "{{ asset('images/default-avatar.png') }}";
         }
     }
 

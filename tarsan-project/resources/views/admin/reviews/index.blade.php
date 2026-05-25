@@ -32,9 +32,7 @@
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col">
             <div class="flex items-center gap-4 mb-4">
                 <img
-                    src="{{ ($review->user && $review->user->photo)
-                        ? asset('storage/'.$review->user->photo)
-                        : asset('images/default-avatar.png') }}"
+                    src="{{ image_url($review->user?->photo) }}"
                     class="w-12 h-12 rounded-full object-cover ring-2 ring-slate-100">
 
                 <div class="flex-1 min-w-0">

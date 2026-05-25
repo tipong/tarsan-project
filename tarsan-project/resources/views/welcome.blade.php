@@ -38,7 +38,7 @@ body{font-family:'Inter',sans-serif;background:#f8f5ef;color:#2a2a2a;overflow-x:
 .hero-bg.loaded{transform:scale(1)}
 .hero-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.78) 0%,rgba(0,0,0,.35) 50%,rgba(0,0,0,.05) 100%)}
 .hero-content{position:relative;z-index:2;width:100%;padding:0 72px 72px;display:flex;justify-content:space-between;align-items:flex-end;gap:24px}
-.hero-title{font-family:'Playfair Display',serif;font-size:clamp(48px,7vw,88px);font-weight:400;font-style:italic;color:#fff;line-height:1.05;letter-spacing:-.02em;max-width:580px}
+.hero-title{font-family:'Playfair Display',serif;font-size:clamp(48px,7vw,88px);font-weight:400;font-style:italic;color:#fff;line-height:1.05;letter-spacing:-.02em;max-width:1000px}
 .hero-right{text-align:right;color:rgba(255,255,255,.75);display:flex;flex-direction:column;align-items:flex-end;gap:24px}
 .hero-sub{font-size:13px;letter-spacing:.15em;text-transform:uppercase;font-weight:300;max-width:240px;line-height:1.7}
 .scroll-hint{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:rgba(255,255,255,.55);font-size:10px;letter-spacing:.2em;text-transform:uppercase;z-index:2;animation:bob 2.2s infinite}
@@ -160,7 +160,7 @@ body{font-family:'Inter',sans-serif;background:#f8f5ef;color:#2a2a2a;overflow-x:
     <div class="nav-auth">
         @guest
             <a href="{{ route('login') }}" class="nav-cta">Login</a>
-            <a href="{{ route('register') }}" class="nav-cta" style="background:rgba(255,255,255,.15)">Register</a>
+            <a href="{{ route('register') }}" class="nav-cta" >Register</a>
         @else
             <a href="{{ route('tamu.booking.index') }}" class="nav-cta">Book Now</a>
         @endguest
@@ -172,7 +172,7 @@ body{font-family:'Inter',sans-serif;background:#f8f5ef;color:#2a2a2a;overflow-x:
     <div class="hero-bg" id="heroBg"></div>
     <div class="hero-overlay"></div>
     <div class="hero-content">
-        <h1 class="hero-title">The Best Stay<br>in <em>Labuan Bajo</em></h1>
+        <h1 class="hero-title">The Best Stay Experience<br>in <em>Labuan Bajo</em></h1>
         <div class="hero-right">
             <p class="hero-sub">Gateway to Komodo<br>National Park &<br>beyond</p>
             {{-- SEARCH BOX --}}

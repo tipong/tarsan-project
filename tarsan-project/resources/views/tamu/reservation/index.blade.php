@@ -50,7 +50,7 @@
                     <div style="text-align:right">
                         <div class="res-item-price">Rp {{ number_format($item['subtotal']) }}</div>
                         <form method="POST" action="{{ route('tamu.booking.remove', $item['room_id']) }}">
-                            @csrf @method('DELETE')
+                            @csrf
                             <button type="submit" class="res-item-remove">Remove</button>
                         </form>
                     </div>
