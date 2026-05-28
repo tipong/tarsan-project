@@ -24,7 +24,17 @@
 .sum-total{display:flex;justify-content:space-between;align-items:center;padding-top:16px;border-top:1px solid rgba(0,0,0,.06);margin-top:16px}
 .sum-total-label{font-size:12px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:#1a1a1a}
 .sum-total-val{font-family:'Playfair Display',serif;font-size:28px;font-weight:400;color:#1a1a1a}
-@media(max-width:900px){.res-grid{grid-template-columns:1fr}}
+@media(max-width:900px){
+  .res-grid{grid-template-columns:1fr}
+  .res-section{padding:24px 16px}
+}
+@media(max-width:600px){
+  .res-title{flex-direction:column;align-items:stretch;gap:12px}
+  .res-title a{width:100%;text-align:center}
+  .res-item{flex-direction:column;align-items:stretch;gap:12px}
+  .res-item div[style="text-align:right"]{text-align:left !important;width:100%}
+  .res-item-price{text-align:left}
+}
 </style>
 @endpush
 

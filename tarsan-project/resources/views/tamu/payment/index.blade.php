@@ -25,7 +25,15 @@
 .pm-list li{display:flex;align-items:center;gap:8px}
 .pm-list li::before{content:'✓';color:#6b5c47;font-weight:bold}
 .secure-note{font-size:11px;color:#888;text-align:center;margin-top:16px;letter-spacing:.05em}
-@media(max-width:900px){.pay-grid{grid-template-columns:1fr}}
+@media(max-width:900px){
+  .pay-grid{grid-template-columns:1fr}
+  .pay-box{padding:24px 16px}
+}
+@media(max-width:600px){
+  .pay-item{flex-direction:column;align-items:stretch;gap:12px}
+  .pi-price{text-align:left}
+  .pi-meta{text-align:left !important}
+}
 </style>
 @endpush
 

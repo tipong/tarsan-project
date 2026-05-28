@@ -17,16 +17,16 @@
           class="space-y-6">
         @csrf
 
-        {{-- PROFILE PHOTO --}}
+        {{-- PICTURE PROFILE --}}
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Profile Photo</label>
-            <div class="flex items-center gap-4">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Profile Picture</label>
+            <div class="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
                 <img
                     id="photoPreview"
                     src="{{ image_url($user->photo) }}"
                     class="h-20 w-20 rounded-full object-cover border-2 border-gray-200">
 
-                <div class="flex-1">
+                <div class="flex-1 w-full">
                     <input
                         type="file"
                         id="photo"

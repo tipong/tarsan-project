@@ -1,7 +1,7 @@
 @extends('layouts.tamu-inner')
-@section('title', 'My Orders – Tarsan Homestay')
+@section('title', 'My Order – Tarsan Homestay')
 @section('page-tag', 'Account')
-@section('page-title', 'My Orders')
+@section('page-title', 'My Order')
 @section('page-sub', 'Manage all your reservations and bookings')
 
 @push('styles')
@@ -45,8 +45,16 @@
 .star-select{display:flex;gap:8px;margin-bottom:16px}
 .star-select select{width:100%;background:#f8f5ef;border:1px solid rgba(0,0,0,.1);padding:10px 14px;font-size:13px;font-family:'Inter',sans-serif;outline:none}
 .review-textarea{width:100%;background:#f8f5ef;border:1px solid rgba(0,0,0,.1);padding:12px 14px;font-size:13px;font-family:'Inter',sans-serif;outline:none;resize:vertical;min-height:100px;margin-top:4px}
-@media(max-width:900px){.order-grid{grid-template-columns:1fr 1fr;gap:16px}}
-@media(max-width:600px){.order-grid{grid-template-columns:1fr}}
+@media(max-width:900px){
+  .order-grid{grid-template-columns:1fr 1fr;gap:16px}
+  .order-inner{padding:24px 20px}
+}
+@media(max-width:600px){
+  .order-grid{grid-template-columns:1fr}
+  .order-inner{padding:20px 16px}
+  .order-actions{flex-direction:column}
+  .oa{width:100%;text-align:center;display:block}
+}
 </style>
 @endpush
 

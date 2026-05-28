@@ -53,7 +53,15 @@
 .cancel-reason-item.selected{border-color:#dc2626;background:#fff5f5}
 .cancel-other-wrap{margin-bottom:20px;display:none}
 .cancel-other-wrap.show{display:block}
-@media(max-width:900px){.os-grid{grid-template-columns:1fr}}
+@media(max-width:900px){
+  .os-grid{grid-template-columns:1fr}
+  .os-box{padding:24px 20px}
+}
+@media(max-width:600px){
+  .os-box{padding:20px 16px}
+  .os-actions{flex-direction:column}
+  .os-btn{width:100%;text-align:center;display:block}
+}
 </style>
 @endpush
 
@@ -165,7 +173,7 @@
         <a href="{{ route('tamu.payment.index', $order->id) }}" class="os-btn ob-pay">Continue Payment</a>
     @endif
 
-    @if(in_array($order->status, ['pending', 'confirmed']))
+    @if(in_array($order->status, ['pending', 'confirmed']) && $order->payment_status !== 'paid')
         <button type="button" onclick="openCancelModal()" class="os-btn ob-cancel">Cancel Order</button>
     @endif
 
@@ -310,6 +318,7 @@ document.getElementById('cancelForm').addEventListener('submit', function(e) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            'Accept': 'application/json',
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
         },
         body: JSON.stringify({ reason: reason })

@@ -121,6 +121,16 @@
         .fade-up { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
         .fade-up.visible { opacity: 1; transform: translateY(0); }
 
+        /* MOBILE MENU DRAWER */
+        .mob-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.4); backdrop-filter: blur(4px); z-index: 199; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+        .mob-overlay.open { opacity: 1; visibility: visible; }
+        .mob-menu { position: fixed; top: 0; right: -100%; width: 100%; max-width: 320px; height: 100vh; background: rgba(248, 245, 239, 0.98); backdrop-filter: blur(20px); z-index: 200; display: flex; flex-direction: column; padding: 80px 32px 40px; gap: 8px; box-shadow: -5px 0 25px rgba(0,0,0,.15); transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .mob-menu.open { right: 0; }
+        .mob-menu a { font-size: 14px; letter-spacing: .08em; text-transform: uppercase; color: #2a2a2a; text-decoration: none; padding: 13px 0; border-bottom: 1px solid rgba(0,0,0,.06); background: none; text-align: left; cursor: pointer; font-family: 'Inter', sans-serif; width: 100%; }
+        .mob-close { position: absolute; top: 22px; right: 22px; background: none; border: none; cursor: pointer; font-size: 22px; color: #2a2a2a; }
+        .mob-toggle-btn { display: none; background: none; border: none; cursor: pointer; color: #fff; padding: 4px; transition: color 0.4s; }
+        .navbar.scrolled .mob-toggle-btn { color: #2a2a2a; }
+
         /* RESPONSIVE */
         @media (max-width: 900px) {
             .navbar { padding: 16px 24px; }
@@ -141,10 +151,40 @@
             .intro-section, .menu-section, .gallery-section { padding: 72px 24px; }
             .page-footer { flex-direction: column; gap: 24px; text-align: center; padding: 40px 24px; }
             .footer-links { flex-wrap: wrap; justify-content: center; }
+            .mob-toggle-btn { display: block !important; }
+        }
+        @media (max-width: 768px) {
+            .navbar-cta { display: none; }
+        }
+        @media (max-width: 480px) {
+            .navbar-logo span { display: none; }
         }
     </style>
 </head>
 <body>
+
+<div class="mob-overlay" id="mobOverlay" onclick="closeMobMenu()"></div>
+
+{{-- MOBILE MENU --}}
+<div class="mob-menu" id="mobMenu">
+    <button class="mob-close" onclick="closeMobMenu()">✕</button>
+    <a href="{{ url('/') }}">Home</a>
+    <a href="{{ url('/') }}#tentang">About</a>
+    <a href="{{ url('/') }}#fasilitas">Facilities</a>
+    <a href="{{ route('kamar.index') }}">Rooms</a>
+    <a href="{{ url('/') }}#kontak">Contact</a>
+    <hr style="border:none;border-top:1px solid rgba(0,0,0,.06);margin:8px 0">
+    @auth
+        <a href="{{ route('tamu.booking.index') }}">Book Now</a>
+        <a href="{{ route('profile.edit') }}">Edit Profile</a>
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit" style="color:#dc2626;font-size:14px;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;padding:13px 0;border:none;background:none;text-align:left;cursor:pointer;font-family:'Inter',sans-serif;width:100%">Logout</button>
+        </form>
+    @else
+        <a href="{{ route('login') }}">Login</a>
+    @endauth
+</div>
 
 {{-- NAVBAR --}}
 <nav class="navbar" id="mainNav">
@@ -159,11 +199,16 @@
         <a href="{{ route('kamar.index') }}">Rooms</a>
         <a href="{{ url('/') }}#kontak">Contact</a>
     </div>
-    @auth
-        <a href="{{ route('tamu.booking.index') }}" class="navbar-cta">Book Now</a>
-    @else
-        <a href="{{ route('login') }}" class="navbar-cta">Sign In</a>
-    @endauth
+    <div style="display:flex;align-items:center;gap:12px">
+        @auth
+            <a href="{{ route('tamu.booking.index') }}" class="navbar-cta">Book Now</a>
+        @else
+            <a href="{{ route('login') }}" class="navbar-cta">Login</a>
+        @endauth
+        <button class="mob-toggle-btn" onclick="openMobMenu()">
+            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+    </div>
 </nav>
 
 {{-- HERO --}}
@@ -173,7 +218,7 @@
     <div class="hero-content">
         <h1 class="hero-title">Dining<br><em>Experience</em></h1>
         <div class="hero-meta">
-            <p>Culinary comfort<br>crafted for every<br>traveler's palate</p>
+            <p>Culinary comfort<br>crafted for every<br>traveler's plate</p>
         </div>
     </div>
     <div class="scroll-indicator">
@@ -184,7 +229,7 @@
 {{-- INTRO --}}
 <section class="intro-section">
     <span class="section-tag fade-up">Tarsan Homestay · Labuan Bajo</span>
-    <h2 class="intro-title fade-up">Savour every<br>meal like a <em>memory</em></h2>
+    <h2 class="intro-title fade-up">Savour every<br>food and be like a <em>memory</em></h2>
     <p class="intro-text fade-up">
         Our dining experience is thoughtfully curated to complement your stay. From hearty Indonesian breakfasts to light evening meals, every dish is prepared with fresh local ingredients to delight your senses.
     </p>
@@ -206,7 +251,7 @@
         </ul>
     </div>
     <div class="split-image">
-        <img src="{{ asset('images/dining/Teh-tawar-manis.jpg') }}" alt="Breakfast">
+        <img src="{{ asset('images/dining/Nasi-Goreng-telor.jpg') }}" alt="Breakfast">
     </div>
 </section>
 
@@ -217,10 +262,10 @@
         <span class="split-label">Authentic Flavours</span>
         <h2 class="split-title"><em>Local cuisine</em><br>done right</h2>
         <p class="split-desc">
-            Taste the authentic flavours of East Nusa Tenggara with our handpicked local dishes. From fresh seafood to traditional Flores recipes, every meal tells a story of the region's rich culinary heritage.
+            Experience the authentic taste of Labuan Bajo and Flores with our carefully selected local dishes. Every bite tells a story of our rich culinary heritage and fresh local ingredients.
         </p>
         <ul class="split-features">
-            <li>Fresh seafood from local waters</li>
+            <li>Labuan Bajo specialities food</li>
             <li>Traditional Flores recipes</li>
             <li>Seasonal local produce</li>
         </ul>
@@ -240,61 +285,20 @@
             After a day of exploring, there's nothing better than sitting down to a satisfying home-cooked dinner. Our evening menu blends comfort and creativity to end your day perfectly.
         </p>
         <ul class="split-features">
-            <li>Rotating daily menu</li>
-            <li>Vegetarian-friendly options</li>
+            <li>Many menu choices</li>
+            <li>Indonesian and western options</li>
             <li>Made with care & fresh produce</li>
         </ul>
         @auth
-        <a href="{{ route('tamu.booking.index') }}" style="display:inline-block; padding:12px 32px; border:1px solid #2a2a2a; color:#2a2a2a; font-size:12px; font-weight:500; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none; transition:all 0.3s;" onmouseover="this.style.background='#2a2a2a'; this.style.color='#f4f0e6'" onmouseout="this.style.background=''; this.style.color='#2a2a2a'">Book Your Stay</a>
+        <a href="{{ route('tamu.booking.index') }}" style="display:inline-block; padding:12px 32px; border:1px solid #2a2a2a; color:#2a2a2a; font-size:12px; font-weight:500; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none; transition:all 0.3s;" onmouseover="this.style.background='#2a2a2a'; this.style.color='#f4f0e6'" onmouseout="this.style.background=''; this.style.color='#2a2a2a'">Book Now</a>
         @else
-        <a href="{{ route('login') }}" style="display:inline-block; padding:12px 32px; border:1px solid #2a2a2a; color:#2a2a2a; font-size:12px; font-weight:500; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none; transition:all 0.3s;" onmouseover="this.style.background='#2a2a2a'; this.style.color='#f4f0e6'" onmouseout="this.style.background=''; this.style.color='#2a2a2a'">Sign In to Book</a>
+        <a href="{{ route('login') }}" style="display:inline-block; padding:12px 32px; border:1px solid #2a2a2a; color:#2a2a2a; font-size:12px; font-weight:500; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none; transition:all 0.3s;" onmouseover="this.style.background='#2a2a2a'; this.style.color='#f4f0e6'" onmouseout="this.style.background=''; this.style.color='#2a2a2a'">Login to Book</a>
         @endauth
     </div>
     <div class="split-image">
         <img src="{{ asset('images/dining/pencake.webp') }}" alt="Evening Meals">
     </div>
 </section>
-
-{{-- LOCAL CUISINE --}}
-<section class="split-section reverse">
-    <div class="split-text fade-up">
-        <div class="split-number">04</div>
-        <span class="split-label">Authentic Flavours</span>
-        <h2 class="split-title"><em>Local cuisine</em><br>done right</h2>
-        <p class="split-desc">
-            Taste the authentic flavours of East Nusa Tenggara with our handpicked local dishes. From fresh seafood to traditional Flores recipes, every meal tells a story of the region's rich culinary heritage.
-        </p>
-        <ul class="split-features">
-            <li>Fresh seafood from local waters</li>
-            <li>Traditional Flores recipes</li>
-            <li>Seasonal local produce</li>
-        </ul>
-    </div>
-    <div class="split-image">
-        <img src="{{ asset('images/dining/Kalori-Indomie-goreng-1.jpg') }}" alt="Local Cuisine">
-    </div>
-</section>
-
-{{-- BREAKFAST --}}
-<section class="split-section">
-    <div class="split-text fade-up">
-        <div class="split-number">05</div>
-        <span class="split-label">Morning Ritual</span>
-        <h2 class="split-title">A warm<br><em>breakfast</em> awaits</h2>
-        <p class="split-desc">
-            Start your day the right way with our wholesome breakfast offerings. Freshly prepared and served in a relaxed setting, our morning meals fuel your adventure through Komodo National Park.
-        </p>
-        <ul class="split-features">
-            <li>Indonesian & Western options</li>
-            <li>Fresh local ingredients</li>
-            <li>Served daily every morning</li>
-        </ul>
-    </div>
-    <div class="split-image">
-        <img src="{{ asset('images/dining/Nasi-Goreng-telor.jpg') }}" alt="Breakfast">
-    </div>
-</section>
-
 
 {{-- MENU SHOWCASE --}}
 <section class="menu-section">
@@ -305,27 +309,27 @@
     </div>
     <div class="menu-grid">
         <div class="menu-card">
-            <img src="{{ asset('images/dining.jpg') }}" alt="Breakfast">
+            <img src="{{ asset('images/dining/Kalori-Indomie-goreng-1.jpg') }}" alt="Breakfast">
             <div class="menu-card-overlay">
                 <span class="menu-card-tag">Morning</span>
-                <h3 class="menu-card-title">Indonesian Breakfast</h3>
-                <p class="menu-card-desc">Nasi goreng, mie goreng, fresh fruit and local favourites to start your day.</p>
+                <h3 class="menu-card-title">Indonesian-Western Breakfast</h3>
+                <p class="menu-card-desc">Fried rice, fried noodle, pancake and local favorites to start your day.</p>
             </div>
         </div>
         <div class="menu-card">
-            <img src="{{ asset('images/hero.png') }}" alt="Seafood">
+            <img src="{{ asset('images/dining/kompiang-1.jpg') }}" alt="Seafood">
             <div class="menu-card-overlay">
-                <span class="menu-card-tag">Local Catch</span>
-                <h3 class="menu-card-title">Fresh Seafood</h3>
-                <p class="menu-card-desc">Grilled fish, calamari and prawns sourced fresh from Labuan Bajo's waters.</p>
+                <span class="menu-card-tag">Local</span>
+                <h3 class="menu-card-title">Flores Traditional</h3>
+                <p class="menu-card-desc">Flores coffee, sweet tea and kompiang from Labuan Bajo's nature</p>
             </div>
         </div>
         <div class="menu-card">
-            <img src="{{ asset('images/dining.jpg') }}" alt="Drinks">
+            <img src="{{ asset('images/dining/cocacola.jpg') }}" alt="Drinks">
             <div class="menu-card-overlay">
                 <span class="menu-card-tag">Refreshments</span>
-                <h3 class="menu-card-title">Tropical Beverages</h3>
-                <p class="menu-card-desc">Fresh juices, coconut water and local herbal drinks to keep you refreshed.</p>
+                <h3 class="menu-card-title">Fresh Beverages</h3>
+                <p class="menu-card-desc">Soft drinks, beer, and many other to keep you refreshed.</p>
             </div>
         </div>
     </div>
@@ -343,6 +347,7 @@
         <div class="gallery-item g3"><img src="{{ asset('images/dining/Teh-tawar-manis.jpg') }}" alt="Dining 3"></div>
         <div class="gallery-item g4"><img src="{{ asset('images/dining/Kalori-Indomie-goreng-1.jpg') }}" alt="Dining 4"></div>
         <div class="gallery-item g5"><img src="{{ asset('images/dining/kopi-hitam.jpg') }}" alt="Dining 5"></div>
+        <div class="gallery-item g6"><img src="{{ asset('images/dining/kompiang-1.jpg') }}" alt="Dining 6"></div>
     </div>
 </section>
 
@@ -355,7 +360,7 @@
         @auth
             <a href="{{ route('tamu.booking.index') }}" class="cta-btn">Book Now</a>
         @else
-            <a href="{{ route('login') }}" class="cta-btn">Get Started</a>
+            <a href="{{ route('login') }}" class="cta-btn">Book Now</a>
         @endauth
     </div>
 </section>
@@ -374,6 +379,16 @@
 </footer>
 
 <script>
+function openMobMenu() {
+    document.getElementById('mobMenu').classList.add('open');
+    document.getElementById('mobOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+function closeMobMenu() {
+    document.getElementById('mobMenu').classList.remove('open');
+    document.getElementById('mobOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+}
 const nav = document.getElementById('mainNav');
 window.addEventListener('scroll', () => {
     nav.classList.toggle('scrolled', window.scrollY > 60);

@@ -17,6 +17,11 @@
 .profile-box .btn-save:hover{background:#333}
 .profile-box .btn-danger{padding:12px 24px;background:transparent;color:#dc2626;border:1px solid #dc2626;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .3s}
 .profile-box .btn-danger:hover{background:#dc2626;color:#fff}
+@media (max-width: 640px) {
+    .profile-box {
+        padding: 24px 16px;
+    }
+}
 </style>
 @endpush
 
@@ -39,3 +44,20 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    function togglePassword(inputId, button) {
+        const input = document.getElementById(inputId);
+        const icon = button.querySelector('img');
+
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.src = icon.dataset.hide;
+        } else {
+            input.type = 'password';
+            icon.src = icon.dataset.show;
+        }
+    }
+</script>
+@endpush

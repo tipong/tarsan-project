@@ -33,6 +33,7 @@ class ReviewController extends Controller
 
         Review::create([
             'user_id' => auth()->id(),
+            'guest_name' => auth()->user()->name,
             'order_id' => $order->id,
             'rating' => $request->rating,
             'review' => $request->review

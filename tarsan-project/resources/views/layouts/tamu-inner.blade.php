@@ -73,20 +73,30 @@ body{font-family:'Inter',sans-serif;background:#f8f5ef;color:#2a2a2a;overflow-x:
 .fcl a:hover{color:#fff}
 .fbot{border-top:1px solid rgba(255,255,255,.07);padding-top:24px;display:flex;justify-content:space-between;font-size:12px;color:rgba(255,255,255,.3);font-family:'Inter',sans-serif}
 /* MOBILE */
-.mob-menu{display:none;position:fixed;inset:0;background:#f4f0e6;z-index:200;flex-direction:column;padding:72px 36px 36px;gap:2px}
-.mob-menu.open{display:flex}
+.mob-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);z-index:199;opacity:0;visibility:hidden;transition:all .3s ease}
+.mob-overlay.open{opacity:1;visibility:visible}
+.mob-menu{position:fixed;top:0;right:-100%;width:100%;max-width:320px;height:100vh;background:rgba(244,240,230,.98);backdrop-filter:blur(20px);z-index:200;display:flex;flex-direction:column;padding:80px 32px 40px;gap:8px;box-shadow:-5px 0 25px rgba(0,0,0,.15);transition:right .4s cubic-bezier(0.16, 1, 0.3, 1)}
+.mob-menu.open{right:0}
 .mob-menu a,.mob-menu button{font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#2a2a2a;text-decoration:none;padding:13px 0;border-bottom:1px solid rgba(0,0,0,.06);background:none;text-align:left;cursor:pointer;font-family:'Inter',sans-serif;width:100%}
 .mob-close{position:absolute;top:22px;right:22px;background:none;border:none;cursor:pointer;font-size:22px;color:#2a2a2a}
 @media(max-width:900px){
   .nb{padding:14px 20px}
   .nb-links{display:none}
   .mob-toggle{display:block}
+  .ab span{display:none}
+  .ab{padding:6px;border-radius:50%}
   .ph{padding:88px 24px 48px;margin-top:60px}
   .main{padding:40px 20px}
   .foot{padding:44px 20px 28px}
   .fg{grid-template-columns:1fr;gap:28px}
   .fbot{flex-direction:column;gap:8px}
   .filter-bar{padding:20px}
+}
+@media(max-width:768px){
+  .nb-right .btn-dark,.nb-right .btn-fill{display:none}
+}
+@media(max-width:480px){
+  .nb-logo span{display:none}
 }
 /* FLASH MESSAGES */
 .flash-success{background:#d1fae5;border:1px solid #6ee7b7;color:#065f46;padding:14px 20px;margin-bottom:24px;font-size:14px}
@@ -105,9 +115,11 @@ body{font-family:'Inter',sans-serif;background:#f8f5ef;color:#2a2a2a;overflow-x:
 @stack('styles')
 </head>
 <body>
+<div class="mob-overlay" id="mobOverlay" onclick="closeMobMenu()"></div>
+
 {{-- MOBILE MENU --}}
 <div class="mob-menu" id="mobMenu">
-    <button class="mob-close" onclick="document.getElementById('mobMenu').classList.remove('open')">✕</button>
+    <button class="mob-close" onclick="closeMobMenu()">✕</button>
     <a href="{{ route('tamu.dashboard') }}">Home</a>
     <a href="{{ url('/') }}#tentang">About</a>
     <a href="{{ route('tamu.facilities') }}">Facilities</a>
@@ -115,7 +127,7 @@ body{font-family:'Inter',sans-serif;background:#f8f5ef;color:#2a2a2a;overflow-x:
     <a href="{{ url('/') }}#kontak">Contact</a>
     @auth
         <a href="{{ route('tamu.booking.index') }}">Book Now</a>
-        <a href="{{ route('tamu.orders') }}">My Orders</a>
+        <a href="{{ route('tamu.orders') }}">My Order</a>
         <a href="{{ route('tamu.notifications.index') }}">Notifications</a>
         <a href="{{ route('profile.edit') }}">Profile</a>
         <form method="POST" action="{{ route('logout') }}">@csrf
@@ -139,7 +151,7 @@ body{font-family:'Inter',sans-serif;background:#f8f5ef;color:#2a2a2a;overflow-x:
         <a href="{{ route('kamar.index') }}" @class(['active' => request()->routeIs('kamar.*')])>Rooms</a>
         @auth
             <a href="{{ route('tamu.booking.index') }}" @class(['active' => request()->routeIs('tamu.booking.*')])>Book</a>
-            <a href="{{ route('tamu.orders') }}" @class(['active' => request()->routeIs('tamu.orders*')])>My Orders</a>
+            <a href="{{ route('tamu.orders') }}" @class(['active' => request()->routeIs('tamu.orders*')])>My Order</a>
         @endauth
         <a href="{{ url('/') }}#kontak">Contact</a>
     </div>
@@ -159,7 +171,7 @@ body{font-family:'Inter',sans-serif;background:#f8f5ef;color:#2a2a2a;overflow-x:
                 </button>
                 <div class="dd">
                     <a href="{{ route('profile.edit') }}">Edit Profile</a>
-                    <a href="{{ route('tamu.orders') }}">My Orders</a>
+                    <a href="{{ route('tamu.orders') }}">My Order</a>
                     <hr>
                     <form method="POST" action="{{ route('logout') }}">@csrf
                         <button type="submit" class="out">Logout</button>
@@ -167,7 +179,7 @@ body{font-family:'Inter',sans-serif;background:#f8f5ef;color:#2a2a2a;overflow-x:
                 </div>
             </div>
         @endguest
-        <button class="mob-toggle" onclick="document.getElementById('mobMenu').classList.add('open')">
+        <button class="mob-toggle" onclick="openMobMenu()">
             <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
         </button>
     </div>
@@ -213,7 +225,7 @@ body{font-family:'Inter',sans-serif;background:#f8f5ef;color:#2a2a2a;overflow-x:
             <div class="fcl">
                 @auth
                     <a href="{{ route('tamu.booking.index') }}">Book Now</a>
-                    <a href="{{ route('tamu.orders') }}">My Orders</a>
+                    <a href="{{ route('tamu.orders') }}">My Order</a>
                     <a href="{{ route('profile.edit') }}">Profile</a>
                 @else
                     <a href="{{ route('login') }}">Login</a>
@@ -242,6 +254,18 @@ function loadCount(){
 }
 </script>
 @endauth
+<script>
+function openMobMenu() {
+    document.getElementById('mobMenu').classList.add('open');
+    document.getElementById('mobOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+function closeMobMenu() {
+    document.getElementById('mobMenu').classList.remove('open');
+    document.getElementById('mobOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+}
+</script>
 @stack('scripts')
 </body>
 </html>

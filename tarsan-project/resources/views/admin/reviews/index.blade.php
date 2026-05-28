@@ -36,7 +36,7 @@
                     class="w-12 h-12 rounded-full object-cover ring-2 ring-slate-100">
 
                 <div class="flex-1 min-w-0">
-                    <p class="font-bold text-slate-900 truncate">{{ $review->user->name ?? 'Former Guest' }}</p>
+                    <p class="font-bold text-slate-900 truncate">{{ $review->guest_name ?? $review->user?->name ?? 'Former Guest' }}</p>
                     <p class="text-xs text-slate-500">
                         {{ $review->created_at->format('d M Y, H:i') }}
                     </p>

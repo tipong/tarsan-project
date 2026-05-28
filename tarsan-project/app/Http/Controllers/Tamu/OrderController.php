@@ -59,7 +59,13 @@ class OrderController extends Controller
         ]);
 
         // Check if order can be cancelled
-        if (!in_array($order->status, ['pending', 'confirmed'])) {
+        if (!in_array($order->status, ['pending', 'confirmed']) || $order->payment_status === 'paid') {
+            if ($request->expectsJson() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Order cannot be cancelled in this status.'
+                ], 422);
+            }
             return redirect()->route('tamu.orders')->with('error', 'Order cannot be cancelled in this status.');
         }
 
@@ -79,6 +85,13 @@ class OrderController extends Controller
             'message' => 'Order ' . $order->order_code . ' has been cancelled. Reason: ' . $request->reason,
             'order_id' => $order->id
         ]);
+
+        if ($request->expectsJson() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Order successfully cancelled.'
+            ]);
+        }
 
         return redirect()->route('tamu.orders')->with('success', 'Order successfully cancelled.');
     }

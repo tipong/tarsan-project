@@ -43,7 +43,7 @@
         <div class="fg-filter" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:16px;align-items:end">
             <div>
                 <label>Search Room</label>
-                <input type="text" name="search" placeholder="Room name..." value="{{ request('search') }}">
+                <input type="text" name="search" placeholder="Type here..." value="{{ request('search') }}">
             </div>
             <div>
                 <label>Facilities</label>
@@ -63,7 +63,7 @@
                 <input type="number" name="price_max" placeholder="10.000.000" value="{{ request('price_max') }}">
             </div>
             <div style="display:flex;gap:8px">
-                <button type="submit" class="btn-fill">Filter</button>
+                <button type="submit" class="btn-fill">Search</button>
                 <a href="{{ route('kamar.index') }}" class="btn-dark">Reset</a>
             </div>
         </div>

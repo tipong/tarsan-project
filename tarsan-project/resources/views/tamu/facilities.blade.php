@@ -471,6 +471,16 @@
             transform: translateY(0);
         }
 
+        /* MOBILE MENU DRAWER */
+        .mob-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.4); backdrop-filter: blur(4px); z-index: 199; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+        .mob-overlay.open { opacity: 1; visibility: visible; }
+        .mob-menu { position: fixed; top: 0; right: -100%; width: 100%; max-width: 320px; height: 100vh; background: rgba(248, 245, 239, 0.98); backdrop-filter: blur(20px); z-index: 200; display: flex; flex-direction: column; padding: 80px 32px 40px; gap: 8px; box-shadow: -5px 0 25px rgba(0,0,0,.15); transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .mob-menu.open { right: 0; }
+        .mob-menu a { font-size: 14px; letter-spacing: .08em; text-transform: uppercase; color: #2a2a2a; text-decoration: none; padding: 13px 0; border-bottom: 1px solid rgba(0,0,0,.06); background: none; text-align: left; cursor: pointer; font-family: 'Inter', sans-serif; width: 100%; }
+        .mob-close { position: absolute; top: 22px; right: 22px; background: none; border: none; cursor: pointer; font-size: 22px; color: #2a2a2a; }
+        .mob-toggle-btn { display: none; background: none; border: none; cursor: pointer; color: #fff; padding: 4px; transition: color 0.4s; }
+        .navbar.scrolled .mob-toggle-btn { color: #2a2a2a; }
+
         /* ─── RESPONSIVE ─────────────────────── */
         @media (max-width: 900px) {
             .navbar { padding: 16px 24px; }
@@ -490,10 +500,40 @@
             .gallery-section { padding: 72px 24px; }
             .page-footer { flex-direction: column; gap: 24px; text-align: center; padding: 40px 24px; }
             .footer-links { flex-wrap: wrap; justify-content: center; }
+            .mob-toggle-btn { display: block !important; }
+        }
+        @media (max-width: 768px) {
+            .navbar-cta { display: none; }
+        }
+        @media (max-width: 480px) {
+            .navbar-logo span { display: none; }
         }
     </style>
 </head>
 <body>
+
+<div class="mob-overlay" id="mobOverlay" onclick="closeMobMenu()"></div>
+
+{{-- MOBILE MENU --}}
+<div class="mob-menu" id="mobMenu">
+    <button class="mob-close" onclick="closeMobMenu()">✕</button>
+    <a href="{{ url('/') }}">Home</a>
+    <a href="{{ url('/') }}#tentang">About</a>
+    <a href="{{ url('/') }}#fasilitas">Facilities</a>
+    <a href="{{ route('kamar.index') }}">Rooms</a>
+    <a href="{{ url('/') }}#kontak">Contact</a>
+    <hr style="border:none;border-top:1px solid rgba(0,0,0,.06);margin:8px 0">
+    @auth
+        <a href="{{ route('tamu.booking.index') }}">Book Now</a>
+        <a href="{{ route('profile.edit') }}">Edit Profile</a>
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit" style="color:#dc2626;font-size:14px;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;padding:13px 0;border:none;background:none;text-align:left;cursor:pointer;font-family:'Inter',sans-serif;width:100%">Logout</button>
+        </form>
+    @else
+        <a href="{{ route('login') }}">Login</a>
+    @endauth
+</div>
 
 {{-- ─── NAVBAR ─────────────────────────────────────────── --}}
 <nav class="navbar" id="mainNav">
@@ -508,11 +548,16 @@
         <a href="{{ route('kamar.index') }}">Rooms</a>
         <a href="{{ url('/') }}#kontak">Contact</a>
     </div>
-    @auth
-        <a href="{{ route('tamu.booking.index') }}" class="navbar-cta">Book Now</a>
-    @else
-        <a href="{{ route('login') }}" class="navbar-cta">Sign In</a>
-    @endauth
+    <div style="display:flex;align-items:center;gap:12px">
+        @auth
+            <a href="{{ route('tamu.booking.index') }}" class="navbar-cta">Book Now</a>
+        @else
+            <a href="{{ route('login') }}" class="navbar-cta">Login</a>
+        @endauth
+        <button class="mob-toggle-btn" onclick="openMobMenu()">
+            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+    </div>
 </nav>
 
 {{-- ─── HERO ────────────────────────────────────────────── --}}
@@ -555,7 +600,7 @@
         </ul>
     </div>
     <div class="split-image">
-        <img src="{{ asset('images/fasilitas/rakbuku.HEIC') }}" alt="Relaxation Area">
+        <img src="{{ asset('images/fasilitas/rakbuku.jpg') }}" alt="Relaxation Area">
     </div>
 </section>
 
@@ -575,7 +620,7 @@
         </ul>
     </div>
     <div class="split-image">
-        <img src="{{ asset('images/fasilitas/balcone.HEIC') }}" alt="Wi-Fi Connectivity">
+        <img src="{{ asset('images/fasilitas/balcone.jpg') }}" alt="Wi-Fi Connectivity">
     </div>
 </section>
 
@@ -595,7 +640,7 @@
         </ul>
     </div>
     <div class="split-image">
-        <img src="{{ asset('images/fasilitas/biliard.HEIC') }}" alt="Billiards Room">
+        <img src="{{ asset('images/fasilitas/biliard.jpg') }}" alt="Billiards Room">
     </div>
 </section>
 
@@ -614,13 +659,13 @@
             <li>Local route recommendations</li>
         </ul>
         @auth
-        <a href="{{ route('tamu.booking.index') }}" class="btn-outline-dark">Book Your room now!</a>
+        <a href="{{ route('tamu.booking.index') }}" class="btn-outline-dark">Book Your Room Now!</a>
         @else
-        <a href="{{ route('login') }}" class="btn-outline-dark">Sign In to Book</a>
+        <a href="{{ route('login') }}" class="btn-outline-dark">Login to Book</a>
         @endauth
     </div>
     <div class="split-image">
-        <img src="{{ asset('images/fasilitas/bathroom.HEIC') }}" alt="Motorbike Rental">
+        <img src="{{ asset('images/fasilitas/bathroom.jpg') }}" alt="Motorbike Rental">
     </div>
 </section>
 
@@ -632,16 +677,16 @@
     </div>
     <div class="gallery-grid">
         <div class="gallery-item g1">
-            <img src="{{ asset('images/fasilitas/rakbuku.HEIC') }}" alt="Facility 1">
+            <img src="{{ asset('images/fasilitas/rakbuku.jpg') }}" alt="Facility 1">
         </div>
         <div class="gallery-item g2">
-            <img src="{{ asset('images/fasilitas/balcone.HEIC') }}" alt="Facility 2">
+            <img src="{{ asset('images/fasilitas/balcone.jpg') }}" alt="Facility 2">
         </div>
         <div class="gallery-item g4">
-            <img src="{{ asset('images/fasilitas/biliard.HEIC') }}" alt="Facility 3">
+            <img src="{{ asset('images/fasilitas/biliard.jpg') }}" alt="Facility 3">
         </div>
         <div class="gallery-item g5">
-            <img src="{{ asset('images/fasilitas/bathroom.HEIC') }}" alt="Facility 4">
+            <img src="{{ asset('images/fasilitas/bathroom.jpg') }}" alt="Facility 4">
         </div>
         <!-- <div class="gallery-item g5">
             <img src="{{ asset('images/facility.jpg') }}" alt="Facility 5">
@@ -657,11 +702,11 @@
     <div class="cta-bg"></div>
     <div class="cta-content fade-up">
         <p class="cta-tag">Ready to experience it?</p>
-        <h2 class="cta-title">Book your<br>room now!</h2>
+        <h2 class="cta-title">Book Your<br>Room Now!</h2>
         @auth
-            <a href="{{ route('tamu.booking.index') }}" class="cta-btn">Reserve Now</a>
+            <a href="{{ route('tamu.booking.index') }}" class="cta-btn">Book Now</a>
         @else
-            <a href="{{ route('login') }}" class="cta-btn">Get Started</a>
+            <a href="{{ route('login') }}" class="cta-btn">Book Now</a>
         @endauth
     </div>
 </section>
@@ -680,6 +725,17 @@
 </footer>
 
 <script>
+function openMobMenu() {
+    document.getElementById('mobMenu').classList.add('open');
+    document.getElementById('mobOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+function closeMobMenu() {
+    document.getElementById('mobMenu').classList.remove('open');
+    document.getElementById('mobOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+}
+
 // Navbar scroll behavior
 const nav = document.getElementById('mainNav');
 window.addEventListener('scroll', () => {

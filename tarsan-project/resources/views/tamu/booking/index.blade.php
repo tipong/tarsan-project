@@ -46,7 +46,17 @@
   .booking-wrap{grid-template-columns:1fr}
   .broom-card{grid-template-columns:1fr}
   .broom-img{height:200px}
-  .broom-action{border-left:none;border-top:1px solid rgba(0,0,0,.06);flex-direction:row;align-items:center;justify-content:space-between}
+  .broom-action{border-left:none;border-top:1px solid rgba(0,0,0,.06);flex-direction:row;align-items:center;justify-content:space-between;padding:16px 20px}
+  .broom-price{text-align:left}
+  .broom-price-sub{text-align:left}
+  .booking-sidebar{position:static;padding:20px 16px;margin-top:24px}
+  .filter-grid{grid-template-columns:1fr 1fr !important}
+}
+@media(max-width:600px){
+  .filter-grid{grid-template-columns:1fr !important}
+  .filter-grid div:last-child{flex-direction:column;width:100%}
+  .filter-grid button, .filter-grid a{width:100%;text-align:center}
+  .broom-action{flex-direction:column;align-items:stretch;gap:16px}
   .broom-price{text-align:left}
   .broom-price-sub{text-align:left}
 }

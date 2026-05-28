@@ -37,7 +37,7 @@
         <div class="filter-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:16px;align-items:end">
             <div>
                 <label>Search Room</label>
-                <input type="text" name="search" placeholder="Room name..." value="{{ request('search') }}">
+                <input type="text" name="search" placeholder="Type here..." value="{{ request('search') }}">
             </div>
             <div>
                 <label>Facilities</label>

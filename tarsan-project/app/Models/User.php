@@ -24,6 +24,19 @@ class User extends Authenticatable
         'password',
         'role',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($user) {
+            // Prevent paid orders from being cascade deleted by setting user_id = null
+            \Illuminate\Support\Facades\DB::table('orders')
+                ->where('user_id', $user->id)
+                ->where('payment_status', 'paid')
+                ->update(['user_id' => null]);
+        });
+    }
     
 
     /**
