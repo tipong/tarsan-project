@@ -8,23 +8,52 @@
     <link href="https://fonts.bunny.net/css?family=figtree:300,400,500,600&display=swap" rel="stylesheet" />
     <!-- Assets -->
     @include('layouts.assets')
+
+    <style>
+        #resepsionisSidebar {
+            transition: transform 0.3s ease-in-out;
+        }
+        @media (max-width: 767px) {
+            #resepsionisSidebar {
+                position: fixed;
+                top: 0; left: 0; bottom: 0;
+                transform: translateX(-100%);
+                z-index: 50;
+            }
+        }
+        @media (min-width: 768px) {
+            #resepsionisSidebar {
+                position: relative !important;
+                transform: translateX(0) !important;
+            }
+        }
+        #sidebarOverlay {
+            display: none;
+        }
+        #sidebarOverlay.is-open {
+            display: block;
+        }
+        #resepsionisSidebar.is-open {
+            transform: translateX(0) !important;
+        }
+    </style>
 </head>
 <body class="bg-slate-50 font-[Figtree] text-slate-800 antialiased selection:bg-indigo-100 selection:text-indigo-900">
 
 <div class="flex min-h-screen">
 
     {{-- MOBILE OVERLAY BACKDROP --}}
-    <div id="sidebarOverlay" class="fixed inset-0 bg-slate-900/50 z-40 hidden md:hidden" onclick="toggleSidebar()"></div>
+    <div id="sidebarOverlay" class="fixed inset-0 bg-slate-900/50 z-40" onclick="closeSidebar()"></div>
 
     {{-- SIDEBAR --}}
-    <aside id="resepsionisSidebar" class="w-64 bg-white border-r border-slate-200 text-slate-900 fixed inset-y-0 left-0 z-50 transform -translate-x-full md:relative md:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col shadow">
+    <aside id="resepsionisSidebar" class="w-64 bg-white border-r border-slate-200 text-slate-900 flex flex-col shadow">
         <div class="px-6 py-5 border-b border-slate-200 flex items-center justify-between">
             <a href="{{ route('resepsionis.dashboard') }}" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
                 <img src="{{ asset('images/tarsanhomestay.png') }}" class="h-10 object-contain">
                 <span class="font-bold text-lg text-slate-900 tracking-tight">Resepsionis</span>
             </a>
-            <button onclick="toggleSidebar()" class="p-2 -mr-2 text-slate-500 hover:text-slate-900 md:hidden focus:outline-none relative z-50 flex items-center justify-center cursor-pointer">
-                <svg class="h-6 w-6 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <button onclick="closeSidebar()" class="p-2 -mr-2 text-slate-500 hover:text-slate-900 focus:outline-none cursor-pointer md:hidden">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
@@ -60,7 +89,7 @@
                 <svg class="inline-block w-5 h-5 mr-2 opacity-75" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                 </svg>
-                Availability Kamar
+                Room Availability
             </a>
         </nav>
 
@@ -83,8 +112,7 @@
         {{-- NAVBAR --}}
         <header class="bg-white border-b border-slate-200 shadow px-4 md:px-8 py-4 flex justify-between items-center sticky top-0 z-30">
             <div class="flex items-center gap-4">
-                {{-- Hamburger menu for mobile --}}
-                <button onclick="toggleSidebar()" class="p-2 -ml-2 text-slate-600 hover:text-slate-900 md:hidden focus:outline-none">
+                <button onclick="openSidebar()" class="p-2 -ml-2 text-slate-600 hover:text-slate-900 md:hidden focus:outline-none">
                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
@@ -96,8 +124,7 @@
 
             <div class="relative" id="profileDropdown">
                 <button onclick="toggleProfileDropdown()" class="flex items-center gap-3 focus:outline-none group">
-                    <img
-                        src="{{ image_url(Auth::user()->photo) }}"
+                    <img src="{{ image_url(Auth::user()->photo) }}"
                         class="h-9 w-9 rounded-full object-cover ring-2 ring-slate-200 group-hover:ring-indigo-100 transition shadow-sm">
                     <div class="text-left hidden sm:block">
                         <p class="font-bold text-sm text-slate-900 group-hover:text-indigo-600 transition">{{ Auth::user()->name }}</p>
@@ -105,8 +132,7 @@
                     </div>
                 </button>
 
-                {{-- Dropdown Menu --}}
-                <div id="dropdownMenu" class="absolute right-0 mt-3 w-48 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 hidden animate-in fade-in slide-in-from-top-2 duration-200 z-50">
+                <div id="dropdownMenu" class="absolute right-0 mt-3 w-48 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 hidden z-50">
                     <div class="px-4 py-2 border-b border-slate-50 mb-1">
                         <p class="text-xs font-black text-slate-400 uppercase tracking-widest">Account Settings</p>
                     </div>
@@ -124,11 +150,8 @@
 
             <script>
                 function toggleProfileDropdown() {
-                    const menu = document.getElementById('dropdownMenu');
-                    menu.classList.toggle('hidden');
+                    document.getElementById('dropdownMenu').classList.toggle('hidden');
                 }
-
-                // Close when clicking outside
                 window.addEventListener('click', function(e) {
                     const dropdown = document.getElementById('profileDropdown');
                     const menu = document.getElementById('dropdownMenu');
@@ -148,17 +171,30 @@
 </div>
 
 <script>
-    function toggleSidebar() {
-        const sidebar = document.getElementById('resepsionisSidebar');
-        const overlay = document.getElementById('sidebarOverlay');
-        sidebar.classList.toggle('-translate-x-full');
-        const isHidden = overlay.classList.toggle('hidden');
-        if (!isHidden) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = '';
-        }
+    var sidebarOpen = false;
+
+    function openSidebar() {
+        if (window.innerWidth >= 768) return;
+        sidebarOpen = true;
+        document.getElementById('resepsionisSidebar').classList.add('is-open');
+        document.getElementById('sidebarOverlay').classList.add('is-open');
+        document.body.style.overflow = 'hidden';
     }
+
+    function closeSidebar() {
+        sidebarOpen = false;
+        document.getElementById('resepsionisSidebar').classList.remove('is-open');
+        document.getElementById('sidebarOverlay').classList.remove('is-open');
+        document.body.style.overflow = '';
+    }
+
+    window.addEventListener('resize', function() {
+        if (window.innerWidth >= 768) closeSidebar();
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && sidebarOpen) closeSidebar();
+    });
 </script>
 
 {{-- SweetAlert Notifications --}}

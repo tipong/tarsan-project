@@ -36,22 +36,4 @@ class ReviewController extends Controller
             'totalReviews'
         ));
     }
-
-    public function reply(Request $request, Review $review)
-    {
-        $request->validate([
-            'admin_reply' => 'required|string|max:500',
-        ]);
-
-        // ❌ Cannot reply to reviews from incomplete orders
-        if (! $review->order || ! $review->order->checked_out_at) {
-            return back()->with('error', 'Review is not valid');
-        }
-
-        $review->update([
-            'admin_reply' => $request->admin_reply,
-        ]);
-
-        return back()->with('success', 'Reply successfully sent');
-    }
 }

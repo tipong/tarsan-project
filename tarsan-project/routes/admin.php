@@ -32,8 +32,5 @@ Route::middleware(['auth', 'role:admin,owner'])
         Route::prefix('reviews')->name('reviews.')->group(function () {
             Route::get('/', [ReviewController::class, 'index'])
                         ->name('index');
-
-            Route::post('/{review}/reply', [ReviewController::class, 'reply'])
-                        ->name('reply');
         });
     });

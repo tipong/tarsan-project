@@ -65,7 +65,7 @@
                     <div class="space-y-2 max-h-60 overflow-y-auto p-4 border border-slate-200 rounded-2xl">
                         @foreach($rooms as $room)
                             <label class="flex items-center p-3 rounded-xl hover:bg-slate-50 cursor-pointer transition border border-transparent hover:border-slate-100">
-                                <input type="checkbox" name="room_ids[]" value="{{ $room->id }}" data-price="{{ $room->price_per_night }}" class="room-checkbox mr-3 h-5 w-5 text-indigo-600 rounded-md border-slate-300 focus:ring-indigo-500">
+                                <input type="checkbox" name="room_ids[]" value="{{ $room->id }}" data-price="{{ $room->price_per_night }}" class="room-checkbox mr-3 h-5 w-5 text-indigo-600 rounded-md border-slate-300 focus:ring-indigo-500" {{ request('room_id') == $room->id ? 'checked' : '' }}>
                                 <div class="flex-1">
                                     <div class="text-sm font-bold text-slate-800">{{ $room->room_name }}</div>
                                     <div class="text-xs text-slate-500">Rp {{ number_format($room->price_per_night, 0, ',', '.') }}/malam — Kapasitas: {{ $room->capacity }} org</div>
@@ -78,11 +78,11 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-slate-800 font-semibold mb-2">Check-in Date <span class="text-red-500">*</span></label>
-                        <input type="date" name="check_in_date" id="checkInDate" value="{{ date('Y-m-d') }}" required class="w-full px-4 py-2 border border-slate-200 rounded-2xl text-sm focus:ring-2 focus:ring-indigo-600 focus:border-transparent outline-none transition">
+                        <input type="date" name="check_in_date" id="checkInDate" value="{{ request('check_in', date('Y-m-d')) }}" required class="w-full px-4 py-2 border border-slate-200 rounded-2xl text-sm focus:ring-2 focus:ring-indigo-600 focus:border-transparent outline-none transition">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-slate-800 font-semibold mb-2">Check-out Date <span class="text-red-500">*</span></label>
-                        <input type="date" name="check_out_date" id="checkOutDate" value="{{ date('Y-m-d', strtotime('+1 day')) }}" required class="w-full px-4 py-2 border border-slate-200 rounded-2xl text-sm focus:ring-2 focus:ring-indigo-600 focus:border-transparent outline-none transition">
+                        <input type="date" name="check_out_date" id="checkOutDate" value="{{ request('check_out', date('Y-m-d', strtotime('+1 day'))) }}" required class="w-full px-4 py-2 border border-slate-200 rounded-2xl text-sm focus:ring-2 focus:ring-indigo-600 focus:border-transparent outline-none transition">
                     </div>
                 </div>
             </div>

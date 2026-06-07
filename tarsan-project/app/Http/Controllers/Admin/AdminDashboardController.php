@@ -32,13 +32,20 @@ class AdminDashboardController extends Controller
 
         $completedOrders = Order::whereNotNull('checked_out_at')->count();
 
+        // Fetch latest 5 orders with rooms and user relationships
+        $recentOrders = Order::with(['items.room', 'user'])
+            ->latest()
+            ->take(5)
+            ->get();
+
         return view('admin.dashboard', compact(
             'totalOrders',
             'totalRevenue',
             'totalRooms',
             'upcomingOrders',
             'ongoingOrders',
-            'completedOrders'
+            'completedOrders',
+            'recentOrders'
         ));
     }
 }

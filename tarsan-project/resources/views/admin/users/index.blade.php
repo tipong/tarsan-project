@@ -85,57 +85,65 @@
     </div>
 @endif
 
-<div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+{{-- DESKTOP TABLE --}}
+<div class="hidden md:block bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
     <div class="overflow-x-auto">
         <table class="w-full text-sm">
             <thead>
-                <tr class="bg-slate-50/50 border-b border-slate-100">
-                    <th class="px-6 py-4 text-left font-bold text-slate-500 uppercase tracking-wider text-[10px]">Pengguna</th>
-                    <th class="px-6 py-4 text-left font-bold text-slate-500 uppercase tracking-wider text-[10px]">Email</th>
-                    <th class="px-6 py-4 text-center font-bold text-slate-500 uppercase tracking-wider text-[10px]">Role</th>
-                    <th class="px-6 py-4 text-right font-bold text-slate-500 uppercase tracking-wider text-[10px]">Aksi</th>
+                <tr class="bg-slate-50/70 border-b border-slate-100">
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Pengguna</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Email</th>
+                    <th class="px-6 py-4 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">Role</th>
+                    <th class="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Aksi</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-slate-50">
+            <tbody class="divide-y divide-slate-100">
                 @forelse($users as $user)
-                    <tr class="hover:bg-slate-50/50 transition duration-150">
+                    <tr class="group hover:bg-indigo-50/10 transition-all duration-200 hover:translate-x-0.5">
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-3">
                                 <img src="{{ image_url($user->photo) }}"
-                                     class="h-10 w-10 rounded-full object-cover ring-2 ring-slate-100"
+                                     class="h-9 w-9 rounded-full object-cover ring-2 ring-slate-100 shadow-sm group-hover:scale-105 transition-transform duration-200"
                                      alt="{{ $user->name }}">
                                 <div>
-                                    <p class="font-bold text-slate-900">{{ $user->name }}</p>
-                                    <p class="text-[10px] text-slate-400 font-medium italic">ID: #{{ $user->id }}</p>
+                                    <p class="font-bold text-slate-800 group-hover:text-indigo-600 transition-colors duration-200">{{ $user->name }}</p>
+                                    <p class="text-[10px] text-slate-400 font-medium italic mt-0.5">ID: #{{ $user->id }}</p>
                                 </div>
                             </div>
                         </td>
-                        <td class="px-6 py-4 text-slate-600 font-medium">{{ $user->email }}</td>
+                        <td class="px-6 py-4">
+                            <span class="text-slate-600 font-medium text-xs flex items-center gap-1.5">
+                                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                </svg>
+                                {{ $user->email }}
+                            </span>
+                        </td>
                         <td class="px-6 py-4 text-center">
                             @if($user->role === 'admin')
-                                <span class="px-2 py-1 bg-red-50 text-red-600 rounded-lg text-[10px] font-black uppercase tracking-tighter">Admin</span>
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-rose-50 text-rose-700 border border-rose-100">Admin</span>
                             @elseif($user->role === 'resepsionis')
-                                <span class="px-2 py-1 bg-indigo-50 text-indigo-600 rounded-lg text-[10px] font-black uppercase tracking-tighter">Staff</span>
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-indigo-50 text-indigo-700 border border-indigo-100">Staff</span>
                             @elseif($user->role === 'owner')
-                                <span class="px-2 py-1 bg-emerald-50 text-emerald-600 rounded-lg text-[10px] font-black uppercase tracking-tighter">Owner</span>
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-100">Owner</span>
                             @else
-                                <span class="px-2 py-1 bg-blue-50 text-blue-600 rounded-lg text-[10px] font-black uppercase tracking-tighter">Tamu</span>
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-blue-50 text-blue-700 border border-blue-100">Tamu</span>
                             @endif
                         </td>
                         <td class="px-6 py-4 text-right">
-                            <div class="flex items-center justify-end gap-2">
+                            <div class="flex items-center justify-end gap-1.5">
                                 <button onclick="openUserModal('edit', {{ json_encode($user) }})"
-                                        class="p-2 text-indigo-600 hover:bg-indigo-50 rounded-xl transition duration-200" title="Edit">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        class="p-2 text-indigo-600 hover:bg-indigo-50 rounded-xl transition duration-200 hover:shadow-sm" title="Edit">
+                                    <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
                                     </svg>
                                 </button>
                                 @if($user->id !== auth()->id())
-                                <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="inline" onsubmit="return confirm('Delete this user?')">
+                                <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus user ini?')">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="p-2 text-red-600 hover:bg-red-50 rounded-xl transition duration-200" title="Delete">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <button type="submit" class="p-2 text-rose-600 hover:bg-rose-50 rounded-xl transition duration-200 hover:shadow-sm" title="Delete">
+                                        <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                         </svg>
                                     </button>
@@ -152,6 +160,51 @@
             </tbody>
         </table>
     </div>
+</div>
+
+{{-- MOBILE CARD VIEW --}}
+<div class="md:hidden space-y-3">
+    @forelse($users as $user)
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4">
+            <div class="flex items-center gap-3 mb-3">
+                <img src="{{ image_url($user->photo) }}"
+                     class="h-12 w-12 rounded-full object-cover ring-2 ring-slate-100 shrink-0"
+                     alt="{{ $user->name }}">
+                <div class="flex-1 min-w-0">
+                    <p class="font-bold text-slate-900 truncate">{{ $user->name }}</p>
+                    <p class="text-xs text-slate-500 truncate">{{ $user->email }}</p>
+                </div>
+                @if($user->role === 'admin')
+                    <span class="px-2 py-1 bg-red-50 text-red-600 rounded-lg text-[10px] font-black uppercase shrink-0">Admin</span>
+                @elseif($user->role === 'resepsionis')
+                    <span class="px-2 py-1 bg-indigo-50 text-indigo-600 rounded-lg text-[10px] font-black uppercase shrink-0">Staff</span>
+                @elseif($user->role === 'owner')
+                    <span class="px-2 py-1 bg-emerald-50 text-emerald-600 rounded-lg text-[10px] font-black uppercase shrink-0">Owner</span>
+                @else
+                    <span class="px-2 py-1 bg-blue-50 text-blue-600 rounded-lg text-[10px] font-black uppercase shrink-0">Tamu</span>
+                @endif
+            </div>
+            <div class="flex gap-2">
+                <button onclick="openUserModal('edit', {{ json_encode($user) }})"
+                        class="flex-1 py-2.5 text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-xl transition font-bold text-xs text-center">
+                    Edit
+                </button>
+                @if($user->id !== auth()->id())
+                <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="flex-1" onsubmit="return confirm('Delete this user?')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="w-full py-2.5 text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition font-bold text-xs text-center">
+                        Delete
+                    </button>
+                </form>
+                @endif
+            </div>
+        </div>
+    @empty
+        <div class="py-12 text-center bg-white rounded-2xl border border-dashed border-slate-300">
+            <p class="text-slate-400 italic">No users found.</p>
+        </div>
+    @endforelse
 </div>
 
 {{-- USER MODAL --}}

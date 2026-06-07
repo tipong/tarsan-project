@@ -2,16 +2,17 @@
 
 @if (\Illuminate\Support\Facades\Route::has($route))
     <a href="{{ route($route) }}"
-       class="block px-3 py-2 rounded
+       class="block px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200
        {{ request()->routeIs($route . '*')
-            ? 'bg-blue-100 text-blue-700 font-semibold'
-            : 'text-gray-700 hover:bg-gray-100' }}">
+            ? 'bg-indigo-50 text-indigo-700 font-semibold shadow-sm'
+            : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}">
         {{ $label }}
     </a>
 @else
     {{-- fallback to prevent errors --}}
     <span
-        class="block px-3 py-2 rounded text-gray-400 cursor-not-allowed">
+        class="block px-4 py-2.5 rounded-xl text-sm font-medium text-slate-400 cursor-not-allowed">
         {{ $label }}
     </span>
 @endif
+

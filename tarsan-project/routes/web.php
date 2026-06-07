@@ -80,7 +80,6 @@ Route::middleware(['auth', 'role:admin,owner'])
         Route::post('/orders/{order}/check-in', [OrderController::class, 'checkIn'])->name('orders.checkin');
         Route::post('/orders/{order}/check-out', [OrderController::class, 'checkOut'])->name('orders.checkout');
         Route::resource('reviews', ReviewController::class);
-        Route::post('/reviews/{review}/reply', [ReviewController::class, 'reply'])->name('reviews.reply');
     });
 
 /*
@@ -101,6 +100,8 @@ Route::middleware(['auth', 'role:owner'])
             ->name('reports.financial');
         Route::get('/reports/financial/export', [FinancialReportController::class, 'export'])
             ->name('reports.financial.export');
+        Route::get('/reports/financial/pdf', [FinancialReportController::class, 'downloadPdf'])
+            ->name('reports.financial.pdf');
     });
 
 /*

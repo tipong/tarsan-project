@@ -1,90 +1,90 @@
 <x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
+    {{-- Header --}}
+    <div class="text-center mb-6">
+        <h2 class="text-xl font-black text-slate-900 tracking-tight">Create Account</h2>
+        <p class="text-xs text-slate-400 font-medium mt-1">Create an account to book your stay</p>
+    </div>
+
+    <form method="POST" action="{{ route('register') }}" class="space-y-4">
         @csrf
 
         <!-- Name -->
         <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+            <label for="name" class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Full Name</label>
+            <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus autocomplete="name"
+                   class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-indigo-600 text-slate-900 font-medium placeholder-slate-400 outline-none transition-all text-sm"
+                   placeholder="Full Name">
+            <x-input-error :messages="$errors->get('name')" class="mt-1" />
         </div>
 
         <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        <div>
+            <label for="email" class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Email Address</label>
+            <input id="email" type="email" name="email" value="{{ old('email') }}" required autocomplete="username"
+                   class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-indigo-600 text-slate-900 font-medium placeholder-slate-400 outline-none transition-all text-sm"
+                   placeholder="name@email.com">
+            <x-input-error :messages="$errors->get('email')" class="mt-1" />
         </div>
 
         <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
+        <div>
+            <label for="password" class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Password</label>
             <div class="relative">
-                <x-text-input
-                    id="password"
-                    class="block mt-1 w-full pr-12"
-                    type="password"
-                    name="password"
-                    required
-                    autocomplete="new-password" />
+                <input id="password" type="password" name="password" required autocomplete="new-password"
+                       class="w-full bg-slate-50 border-none rounded-2xl pl-5 pr-12 py-4 focus:ring-2 focus:ring-indigo-600 text-slate-900 font-medium placeholder-slate-400 outline-none transition-all text-sm"
+                       placeholder="Create password">
 
                 <button type="button"
                         onclick="togglePassword('password', this)"
-                        class="absolute inset-y-0 right-0 flex items-center px-3">
-                    <img
-                        src="{{ asset('icons/visibility.png') }}"
-                        data-show="{{ asset('icons/visibility.png') }}"
-                        data-hide="{{ asset('icons/visibility-off.png') }}"
-                        class="h-5 w-5"
-                        alt="Toggle Password">
+                        class="absolute inset-y-0 right-0 flex items-center px-4">
+                    <img src="{{ asset('icons/visibility.png') }}"
+                         data-show="{{ asset('icons/visibility.png') }}"
+                         data-hide="{{ asset('icons/visibility-off.png') }}"
+                         class="h-5 w-5 opacity-40 hover:opacity-75 transition-opacity"
+                         alt="Toggle Password">
                 </button>
             </div>
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+            <x-input-error :messages="$errors->get('password')" class="mt-1" />
         </div>
 
-
         <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
+        <div>
+            <label for="password_confirmation" class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Confirm Password</label>
             <div class="relative">
-                <x-text-input
-                    id="password_confirmation"
-                    class="block mt-1 w-full pr-12"
-                    type="password"
-                    name="password_confirmation"
-                    required
-                    autocomplete="new-password" />
+                <input id="password_confirmation" type="password" name="password_confirmation" required autocomplete="new-password"
+                       class="w-full bg-slate-50 border-none rounded-2xl pl-5 pr-12 py-4 focus:ring-2 focus:ring-indigo-600 text-slate-900 font-medium placeholder-slate-400 outline-none transition-all text-sm"
+                       placeholder="Confirm password">
 
                 <button type="button"
                         onclick="togglePassword('password_confirmation', this)"
-                        class="absolute inset-y-0 right-0 flex items-center px-3">
-                    <img
-                        src="{{ asset('icons/visibility.png') }}"
-                        data-show="{{ asset('icons/visibility.png') }}"
-                        data-hide="{{ asset('icons/visibility-off.png') }}"
-                        class="h-5 w-5"
-                        alt="Toggle Password">
+                        class="absolute inset-y-0 right-0 flex items-center px-4">
+                    <img src="{{ asset('icons/visibility.png') }}"
+                         data-show="{{ asset('icons/visibility.png') }}"
+                         data-hide="{{ asset('icons/visibility-off.png') }}"
+                         class="h-5 w-5 opacity-40 hover:opacity-75 transition-opacity"
+                         alt="Toggle Password">
                 </button>
             </div>
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
+            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-1" />
         </div>
 
-
-
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
-
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
+        {{-- Submit Button --}}
+        <div class="pt-2">
+            <button type="submit"
+                    class="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl hover:shadow-xl hover:shadow-indigo-100 transition duration-200 font-bold text-sm">
+                Register
+            </button>
         </div>
     </form>
+
+    {{-- Switch Action Button --}}
+    <div class="mt-8 pt-6 border-t border-slate-100 text-center">
+        <p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Already have an account?</p>
+        <a href="{{ route('login') }}"
+           class="inline-flex items-center justify-center gap-2 mt-3 px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-2xl transition duration-200 w-full sm:w-auto">
+            Log In Here
+        </a>
+    </div>
 
     <script>
         function togglePassword(inputId, button) {
@@ -100,5 +100,4 @@
             }
         }
     </script>
-
 </x-guest-layout>

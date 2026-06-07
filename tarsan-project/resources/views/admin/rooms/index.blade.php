@@ -42,72 +42,81 @@
     </div>
 @endif
 
-<div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+{{-- DESKTOP TABLE --}}
+<div class="hidden md:block bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
     <div class="overflow-x-auto">
         <table class="w-full text-sm">
             <thead>
-                <tr class="bg-slate-50/50 border-b border-slate-100">
-                    <th class="px-6 py-4 text-left font-bold text-slate-500 uppercase tracking-wider text-[10px]">Room</th>
-                    <th class="px-6 py-4 text-left font-bold text-slate-500 uppercase tracking-wider text-[10px]">Price</th>
-                    <th class="px-6 py-4 text-center font-bold text-slate-500 uppercase tracking-wider text-[10px]">Capacity</th>
-                    <th class="px-6 py-4 text-center font-bold text-slate-500 uppercase tracking-wider text-[10px]">Available</th>
-                    <th class="px-6 py-4 text-center font-bold text-slate-500 uppercase tracking-wider text-[10px]">Status</th>
-                    <th class="px-6 py-4 text-right font-bold text-slate-500 uppercase tracking-wider text-[10px]">Action</th>
+                <tr class="bg-slate-50/70 border-b border-slate-100">
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Room</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Price</th>
+                    <th class="px-6 py-4 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">Capacity</th>
+                    <th class="px-6 py-4 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">Available</th>
+                    <th class="px-6 py-4 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Action</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-slate-50">
+            <tbody class="divide-y divide-slate-100">
                 @forelse($rooms as $room)
-                    <tr class="hover:bg-slate-50/50 transition duration-150">
+                    <tr class="group hover:bg-indigo-50/10 transition-all duration-200 hover:translate-x-0.5">
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-4">
-                                <div class="relative group">
+                                <div class="relative group/img shrink-0">
                                     @if($room->images->first())
                                         <img src="{{ image_url($room->images->first()->image) }}"
-                                             class="w-16 h-12 rounded-xl object-cover shadow-sm group-hover:scale-105 transition duration-300">
+                                             class="w-16 h-12 rounded-xl object-cover shadow-sm group-hover/img:scale-105 transition duration-300 border border-slate-100">
                                     @else
-                                        <div class="w-16 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400 text-[10px] font-bold uppercase">
+                                        <div class="w-16 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400 text-[10px] font-bold uppercase border border-slate-200/50">
                                             No Img
                                         </div>
                                     @endif
                                 </div>
                                 <div>
-                                    <p class="font-bold text-slate-900">{{ $room->room_name }}</p>
-                                    <p class="text-[10px] text-slate-400 font-medium">{{ Str::limit($room->description, 30) }}</p>
+                                    <p class="font-bold text-slate-800 group-hover:text-indigo-600 transition-colors duration-200">{{ $room->room_name }}</p>
+                                    <p class="text-[10px] text-slate-400 font-medium mt-0.5">{{ Str::limit($room->description, 45) }}</p>
                                 </div>
                             </div>
                         </td>
                         <td class="px-6 py-4">
-                            <span class="font-bold text-indigo-600">Rp {{ number_format($room->price_per_night, 0, ',', '.') }}</span>
-                            <span class="text-[10px] text-slate-400 block font-medium">/ night</span>
+                            <div class="flex flex-col">
+                                <span class="font-bold text-indigo-600">Rp {{ number_format($room->price_per_night, 0, ',', '.') }}</span>
+                                <span class="text-[10px] text-slate-400 font-medium">/ night</span>
+                            </div>
                         </td>
                         <td class="px-6 py-4 text-center">
                             <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold">
+                                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                                </svg>
                                 {{ $room->capacity }} Pax
                             </span>
                         </td>
-                        <td class="px-6 py-4 text-center font-bold {{ $room->available_rooms > 0 ? 'text-emerald-600' : 'text-red-600' }}">
-                            {{ $room->available_rooms }}
+                        <td class="px-6 py-4 text-center">
+                            <div class="flex items-center justify-center gap-1.5 font-bold">
+                                <span class="w-2 h-2 rounded-full {{ $room->available_rooms > 0 ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500' }}"></span>
+                                <span class="{{ $room->available_rooms > 0 ? 'text-emerald-600' : 'text-rose-600' }}">{{ $room->available_rooms }} / {{ $room->total_rooms }}</span>
+                            </div>
                         </td>
                         <td class="px-6 py-4 text-center">
                             @if($room->is_active)
-                                <span class="px-2 py-1 bg-emerald-50 text-emerald-600 rounded-lg text-[10px] font-black uppercase">Active</span>
+                                <span class="inline-flex items-center px-2.5 py-1 bg-emerald-50 text-emerald-600 rounded-lg text-[10px] font-black uppercase border border-emerald-100">Active</span>
                             @else
-                                <span class="px-2 py-1 bg-slate-50 text-slate-400 rounded-lg text-[10px] font-black uppercase">Inactive</span>
+                                <span class="inline-flex items-center px-2.5 py-1 bg-slate-50 text-slate-400 rounded-lg text-[10px] font-black uppercase border border-slate-200">Inactive</span>
                             @endif
                         </td>
                         <td class="px-6 py-4 text-right">
-                            <div class="flex items-center justify-end gap-2">
+                            <div class="flex items-center justify-end gap-1.5">
                                 <button onclick="openRoomModal('edit', {{ json_encode($room) }})"
-                                        class="p-2 text-blue-600 hover:bg-blue-50 rounded-xl transition duration-200" title="Edit">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        class="p-2 text-indigo-600 hover:bg-indigo-50 rounded-xl transition duration-200 hover:shadow-sm" title="Edit">
+                                    <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
                                     </svg>
                                 </button>
-                                <form action="{{ route('admin.rooms.destroy', $room) }}" method="POST" class="inline" onsubmit="return confirm('Delete this room?')">
+                                <form action="{{ route('admin.rooms.destroy', $room) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus kamar ini?')">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="p-2 text-red-600 hover:bg-red-50 rounded-xl transition duration-200" title="Delete">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <button type="submit" class="p-2 text-rose-600 hover:bg-rose-50 rounded-xl transition duration-200 hover:shadow-sm" title="Delete">
+                                        <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                         </svg>
                                     </button>
@@ -123,6 +132,61 @@
             </tbody>
         </table>
     </div>
+</div>
+
+{{-- MOBILE CARD VIEW --}}
+<div class="md:hidden space-y-3">
+    @forelse($rooms as $room)
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4">
+            <div class="flex items-center gap-3 mb-3">
+                @if($room->images->first())
+                    <img src="{{ image_url($room->images->first()->image) }}"
+                         class="w-16 h-14 rounded-xl object-cover shadow-sm shrink-0">
+                @else
+                    <div class="w-16 h-14 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400 text-[10px] font-bold uppercase shrink-0">
+                        No Img
+                    </div>
+                @endif
+                <div class="flex-1 min-w-0">
+                    <p class="font-bold text-slate-900">{{ $room->room_name }}</p>
+                    <p class="text-xs font-bold text-indigo-600">Rp {{ number_format($room->price_per_night, 0, ',', '.') }}<span class="text-slate-400 font-normal">/malam</span></p>
+                </div>
+                @if($room->is_active)
+                    <span class="px-2 py-1 bg-emerald-50 text-emerald-600 rounded-lg text-[10px] font-black uppercase shrink-0">Active</span>
+                @else
+                    <span class="px-2 py-1 bg-slate-50 text-slate-400 rounded-lg text-[10px] font-black uppercase shrink-0">Inactive</span>
+                @endif
+            </div>
+            <div class="bg-slate-50 rounded-xl p-3 mb-3 flex justify-around">
+                <div class="text-center">
+                    <p class="text-[10px] text-slate-400 font-bold uppercase">Kapasitas</p>
+                    <p class="text-sm font-bold text-slate-700">{{ $room->capacity }} Pax</p>
+                </div>
+                <div class="border-l border-slate-200"></div>
+                <div class="text-center">
+                    <p class="text-[10px] text-slate-400 font-bold uppercase">Available</p>
+                    <p class="text-sm font-bold {{ $room->available_rooms > 0 ? 'text-emerald-600' : 'text-red-600' }}">{{ $room->available_rooms }}</p>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="openRoomModal('edit', {{ json_encode($room) }})"
+                        class="flex-1 py-2.5 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-xl transition font-bold text-xs text-center">
+                    Edit
+                </button>
+                <form action="{{ route('admin.rooms.destroy', $room) }}" method="POST" class="flex-1" onsubmit="return confirm('Delete this room?')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="w-full py-2.5 text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition font-bold text-xs text-center">
+                        Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+    @empty
+        <div class="py-12 text-center bg-white rounded-2xl border border-dashed border-slate-300">
+            <p class="text-slate-400 italic">No rooms available yet.</p>
+        </div>
+    @endforelse
 </div>
 
 {{-- ROOM MODAL --}}
@@ -145,85 +209,85 @@
                 <div class="grid md:grid-cols-2 gap-6">
                     {{-- Nama Kamar --}}
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Nama Kamar</label>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2.5">Nama Kamar</label>
                         <input type="text" name="room_name" id="roomName" required
-                               class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-indigo-600 text-slate-900 font-medium placeholder-slate-400 outline-none transition-all"
+                               class="w-full bg-white border border-slate-200 rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 text-slate-900 font-medium placeholder-slate-400 outline-none transition-all shadow-sm"
                                placeholder="Contoh: Deluxe Suite">
                     </div>
 
                     {{-- Harga --}}
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Harga per Malam</label>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2.5">Harga per Malam</label>
                         <div class="relative">
-                            <span class="absolute left-5 top-4 text-slate-400 font-bold">Rp</span>
+                            <span class="absolute left-5 top-3.5 text-slate-400 font-bold text-sm">Rp</span>
                             <input type="number" name="price_per_night" id="roomPrice" required
-                                   class="w-full bg-slate-50 border-none rounded-2xl pl-12 pr-5 py-4 focus:ring-2 focus:ring-indigo-600 text-slate-900 font-medium placeholder-slate-400 outline-none transition-all"
+                                   class="w-full bg-white border border-slate-200 rounded-2xl pl-12 pr-5 py-3.5 focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 text-slate-900 font-medium placeholder-slate-400 outline-none transition-all shadow-sm"
                                    placeholder="0">
                         </div>
                     </div>
 
                     {{-- Kapasitas --}}
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Kapasitas (Pax)</label>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2.5">Kapasitas (Pax)</label>
                         <input type="number" name="capacity" id="roomCapacity" required
-                               class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-indigo-600 text-slate-900 font-medium placeholder-slate-400 outline-none transition-all"
+                               class="w-full bg-white border border-slate-200 rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 text-slate-900 font-medium placeholder-slate-400 outline-none transition-all shadow-sm"
                                placeholder="0">
                     </div>
 
                     {{-- Total Kamar --}}
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Total Kamar</label>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2.5">Total Kamar</label>
                         <input type="number" name="total_rooms" id="roomTotal" required
-                               class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-indigo-600 text-slate-900 font-medium placeholder-slate-400 outline-none transition-all"
+                               class="w-full bg-white border border-slate-200 rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 text-slate-900 font-medium placeholder-slate-400 outline-none transition-all shadow-sm"
                                placeholder="0">
                     </div>
                 </div>
 
                 {{-- Images --}}
                 <div>
-                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Foto Kamar (Multiple)</label>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2.5">Foto Kamar (Multiple)</label>
                     <div id="editImagesContainer" class="hidden mb-4 grid grid-cols-4 gap-4">
                         {{-- Existing images will be loaded here --}}
                     </div>
                     <input type="file" name="images[]" multiple accept="image/*"
-                           class="w-full bg-slate-50 border-dashed border-2 border-slate-200 rounded-2xl px-5 py-8 text-center text-sm text-slate-400 cursor-pointer hover:border-indigo-400 transition-all">
+                           class="w-full bg-white border-dashed border-2 border-slate-200 rounded-2xl px-5 py-6 text-center text-sm text-slate-400 cursor-pointer hover:border-indigo-400 transition-all shadow-sm">
                     <p class="mt-2 text-[10px] text-slate-400 font-medium">You can select multiple images. Format JPG/PNG max 5MB.</p>
                 </div>
 
                 {{-- Facilities --}}
                 <div>
-                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Fasilitas</label>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2.5">Fasilitas</label>
                     @if($usesFacilityRelations)
-                        <div class="grid grid-cols-2 md:grid-cols-3 gap-3 bg-slate-50 p-6 rounded-3xl max-h-48 overflow-y-auto">
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-3 bg-slate-50 p-5 rounded-2xl max-h-48 overflow-y-auto border border-slate-100">
                             @foreach($facilities as $facility)
                                 <label class="flex items-center gap-3 cursor-pointer group">
                                     <input type="checkbox" name="facility_ids[]" value="{{ $facility->id }}"
-                                           class="facility-checkbox rounded-lg border-slate-200 text-indigo-600 focus:ring-indigo-600 transition duration-200">
+                                           class="facility-checkbox rounded border-slate-200 text-indigo-600 focus:ring-indigo-600 transition duration-200">
                                     <span class="text-xs font-bold text-slate-600 group-hover:text-indigo-600 transition">{{ $facility->name }}</span>
                                 </label>
                             @endforeach
                         </div>
                     @else
                         <textarea name="facilities" id="roomLegacyFacilities" rows="2"
-                                  class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-indigo-600 text-slate-900 font-medium placeholder-slate-400 outline-none transition-all"
+                                  class="w-full bg-white border border-slate-200 rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 text-slate-900 font-medium placeholder-slate-400 outline-none transition-all shadow-sm"
                                   placeholder="Separate with comma: AC, WiFi, TV"></textarea>
                     @endif
                 </div>
 
                 {{-- Description --}}
                 <div>
-                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Description</label>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2.5">Description</label>
                     <textarea name="description" id="roomDescription" rows="4"
-                              class="w-full bg-slate-50 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-indigo-600 text-slate-900 font-medium placeholder-slate-400 outline-none transition-all"
+                              class="w-full bg-white border border-slate-200 rounded-2xl px-5 py-3.5 focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 text-slate-900 font-medium placeholder-slate-400 outline-none transition-all shadow-sm"
                               placeholder="Ceritakan tentang kamar ini..."></textarea>
                 </div>
 
                 {{-- Status --}}
                 <div>
-                    <label class="flex items-center gap-3 cursor-pointer p-4 bg-slate-50 rounded-2xl">
+                    <label class="flex items-center gap-3 cursor-pointer p-4 bg-slate-50 hover:bg-slate-100 rounded-2xl transition border border-slate-100">
                         <input type="checkbox" name="is_active" id="roomIsActive" value="1"
-                               class="rounded-lg border-slate-200 text-indigo-600 focus:ring-indigo-600">
-                        <span class="text-sm font-bold text-slate-700 uppercase tracking-widest">Room Active & Bookable</span>
+                               class="rounded border-slate-200 text-indigo-600 focus:ring-indigo-600 h-5 w-5">
+                        <span class="text-xs font-bold text-slate-600 uppercase tracking-widest">Room Active & Bookable</span>
                     </label>
                 </div>
 

@@ -243,8 +243,8 @@
                     <option value="1">⭐ Very Poor</option>
                 </select>
             </div>
-            <span class="modal-label">Review</span>
-            <textarea name="review" class="modal-textarea" placeholder="Tell us about your experience..." required></textarea>
+            <span class="modal-label">Review (optional)</span>
+            <textarea name="review" class="modal-textarea" placeholder="Tell us about your experience..."></textarea>
             <div class="modal-actions">
                 <button type="button" onclick="closeReviewModal()" class="btn-dark" style="flex:1">Cancel</button>
                 <button type="submit" class="os-btn ob-review" style="flex:1;padding:11px 20px">Submit Review</button>
