@@ -278,4 +278,6 @@ Route::middleware(['auth', 'role:tamu,admin,resepsionis,owner'])
             ->name('tamu.invoice.download');
         Route::get('/tamu/invoice/{order}', [InvoiceController::class, 'show'])
             ->name('tamu.invoice.show');
+        Route::get('/invoice/{order}/print', [InvoiceController::class, 'print'])
+            ->name('invoice.print');
     });
