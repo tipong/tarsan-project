@@ -181,6 +181,10 @@
     @endforelse
 </div>
 
+<div class="mt-6">
+    {{ $vouchers->links() }}
+</div>
+
 {{-- VOUCHER MODAL --}}
 <div id="voucherModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-[2.5rem] w-full max-w-md shadow-2xl overflow-hidden transform transition-all scale-95 opacity-0 duration-300" id="voucherModalContent">

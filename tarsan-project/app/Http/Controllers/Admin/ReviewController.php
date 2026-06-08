@@ -25,7 +25,7 @@ class ReviewController extends Controller
             });
         }
 
-        $reviews = $query->paginate(10);
+        $reviews = $query->paginate(10)->withQueryString();
 
         $averageRating = round(Review::avg('rating') ?? 5, 1);
         $totalReviews  = Review::count();

@@ -34,7 +34,7 @@ class VoucherController extends Controller
             $query->where('ends_at', '<', $now);
         }
 
-        $vouchers = $query->latest()->paginate(10);
+        $vouchers = $query->latest()->paginate(10)->withQueryString();
 
         return view('admin.vouchers.index', compact('vouchers'));
     }

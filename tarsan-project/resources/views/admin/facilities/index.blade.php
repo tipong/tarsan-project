@@ -131,6 +131,10 @@
             </div>
         @endforelse
     </div>
+
+    <div class="mt-6">
+        {{ $facilities->links() }}
+    </div>
 </div>
 
 {{-- MODAL --}}
